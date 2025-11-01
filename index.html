@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Techno Directe – Catalogue + Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400  ;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root{--accent:#ff6b00;--dark:#222;--light:#f7f7f7;--font:'Cairo',sans-serif;}
     *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font);}
@@ -90,9 +90,9 @@
       ar:{h1:'تكنو دايركت',btnLang:'Français',modalTitle:'نموذج الطلب',placeholderNom:'اللقب',placeholderPrenom:'الاسم',placeholderTel1:'الهاتف 1',placeholderTel2:'الهاتف 2 (اختياري)',radioBureau:'مكتب البريد',radioDomicile:'توصيل للمنزل',submit:'إرسال الطلب',labelWilaya:'ولاية التوصيل :',commanderWhatsapp:'اطلب عبر واتساب',commanderForm:'اطلب هنا',total:'المجموع :',adminTitle:'منطقة الأدمن – طلبات النموذج',addAffiche:'+ إضافة ملصق (max 20)',save:'حفظ التغييرات'}
     };
     const DEFAULT_CATALOG = [
-      {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60  '},
-      {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo/1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60  '},
-      {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60  '}
+      {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60'},
+      {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo/1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60'},
+      {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60'}
     ];
     let catalogue = [];
 
@@ -158,8 +158,8 @@
           const prodName = card.querySelector('h2').textContent;
           const wtxt = lang==='fr'?
             `Bonjour Techno Directe, je veux commander : ${prodName} (Total : ${tot} DA)`:
-‎            `مرحبا تكنو دايركت، أريد طلب : ${prodName} (المجموع : ${tot} دج)`;
-          whats.href = `https://wa.me/  ${PHONE1}?text=${encodeURIComponent(wtxt)}`;
+            `مرحبا تكنو دايركت، أريد طلب : ${prodName} (المجموع : ${tot} دج)`;
+          whats.href = `https://wa.me/${PHONE1}?text=${encodeURIComponent(wtxt)}`;
         }
         sel.onchange = upd; upd();
       });
@@ -240,7 +240,7 @@
     function addEmptyAffiche(){
       if (catalogue.length >= MAX_AFFICHES) return alert('Max 20 affiches');
       const newId = catalogue.length ? Math.max(...catalogue.map(p=>p.id)) + 1 : 1;
-      catalogue.push({id:newId, name:'Nouveau PC',desc:'Description ici',price:50000,img:'https://via.placeholder.com/800x600?text=Nouveau+PC  '});
+      catalogue.push({id:newId, name:'Nouveau PC',desc:'Description ici',price:50000,img:'https://via.placeholder.com/800x600?text=Nouveau+PC'});
       renderAdminList();
       renderCatalog();
       saveCatalog();
