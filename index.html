@@ -1,356 +1,152 @@
-alert("✅ Script admin chargé avec succès !");
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Techno Directe – PC reconditionnés</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Google font arabic -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Techno Direct - PC Portable</title>
   <style>
-    :root{
-      --accent:#ff6b00;
-      --dark:#222;
-      --light:#f7f7f7;
-      --font:'Cairo',sans-serif;
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
     }
-    *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font);}
-    body{background:var(--light);color:var(--dark);line-height:1.6;transition:.3s;}
-    body[dir="rtl"]{text-align:right;}
-    header{background:var(--dark);color:#fff;padding:1.2rem 1rem;text-align:center;position:relative;}
-    header h1{font-size:2rem;font-weight:700;}
-    .lang-switch{position:absolute;right:1rem;top:1.2rem;background:var(--accent);color:#fff;border:none;padding:.4rem .8rem;border-radius:4px;cursor:pointer;}
-    body[dir="rtl"] .lang-switch{left:1rem;right:auto;}
-    .container{max-width:1000px;margin:auto;padding:1rem;}
-    .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;}
-    .card img{width:100%;height:200px;object-fit:cover;}
-    .info{padding:1rem;}
-    .price{font-size:1.5rem;font-weight:700;color:var(--accent);}
-    .btn{background:var(--accent);color:#fff;padding:.75rem 1.2rem;border:none;border-radius:4px;cursor:pointer;font-size:1rem;margin:.3rem .3rem 0 0;display:inline-block;text-decoration:none;}
-    .btn:hover{background:#e55a00;}
-    select{margin:.5rem 0;padding:.5rem;width:100%;max-width:300px;}
-    @media(min-width:600px){.card{flex-direction:row;}.card img{width:260px;height:auto;}}
-    /* MODALE */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:999;}
-    .modal{background:#fff;border-radius:8px;width:90%;max-width:500px;padding:1.5rem;position:relative;}
-    .modal h2{margin-bottom:1rem;}
-    .modal input, .modal select{width:100%;padding:.5rem;margin:.4rem 0;}
-    .modal .close{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1.4rem;cursor:pointer;}
-    body[dir="rtl"] .modal .close{left:.7rem;right:auto;}
-    /* ADMIN ZONE */
-    .admin-zone{background:#ffeaa7;margin:2rem 0;padding:1rem;border-radius:6px;display:none;}
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 20px;
+      padding: 15px;
+      max-width: 400px;
+      display: inline-block;
+      vertical-align: top;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .info {
+      margin-top: 10px;
+    }
+    .price {
+      color: #1e90ff;
+      font-weight: bold;
+    }
+    .btn {
+      display: inline-block;
+      background: #25d366;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .btn.formulaire {
+      background: #007bff;
+    }
+    .admin-zone {
+      display: none;
+      background: #fff;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .admin-btn {
+      display: none;
+      background: #ff9800;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 20px;
+    }
+    #adminPre {
+      background: #000;
+      color: #0f0;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1 id="h1-title">Techno Directe</h1>
-    <button class="lang-switch" id="langBtn">العربية</button>
-  </header>
 
-  <div class="container">
-    <!-- Produit 1 -->
-    <div class="card" data-produit="HP EliteBook 840 G5" data-prix="50000">
-      <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60" alt="HP EliteBook">
-      <div class="info">
-        <h2>HP EliteBook 840 G5</h2>
-        <p>Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD</p>
-        <p class="price prix-produit" data-prix="50000">50 000 DA</p>
-        <label class="label-wilaya">Wilaya de livraison :
-          <select class="wilaya" required></select>
-        </label>
-        <p class="total"><strong>Total : <span class="montant">50 000 DA</span></strong></p>
-        <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
-        <button class="btn formulaire">Remplir le formulaire</button>
-      </div>
-    </div>
-
-    <!-- Produit 2 -->
-    <div class="card" data-produit="Lenovo ThinkPad T480" data-prix="72000">
-      <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" alt="ThinkPad">
-      <div class="info">
-        <h2>Lenovo ThinkPad T480</h2>
-        <p>Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD</p>
-        <p class="price prix-produit" data-prix="72000">72 000 DA</p>
-        <label class="label-wilaya">Wilaya de livraison :
-          <select class="wilaya" required></select>
-        </label>
-        <p class="total"><strong>Total : <span class="montant">72 000 DA</span></strong></p>
-        <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
-        <button class="btn formulaire">Remplir le formulaire</button>
-      </div>
-    </div>
-
-    <!-- Produit 3 -->
-    <div class="card" data-produit="MacBook Air 2018" data-prix="94000">
-      <img src="https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60" alt="MacBook">
-      <div class="info">
-        <h2>MacBook Air 2018</h2>
-        <p>Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina</p>
-        <p class="price prix-produit" data-prix="94000">94 000 DA</p>
-        <label class="label-wilaya">Wilaya de livraison :
-          <select class="wilaya" required></select>
-        </label>
-        <p class="total"><strong>Total : <span class="montant">94 000 DA</span></strong></p>
-        <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
-        <button class="btn formulaire">Remplir le formulaire</button>
-      </div>
-    </div>
-
-    <!-- ADMIN ZONE (cachée par défaut) -->
-    <div class="admin-zone" id="adminZone">
-      <h3>Zone Admin – Commandes formulaire</h3>
-      <pre id="adminPre"></pre>
+  <!-- Produit 1 -->
+  <div class="card" data-produit="Lenovo ThinkPad T480" data-prix="72000">
+    <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" alt="ThinkPad">
+    <div class="info">
+      <h2>Lenovo ThinkPad T480</h2>
+      <p>Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD</p>
+      <p class="price prix-produit" data-prix="72000">72 000 DA</p>
+      <label class="label-wilaya">Wilaya de livraison :
+        <select class="wilaya" required></select>
+      </label>
+      <p class="total"><strong>Total : <span class="montant">72 000 DA</span></strong></p>
+      <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
+      <button class="btn formulaire">Remplir le formulaire</button>
     </div>
   </div>
 
-  <!-- MODALE FORMULAIRE -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <button class="close" id="closeModal">&times;</button>
-      <h2 id="modalTitle">Formulaire de commande</h2>
-      <form id="commandeForm">
-        <input type="text" name="nom" placeholder="Nom" required>
-        <input type="text" name="prenom" placeholder="Prénom" required>
-        <select name="wilaya" required></select>
-        <input type="tel" name="tel1" placeholder="Téléphone 1" required>
-        <input type="tel" name="tel2" placeholder="Téléphone 2 (facultatif)">
-        <label><input type="radio" name="livraison" value="bureau" checked> Bureau de poste</label>
-        <label><input type="radio" name="livraison" value="domicile"> À domicile</label>
-        <input type="hidden" name="produit">
-        <input type="hidden" name="total">
-        <button type="submit" class="btn">Envoyer la commande</button>
-      </form>
+  <!-- Produit 2 -->
+  <div class="card" data-produit="MacBook Air 2018" data-prix="94000">
+    <img src="https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60" alt="MacBook">
+    <div class="info">
+      <h2>MacBook Air 2018</h2>
+      <p>Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina</p>
+      <p class="price prix-produit" data-prix="94000">94 000 DA</p>
+      <label class="label-wilaya">Wilaya de livraison :
+        <select class="wilaya" required></select>
+      </label>
+      <p class="total"><strong>Total : <span class="montant">94 000 DA</span></strong></p>
+      <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
+      <button class="btn formulaire">Remplir le formulaire</button>
     </div>
   </div>
 
-  <footer style="text-align:center;padding:1.5rem;font-size:.85rem;color:#777;">
-    Contact : 07 00 00 00 00 (WhatsApp / appel)
-  </footer>
+  <!-- Bouton admin -->
+  <button class="admin-btn" id="openAdmin">⚙️ Ouvrir Admin</button>
+
+  <!-- Zone Admin -->
+  <div class="admin-zone" id="adminZone">
+    <h3>Zone Admin – Modifier les produits</h3>
+    <pre id="adminPre"></pre>
+  </div>
 
   <script>
-    /* ========== 1) DONNEES ========== */
-    const PHONE1 = '213699039372'; // 0699039372
-    const PHONE2 = '213560072059'; // 0560072059
-    const WILAYAS = [
-      {fr:'ADRAR',ar:'أدرار',prix:1400},{fr:'CHLEF',ar:'الشلف',prix:800},{fr:'LAGHOUAT',ar:'الأغواط',prix:950},{fr:'OUM EL BOUAGHI',ar:'أم البواقي',prix:800},{fr:'BATNA',ar:'باتنة',prix:800},{fr:'BEJAIA',ar:'بجاية',prix:450},{fr:'BISKRA',ar:'بسكرة',prix:950},{fr:'BECHAR',ar:'بشار',prix:1100},{fr:'BLIDA',ar:'البليدة',prix:750},{fr:'BOUIRA',ar:'البويرة',prix:700},{fr:'TAMANRASSET',ar:'تمنراست',prix:1600},{fr:'TEBESSA',ar:'تبسة',prix:800},{fr:'TLEMCEN',ar:'تلمسان',prix:900},{fr:'TIARET',ar:'تيارت',prix:800},{fr:'TIZI OUZOU',ar:'تيزي وزو',prix:650},{fr:'ALGER',ar:'الجزائر',prix:600},{fr:'DJELFA',ar:'الجلفة',prix:950},{fr:'JUEL',ar:'جيجل',prix:700},{fr:'SETIF',ar:'سطيف',prix:750},{fr:'SAIDA',ar:'سعيدة',prix:800},{fr:'SKIKDA',ar:'سكيكدة',prix:750},{fr:'SIDIBELABBES',ar:'سيدي بلعباس',prix:750},{fr:'ANNABA',ar:'عنابة',prix:800},{fr:'GUELMA',ar:'قالمة',prix:800},{fr:'CONSTANTINE',ar:'قسنطينة',prix:750},{fr:'MEDEA',ar:'المدية',prix:750},{fr:'MOSTAGANEM',ar:'معسكر',prix:750},{fr:'M\'SILA',ar:'المسيلة',prix:850},{fr:'MASCARA',ar:'مascara',prix:750},{fr:'OUARGLA',ar:'ورقلة',prix:1000},{fr:'ORAN',ar:'وهران',prix:700},{fr:'EL BAYADH',ar:'البيض',prix:1050},{fr:'ILLIZI',ar:'إيليزي',prix:1100},{fr:'BORDJ BOU ARRERIDJ',ar:'برج بوعريريج',prix:750},{fr:'BOUMERDES',ar:'بومرداس',prix:750},{fr:'EL TARF',ar:'الطارف',prix:850},{fr:'TINDOUF',ar:'تندوف',prix:1600},{fr:'TISSEMSILT',ar:'تيسمسيلت',prix:800},{fr:'EL OUED',ar:'الوادي',prix:1000},{fr:'KHENCHELA',ar:'خنشلة',prix:800},{fr:'SOUK AHRAS',ar:'سوق أهراس',prix:800},{fr:'TIPAZA',ar:'تيبازة',prix:900},{fr:'MILA',ar:'ميلة',prix:800},{fr:'AIN DEFLA',ar:'عين الدفلى',prix:850},{fr:'NAAMA',ar:'النعامة',prix:800},{fr:'AIN TEMOUCHENT',ar:'عين تموشنت',prix:800},{fr:'GHARDAIA',ar:'غرداية',prix:800},{fr:'RELIZANE',ar:'غليزان',prix:800},{fr:'TIMIMOUN',ar:'تيميمون',prix:800},{fr:'BORDJ BADJI MOKHTAR',ar:'برج باجي مختار',prix:800},{fr:'OULED DJELLAL',ar:'أولاد جلال',prix:800},{fr:'BENI ABBES',ar:'بني عباس',prix:800},{fr:'IN SALAH',ar:'عين صالح',prix:800},{fr:'IN GUEZZAM',ar:'عين قزام',prix:800},{fr:'TOUGGOURT',ar:'تقرت',prix:800},{fr:'DJANET',ar:'جانت',prix:800},{fr:'MGHAIR',ar:'الاغواط',prix:800},{fr:'EL MENIAA',ar:'المنيعة',prix:800}
-    ];
+    // Vérifier si admin mode est activé
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminMode = urlParams.has("admin");
+    const adminBtn = document.getElementById("openAdmin");
+    const adminZone = document.getElementById("adminZone");
 
-    /* ========== 2) UTILITAIRES ========== */
-    const body=document.body, langBtn=document.getElementById('langBtn');
-    let lang='fr';
-    const txt={
-      fr:{h1:'Techno Directe', btnLang:'العربية', modalTitle:'Formulaire de commande', placeholderNom:'Nom',placeholderPrenom:'Prénom',placeholderTel1:'Téléphone 1',placeholderTel2:'Téléphone 2 (facultatif)',radioBureau:'Bureau de poste',radioDomicile:'À domicile',submit:'Envoyer la commande',labelWilaya:'Wilaya de livraison :',commanderWhatsapp:'Commander sur WhatsApp',commanderForm:'Remplir le formulaire',total:'Total :',adminTitle:'Zone Admin – Commandes formulaire'},
-      ar:{h1:'تكنو دايركت', btnLang:'Français', modalTitle:'نموذج الطلب', placeholderNom:'اللقب',placeholderPrenom:'الاسم',placeholderTel1:'الهاتف 1',placeholderTel2:'الهاتف 2 (اختياري)',radioBureau:'مكتب البريد',radioDomicile:'توصيل للمنزل',submit:'إرسال الطلب',labelWilaya:'ولاية التوصيل :',commanderWhatsapp:'اطلب عبر واتساب',commanderForm:'املأ النموذج',total:'المجموع :',adminTitle:'منطقة الأدمن – طلبات النموذج'}
-    };
-
-    /* ========== 3) INITIALISATIONS ========== */
-    fillWilayaSelects();
-    attachEvents();
-    updateLang();
-    showAdminIfRequested();
-
-    /* ========== 4) FUNCTIONS ========== */
-    function fillWilayaSelects(){
-      document.querySelectorAll('.wilaya, select[name=wilaya]').forEach(sel=>{
-        sel.innerHTML='<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
-        WILAYAS.forEach(w=>{
-          const option=document.createElement('option');
-          option.value=w.prix;
-          option.textContent= lang==='fr'? w.fr : w.ar;
-          sel.appendChild(option);
-        });
-      });
-    }
-    function attachEvents(){
-      // langue
-      langBtn.onclick=()=>{ lang= lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); };
-      // modale
-      const overlay=document.getElementById('modalOverlay'), closeBtn=document.getElementById('closeModal');
-      document.querySelectorAll('.formulaire').forEach(btn=>{
-        btn.onclick=e=>{
-          const card=btn.closest('.card');
-          overlay.style.display='flex';
-          overlay.querySelector('input[name=produit]').value=card.dataset.produit;
-          overlay.querySelector('input[name=total]').value=parseInt(card.dataset.prix) + (parseInt(card.querySelector('.wilaya').value)||0);
+    if (adminMode) {
+      const pass = prompt("Entrer le mot de passe admin :");
+      if (pass === "technoid") {
+        adminBtn.style.display = "block";
+        adminBtn.onclick = () => {
+          adminZone.style.display = "block";
+          afficherProduits();
         };
-      });
-      closeBtn.onclick=()=>overlay.style.display='none';
-      overlay.onclick=e=>{ if(e.target===overlay) overlay.style.display='none'; };
-      // soumission formulaire
-      document.getElementById('commandeForm').onsubmit=e=>{
-        e.preventDefault();
-        const data=Object.fromEntries(new FormData(e.target));
-        data.date=new Date().toLocaleString('fr-DZ');
-        saveCommand(data);
-        alert(lang==='fr'?'Commande enregistrée !':'تم حفظ الطلب !');
-        overlay.style.display='none'; e.target.reset();
-        refreshAdmin();
-      };
-      // maj prix carte + lien whatsapp
-      document.querySelectorAll('.card').forEach(card=>{
-        const prix=parseInt(card.dataset.prix), wilSel=card.querySelector('.wilaya'), montantSpan=card.querySelector('.montant'), whatsappBtn=card.querySelector('.whatsapp');
-        function upd(){
-          const liv=parseInt(wilSel.value)||0, tot=prix+liv;
-          montantSpan.textContent=tot.toLocaleString('fr-DZ')+' DA';
-          const wtxt=lang==='fr'?
-            `Bonjour Techno Directe, je veux commander : ${card.dataset.produit} (Total : ${tot} DA)`:
-            `مرحبا تكنو دايركت، أريد طلب : ${card.dataset.produit} (المجموع : ${tot} دج)`;
-          whatsappBtn.href=`https://wa.me/${PHONE1}?text=${encodeURIComponent(wtxt)}`;
-        }
-        wilSel.onchange=upd; upd();
-      });
-    }
-    function updateLang(){
-      body.dir= lang==='ar'?'rtl':'ltr';
-      body.lang= lang;
-      langBtn.textContent=txt[lang].btnLang;
-      Object.keys(txt[lang]).forEach(key=>{
-        const el=document.getElementById(key);
-        if(el) el.textContent=txt[lang][key];
-      });
-      document.querySelectorAll('.label-wilaya').forEach(l=>l.childNodes[0].textContent=txt[lang].labelWilaya);
-      document.querySelectorAll('.whatsapp').forEach(b=>b.textContent=txt[lang].commanderWhatsapp);
-      document.querySelectorAll('.formulaire').forEach(b=>b.textContent=txt[lang].commanderForm);
-      document.querySelectorAll('.total strong').forEach(t=>t.childNodes[0].textContent=txt[lang].total+' ');
-    }
-    function saveCommand(obj){
-      const arr=JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      arr.push(obj);
-      localStorage.setItem('commandesFormulaire',JSON.stringify(arr));
-    }
-    function refreshAdmin(){
-      const zone=document.getElementById('adminZone'), pre=document.getElementById('adminPre');
-      const arr=JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      pre.textContent= arr.length? arr.map((c,i)=>`${i+1}. ${c.nom} ${c.prenom} | ${c.wilaya} | ${c.tel1} ${c.tel2?'/'+c.tel2:''} | ${c.livraison} | ${c.produit} | ${c.total} DA | ${c.date}`).join('\n') : 'Aucune commande';
-    }
-    function showAdminIfRequested(){
-      if(location.search.includes('admin')){
-        document.getElementById('adminZone').style.display='block';
-        refreshAdmin();
+      } else {
+        alert("Mot de passe incorrect ❌");
       }
+    }
+
+    function afficherProduits() {
+      const produits = document.querySelectorAll(".card");
+      let texte = "📦 Liste des produits :\n\n";
+      produits.forEach((card, i) => {
+        const nom = card.dataset.produit;
+        const prix = card.dataset.prix;
+        texte += `${i+1}. ${nom} – ${prix} DA\n`;
+      });
+      document.getElementById("adminPre").innerText = texte;
     }
   </script>
 </body>
 </html>
-<!-- 🔐 Panneau Admin Techno Direct -->
-<style>
-  #openAdmin {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    background: #222;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    display: none;
-    z-index: 9999;
-  }
-
-  #adminPanel {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 3px solid #222;
-    padding: 15px;
-    display: none;
-    z-index: 9999;
-    max-height: 70vh;
-    overflow-y: auto;
-    font-family: Arial, sans-serif;
-  }
-
-  #adminPanel input {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-
-  #adminPanel button {
-    background: #222;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-  }
-
-  .closeAdmin {
-    float: right;
-    color: red;
-    font-weight: bold;
-  }
-</style>
-
-<div id="openAdmin">⚙️ Ouvrir Admin</div>
-
-<div id="adminPanel">
-  <span class="closeAdmin" onclick="document.getElementById('adminPanel').style.display='none'">✖</span>
-  <h3>🧠 Panneau Admin – Techno Direct</h3>
-  <label>Nom du produit :</label>
-  <input type="text" id="adminNom" placeholder="Ex: HP ZBook 14u G6">
-  <label>Prix (DA) :</label>
-  <input type="number" id="adminPrix" placeholder="60000">
-  <label>URL de l’image :</label>
-  <input type="text" id="adminImage" placeholder="https://...jpg">
-  <button onclick="updateProduct()">✅ Appliquer au produit sélectionné</button>
-</div>
-
-<script>
-  let selectedCard = null;
-  let lastTap = 0;
-
-  // 🟩 Geste secret pour afficher le bouton d’accès admin
-  document.body.addEventListener('touchstart', function (e) {
-    if (e.touches[0].clientY < 100 && e.touches[0].clientX < 100) {
-      const now = new Date().getTime();
-      if (now - lastTap < 500) {
-        const pass = prompt("🔐 Entrez le mot de passe admin :");
-        if (pass === "technoid") { // <-- change ici ton mot de passe secret
-          document.getElementById('openAdmin').style.display = 'block';
-        } else {
-          alert("❌ Mot de passe incorrect");
-        }
-      }
-      lastTap = now;
-    }
-  });
-
-  // 🟨 Ouvrir le panneau admin
-  document.getElementById('openAdmin').addEventListener('click', () => {
-    document.getElementById('adminPanel').style.display = 'block';
-  });
-
-  // 🟦 Sélection d’un produit pour modification
-  document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('click', () => {
-      selectedCard = card;
-      const titre = card.querySelector('h2').innerText;
-      const prix = card.querySelector('.prix-produit').getAttribute('data-prix');
-      const img = card.querySelector('img').src;
-      document.getElementById('adminNom').value = titre;
-      document.getElementById('adminPrix').value = prix;
-      document.getElementById('adminImage').value = img;
-      alert(`🧩 Produit sélectionné : ${titre}`);
-    });
-  });
-
-  // 🟥 Appliquer les modifications
-  function updateProduct() {
-    if (!selectedCard) return alert("⚠️ Sélectionne d’abord un produit !");
-    const nom = document.getElementById('adminNom').value;
-    const prix = document.getElementById('adminPrix').value;
-    const img = document.getElementById('adminImage').value;
-
-    selectedCard.querySelector('h2').innerText = nom;
-    selectedCard.querySelector('.prix-produit').innerText = `${prix} DA`;
-    selectedCard.querySelector('.prix-produit').setAttribute('data-prix', prix);
-    selectedCard.querySelector('.montant').innerText = `${prix} DA`;
-    selectedCard.querySelector('img').src = img;
-
-    alert("✅ Produit mis à jour !");
-    document.getElementById('adminPanel').style.display = 'none';
-  }
-</script>
