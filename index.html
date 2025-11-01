@@ -2,215 +2,315 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Techno Direct</title>
+  <title>Techno Directe – Admin + Catalogue</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f5f5;
-    }
-    .card {
-      width: 300px;
-      background: white;
-      border-radius: 10px;
-      margin: 20px auto;
-      padding: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-      overflow: hidden;
-    }
-    .card img {
-      width: 100%;
-      border-radius: 10px;
-    }
-    .info {
-      padding: 10px;
-    }
-    .price {
-      color: green;
-      font-weight: bold;
-    }
-    .btn {
-      display: inline-block;
-      background: #007bff;
-      color: white;
-      padding: 8px 12px;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 8px;
-      cursor: pointer;
-    }
-    .btn:hover { background: #0056b3; }
-    .admin-zone {
-      display: none;
-      position: fixed;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      width: 90%;
-      max-width: 500px;
-      z-index: 999;
-    }
-    .admin-zone input, .admin-zone textarea {
-      width: 100%;
-      padding: 6px;
-      margin: 6px 0;
-    }
-    #closeAdmin { background: crimson; }
+    :root{--accent:#ff6b00;--dark:#222;--light:#f7f7f7;--font:'Cairo',sans-serif;}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font);}
+    body{background:var(--light);color:var(--dark);line-height:1.6;}
+    header{background:var(--dark);color:#fff;padding:1.2rem 1rem;text-align:center;position:relative;}
+    header h1{font-size:2rem;font-weight:700;}
+    #zoneDblClick{position:absolute;top:0;left:0;width:80px;height:80px;}
+    .lang-switch{position:absolute;right:1rem;top:1.2rem;background:var(--accent);color:#fff;border:none;padding:.4rem .8rem;border-radius:4px;cursor:pointer;}
+    body[dir="rtl"] .lang-switch{left:1rem;right:auto;}
+    .container{max-width:1000px;margin:auto;padding:1rem;}
+    .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;}
+    .card img{width:100%;height:200px;object-fit:cover;}
+    .info{padding:1rem;}
+    .price{font-size:1.5rem;font-weight:700;color:var(--accent);}
+    .btn{background:var(--accent);color:#fff;padding:.75rem 1.2rem;border:none;border-radius:4px;cursor:pointer;font-size:1rem;margin:.3rem .3rem 0 0;display:inline-block;text-decoration:none;}
+    .btn:hover{background:#e55a00;}
+    select{margin:.5rem 0;padding:.5rem;width:100%;max-width:300px;}
+    @media(min-width:600px){.card{flex-direction:row;}.card img{width:260px;height:auto;}}
+    /* MODALES */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:999;}
+    .modal{background:#fff;border-radius:8px;width:90%;max-width:500px;padding:1.5rem;position:relative;}
+    .modal .close{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1.4rem;cursor:pointer;}
+    body[dir="rtl"] .modal .close{left:.7rem;right:auto;}
+    /* ADMIN */
+    .admin-panel{background:#ffeaa7;padding:1rem;border-radius:6px;margin:2rem 0;display:none;}
+    .admin-item{border:1px solid var(--accent);padding:.7rem;margin:.5rem 0;border-radius:4px;background:#fff;}
+    .admin-item input[type=text],.admin-item input[type=number],.admin-item input[type=file]{width:100%;margin:.3rem 0;}
+    .admin-item img{max-width:120px;display:block;margin:.3rem 0;}
+    #addAffiches{margin-bottom:1rem;}
+    #commandesList{max-height:300px;overflow:auto;background:#fff;padding:.5rem;border:1px solid #ccc;border-radius:4px;margin-top:.7rem;}
   </style>
 </head>
 <body>
+  <header>
+    <div id="zoneDblClick"></div>
+    <h1 id="h1-title">Techno Directe</h1>
+    <button class="lang-switch" id="langBtn">العربية</button>
+  </header>
 
-<!-- Produit 1 -->
-<div class="card" data-produit="HP ZBook 14u G6" data-prix="60000">
-  <img src="https://images.unsplash.com/photo-1587202372775-98927a7c62d5?auto=format&fit=crop&w=800&q=60" alt="HP ZBook">
-  <div class="info">
-    <h2>HP ZBook 14u G6</h2>
-    <p>Intel Core i7 • 16 Go DDR4 • SSD 512 Go • 14″ Full HD</p>
-    <p class="price prix-produit" data-prix="60000">60 000 DA</p>
-    <label>Wilaya :
-      <select class="wilaya" required></select>
-    </label>
-    <p class="total"><strong>Total : <span class="montant">60 000 DA</span></strong></p>
-    <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
-    <button class="btn formulaire">Remplir le formulaire</button>
+  <div class="container">
+    <!-- CATALOGUE -->
+    <div id="catalogue"></div>
+
+    <!-- ADMIN PANEL -->
+    <div class="admin-panel" id="adminPanel">
+      <h2>Zone Admin</h2>
+      <button class="btn" id="addAffiches">+ Ajouter une affiche (max 20)</button>
+      <div id="adminList"></div>
+      <button class="btn" onclick="saveCatalog()">Sauvegarder les changements</button>
+
+      <h3 style="margin-top:1.2rem">Commandes reçues (formulaire)</h3>
+      <div id="commandesList"></div>
+    </div>
   </div>
-</div>
 
-<!-- Produit 2 -->
-<div class="card" data-produit="Lenovo ThinkPad T480" data-prix="72000">
-  <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" alt="ThinkPad">
-  <div class="info">
-    <h2>Lenovo ThinkPad T480</h2>
-    <p>Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD</p>
-    <p class="price prix-produit" data-prix="72000">72 000 DA</p>
-    <label>Wilaya :
-      <select class="wilaya" required></select>
-    </label>
-    <p class="total"><strong>Total : <span class="montant">72 000 DA</span></strong></p>
-    <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
-    <button class="btn formulaire">Remplir le formulaire</button>
+  <!-- MODALE PASSWORD -->
+  <div class="modal-overlay" id="passModal">
+    <div class="modal">
+      <button class="close" onclick="closePassModal()">&times;</button>
+      <h3>Entrez le mot de passe</h3>
+      <input type="password" id="passInput" placeholder="Mot de passe" style="width:100%;padding:.5rem;margin:.7rem 0;">
+      <button class="btn" onclick="checkPass()">Valider</button>
+    </div>
   </div>
-</div>
 
-<!-- Produit 3 -->
-<div class="card" data-produit="MacBook Air 2018" data-prix="94000">
-  <img src="https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60" alt="MacBook">
-  <div class="info">
-    <h2>MacBook Air 2018</h2>
-    <p>Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina</p>
-    <p class="price prix-produit" data-prix="94000">94 000 DA</p>
-    <label>Wilaya :
-      <select class="wilaya" required></select>
-    </label>
-    <p class="total"><strong>Total : <span class="montant">94 000 DA</span></strong></p>
-    <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
-    <button class="btn formulaire">Remplir le formulaire</button>
-  </div>
-</div>
+  <footer style="text-align:center;padding:1.5rem;font-size:.85rem;color:#777;">
+    Contact : 07 00 00 00 00 (WhatsApp / appel)
+  </footer>
 
-<!-- ADMIN ZONE -->
-<div class="admin-zone" id="adminZone">
-  <h3>Zone Admin – Gestion des produits</h3>
+  <script>
+    /* ========= CONFIG ========= */
+    const PASSWORD = 'technoid';
+    const MAX_AFFICHES = 20;
+    const PHONE1 = '213699039372'; // 0699039372
+    const PHONE2 = '213560072059'; // 0560072059
+    const WILAYAS = [
+      {fr:'ADRAR',ar:'أدرار',prix:1400},{fr:'CHLEF',ar:'الشلف',prix:800},{fr:'LAGHOUAT',ar:'الأغواط',prix:950},{fr:'OUM EL BOUAGHI',ar:'أم البواقي',prix:800},{fr:'BATNA',ar:'باتنة',prix:800},{fr:'BEJAIA',ar:'بجاية',prix:450},{fr:'BISKRA',ar:'بسكرة',prix:950},{fr:'BECHAR',ar:'بشار',prix:1100},{fr:'BLIDA',ar:'البليدة',prix:750},{fr:'BOUIRA',ar:'البويرة',prix:700},{fr:'TAMANRASSET',ar:'تمنراست',prix:1600},{fr:'TEBESSA',ar:'تبسة',prix:800},{fr:'TLEMCEN',ar:'تلمسان',prix:900},{fr:'TIARET',ar:'تيارت',prix:800},{fr:'TIZI OUZOU',ar:'تيزي وزو',prix:650},{fr:'ALGER',ar:'الجزائر',prix:600},{fr:'DJELFA',ar:'الجلفة',prix:950},{fr:'JUEL',ar:'جيجل',prix:700},{fr:'SETIF',ar:'سطيف',prix:750},{fr:'SAIDA',ar:'سعيدة',prix:800},{fr:'SKIKDA',ar:'سكيكدة',prix:750},{fr:'SIDIBELABBES',ar:'سيدي بلعباس',prix:750},{fr:'ANNABA',ar:'عنابة',prix:800},{fr:'GUELMA',ar:'قالمة',prix:800},{fr:'CONSTANTINE',ar:'قسنطينة',prix:750},{fr:'MEDEA',ar:'المدية',prix:750},{fr:'MOSTAGANEM',ar:'معسكر',prix:750},{fr:'M\'SILA',ar:'المسيلة',prix:850},{fr:'MASCARA',ar:'مascara',prix:750},{fr:'OUARGLA',ar:'ورقلة',prix:1000},{fr:'ORAN',ar:'وهران',prix:700},{fr:'EL BAYADH',ar:'البيض',prix:1050},{fr:'ILLIZI',ar:'إيليزي',prix:1100},{fr:'BORDJ BOU ARRERIDJ',ar:'برج بوعريريج',prix:750},{fr:'BOUMERDES',ar:'بومرداس',prix:750},{fr:'EL TARF',ar:'الطارف',prix:850},{fr:'TINDOUF',ar:'تندوف',prix:1600},{fr:'TISSEMSILT',ar:'تيسمسيلت',prix:800},{fr:'EL OUED',ar:'الوادي',prix:1000},{fr:'KHENCHELA',ar:'خنشلة',prix:800},{fr:'SOUK AHRAS',ar:'سوق أهراس',prix:800},{fr:'TIPAZA',ar:'تيبازة',prix:900},{fr:'MILA',ar:'ميلة',prix:800},{fr:'AIN DEFLA',ar:'عين الدفلى',prix:850},{fr:'NAAMA',ar:'النعامة',prix:800},{fr:'AIN TEMOUCHENT',ar:'عين تموشنت',prix:800},{fr:'GHARDAIA',ar:'غرداية',prix:800},{fr:'RELIZANE',ar:'غليزان',prix:800},{fr:'TIMIMOUN',ar:'تيميمون',prix:800},{fr:'BORDJ BADJI MOKHTAR',ar:'برج باجي مختار',prix:800},{fr:'OULED DJELLAL',ar:'أولاد جلال',prix:800},{fr:'BENI ABBES',ar:'بني عباس',prix:800},{fr:'IN SALAH',ar:'عين صالح',prix:800},{fr:'IN GUEZZAM',ar:'عين قزام',prix:800},{fr:'TOUGGOURT',ar:'تقرت',prix:800},{fr:'DJANET',ar:'جانت',prix:800},{fr:'MGHAIR',ar:'الاغواط',prix:800},{fr:'EL MENIAA',ar:'المنيعة',prix:800}
+    ];
 
-  <input type="file" id="imageProduit" accept="image/*">
-  <input type="text" id="nomProduit" placeholder="Nom du produit">
-  <input type="number" id="prixProduit" placeholder="Prix (DA)">
-  <textarea id="descProduit" placeholder="Description du produit"></textarea>
-  <button id="ajouterProduit" class="btn">Ajouter produit</button>
-  <button id="closeAdmin" class="btn">Fermer</button>
+    /* ========= LANG / UTILS ========= */
+    let lang = 'fr';
+    const body = document.body;
+    const txt = {
+      fr:{h1:'Techno Directe',btnLang:'العربية',modalTitle:'Formulaire de commande',placeholderNom:'Nom',placeholderPrenom:'Prénom',placeholderTel1:'Téléphone 1',placeholderTel2:'Téléphone 2 (facultatif)',radioBureau:'Bureau de poste',radioDomicile:'À domicile',submit:'Envoyer la commande',labelWilaya:'Wilaya de livraison :',commanderWhatsapp:'Commander sur WhatsApp',commanderForm:'Remplir le formulaire',total:'Total :',adminTitle:'Zone Admin – Commandes formulaire',addAffiche:'+ Ajouter une affiche (max 20)',save:'Sauvegarder les changements'},
+      ar:{h1:'تكنو دايركت',btnLang:'Français',modalTitle:'نموذج الطلب',placeholderNom:'اللقب',placeholderPrenom:'الاسم',placeholderTel1:'الهاتف 1',placeholderTel2:'الهاتف 2 (اختياري)',radioBureau:'مكتب البريد',radioDomicile:'توصيل للمنزل',submit:'إرسال الطلب',labelWilaya:'ولاية التوصيل :',commanderWhatsapp:'اطلب عبر واتساب',commanderForm:'املأ النموذج',total:'المجموع :',adminTitle:'منطقة الأدمن – طلبات النموذج',addAffiche:'+ إضافة ملصق (max 20)',save:'حفظ التغييرات'}
+    };
 
-  <hr>
-  <div id="listeProduits"></div>
-</div>
+    /* ========= CATALOGUE ========= */
+    const DEFAULT_CATALOG = [
+      {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60'},
+      {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60'},
+      {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60'}
+    ];
+    let catalogue = [];
 
-<script>
-  // Double clic pour ouvrir la zone admin
-  document.addEventListener('dblclick', e => {
-    if (e.clientX < 100 && e.clientY < 100) {
-      const mdp = prompt("Mot de passe admin :");
-      if (mdp === "technoid") {
-        document.getElementById("adminZone").style.display = "block";
-        afficherProduitsAdmin();
+    /* ========= INIT ========= */
+    initCatalog();
+    renderCatalog();
+    attachEvents();
+    updateLang();
+    showCommandes();
+
+    /* ========= FUNCTIONS ========= */
+    function initCatalog(){
+      const saved = localStorage.getItem('technoCatalog');
+      if (saved) catalogue = JSON.parse(saved);
+      else { catalogue = JSON.parse(JSON.stringify(DEFAULT_CATALOG)); saveCatalog(); }
+    }
+    function saveCatalog(){
+      localStorage.setItem('technoCatalog', JSON.stringify(catalogue));
+    }
+    function renderCatalog(){
+      const cont = document.getElementById('catalogue');
+      cont.innerHTML = '';
+      catalogue.forEach(prod=>{
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${prod.img}" alt="${prod.name}">
+          <div class="info">
+            <h2>${prod.name}</h2>
+            <p>${prod.desc}</p>
+            <p class="price prix-produit" data-prix="${prod.price}">${prod.price.toLocaleString('fr-DZ')} DA</p>
+            <label class="label-wilaya">${txt[lang].labelWilaya}
+              <select class="wilaya" required></select>
+            </label>
+            <p class="total"><strong>${txt[lang].total} <span class="montant">${prod.price.toLocaleString('fr-DZ')} DA</span></strong></p>
+            <a class="btn whatsapp" href="#">${txt[lang].commanderWhatsapp}</a>
+            <button class="btn formulaire" data-id="${prod.id}">${txt[lang].commanderForm}</button>
+          </div>`;
+        cont.appendChild(card);
+      });
+      fillWilayaSelects();
+      attachCardEvents();
+    }
+    function fillWilayaSelects(){
+      document.querySelectorAll('.wilaya').forEach(sel=>{
+        sel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
+        WILAYAS.forEach(w=>{
+          const opt = document.createElement('option');
+          opt.value = w.prix;
+          opt.textContent = lang==='fr'? w.fr : w.ar;
+          sel.appendChild(opt);
+        });
+      });
+    }
+    function attachCardEvents(){
+      document.querySelectorAll('.card').forEach(card=>{
+        const prix = parseInt(card.querySelector('.prix-produit').dataset.prix);
+        const sel = card.querySelector('.wilaya');
+        const mont = card.querySelector('.montant');
+        const whats = card.querySelector('.whatsapp');
+        function upd(){
+          const liv = parseInt(sel.value)||0; const tot = prix + liv;
+          mont.textContent = tot.toLocaleString('fr-DZ') + ' DA';
+          const prodName = card.querySelector('h2').textContent;
+          const wtxt = lang==='fr'?
+            `Bonjour Techno Directe, je veux commander : ${prodName} (Total : ${tot} DA)`:
+            `مرحبا تكنو دايركت، أريد طلب : ${prodName} (المجموع : ${tot} دج)`;
+          whats.href = `https://wa.me/${PHONE1}?text=${encodeURIComponent(wtxt)}`;
+        }
+        sel.onchange = upd; upd();
+      });
+    }
+    function attachEvents(){
+      // langue
+      document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
+      // double-click zone
+      document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
+      // formulaire modal
+      document.querySelectorAll('.formulaire').forEach(btn=>{
+        btn.onclick = (e)=>{
+          const prodId = e.target.dataset.id;
+          const prod = catalogue.find(p=>p.id==prodId);
+          openFormModal(prod);
+        };
+      });
+      // admin add affiche
+      document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
+    }
+    function updateLang(){
+      body.dir = lang==='ar'?'rtl':'ltr';
+      body.lang = lang;
+      document.getElementById('h1-title').textContent = txt[lang].h1;
+      document.getElementById('langBtn').textContent = txt[lang].btnLang;
+      document.getElementById('addAffiches').textContent = txt[lang].addAffiche;
+    }
+    /* ========= PASSWORD + ADMIN ========= */
+    function closePassModal(){
+      document.getElementById('passModal').style.display = 'none';
+      document.getElementById('passInput').value = '';
+    }
+    function checkPass(){
+      if (document.getElementById('passInput').value === PASSWORD){
+        closePassModal();
+        openAdminPanel();
       } else {
-        alert("Mot de passe incorrect !");
+        alert('Mot de passe incorrect');
       }
     }
-  });
-
-  document.getElementById("closeAdmin").onclick = () => {
-    document.getElementById("adminZone").style.display = "none";
-  };
-
-  const produitsContainer = document.body;
-  const listeProduits = document.getElementById("listeProduits");
-  let produits = JSON.parse(localStorage.getItem("produits")) || [];
-
-  function afficherProduits() {
-    document.querySelectorAll('.card').forEach(c => c.remove());
-    produits.forEach((p, i) => {
-      const div = document.createElement("div");
-      div.className = "card";
-      div.innerHTML = `
-        <img src="${p.image}" alt="${p.nom}">
-        <div class="info">
-          <h2>${p.nom}</h2>
-          <p>${p.desc}</p>
-          <p class="price">${p.prix} DA</p>
-          <a class="btn whatsapp" href="#">Commander sur WhatsApp</a>
-        </div>
-      `;
-      produitsContainer.appendChild(div);
-    });
-  }
-
-  function afficherProduitsAdmin() {
-    listeProduits.innerHTML = "";
-    produits.forEach((p, i) => {
-      const div = document.createElement("div");
-      div.innerHTML = `
-        <b>${p.nom}</b> — ${p.prix} DA
-        <button onclick="supprimerProduit(${i})">🗑 Supprimer</button>
-      `;
-      listeProduits.appendChild(div);
-    });
-  }
-
-  document.getElementById("ajouterProduit").onclick = () => {
-    const nom = document.getElementById("nomProduit").value;
-    const prix = document.getElementById("prixProduit").value;
-    const desc = document.getElementById("descProduit").value;
-    const imageInput = document.getElementById("imageProduit");
-
-    if (!nom || !prix || !desc || !imageInput.files[0]) return alert("Tous les champs sont requis !");
-    if (produits.length >= 20) return alert("Limite de 20 affiches atteinte.");
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const image = e.target.result;
-      produits.push({ nom, prix, desc, image });
-      localStorage.setItem("produits", JSON.stringify(produits));
-      afficherProduits();
-      afficherProduitsAdmin();
-      alert("Produit ajouté avec succès !");
-    };
-    reader.readAsDataURL(imageInput.files[0]);
-  };
-
-  function supprimerProduit(i) {
-    if (confirm("Supprimer ce produit ?")) {
-      produits.splice(i, 1);
-      localStorage.setItem("produits", JSON.stringify(produits));
-      afficherProduits();
-      afficherProduitsAdmin();
+    function openAdminPanel(){
+      document.getElementById('adminPanel').style.display = 'block';
+      renderAdminList();
+      showCommandes();
     }
-  }
-
-  afficherProduits();
-</script>
-
+    function renderAdminList(){
+      const list = document.getElementById('adminList');
+      list.innerHTML = '';
+      catalogue.forEach((prod,idx)=>{
+        const div = document.createElement('div');
+        div.className = 'admin-item';
+        div.innerHTML = `
+          <h4>Affiche ${idx+1}</h4>
+          <input type="text" placeholder="Nom" value="${prod.name}" onchange="catalogue[${idx}].name=this.value">
+          <input type="text" placeholder="Description" value="${prod.desc}" onchange="catalogue[${idx}].desc=this.value">
+          <input type="number" placeholder="Prix" value="${prod.price}" onchange="catalogue[${idx}].price=parseInt(this.value)||0">
+          <input type="file" accept="image/*" onchange="changeImage(${idx},this)">
+          <img src="${prod.img}" style="max-width:120px;display:block;margin:.3rem 0;">
+          <button class="btn" onclick="removeAffiche(${idx})">Supprimer</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+    function changeImage(idx,input){
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e=>{
+        catalogue[idx].img = e.target.result;
+        renderAdminList();
+      };
+      reader.readAsDataURL(file);
+    }
+    function removeAffiche(idx){
+      if (catalogue.length <= 1) return alert('Il faut au moins 1 affiche');
+      catalogue.splice(idx,1);
+      renderAdminList();
+      renderCatalog();
+    }
+    function addEmptyAffiche(){
+      if (catalogue.length >= MAX_AFFICHES) return alert('Max 20 affiches');
+      const newId = catalogue.length ? Math.max(...catalogue.map(p=>p.id)) + 1 : 1;
+      catalogue.push({id:newId, name:'Nouveau PC',desc:'Description ici',price:50000,img:'https://via.placeholder.com/800x600?text=Nouveau+PC'});
+      renderAdminList();
+      renderCatalog();
+    }
+    function saveCatalog(){
+      localStorage.setItem('technoCatalog', JSON.stringify(catalogue));
+      alert('Catalogue sauvegardé ! Les visiteurs verront les changements.');
+      renderCatalog();
+    }
+    /* ========= COMMANDES ========= */
+    function openFormModal(prod){
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.style.display = 'flex';
+      overlay.innerHTML = `
+        <div class="modal">
+          <button class="close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+          <h2>${txt[lang].modalTitle}</h2>
+          <form id="commandeForm">
+            <input type="text" name="nom" placeholder="${txt[lang].placeholderNom}" required>
+            <input type="text" name="prenom" placeholder="${txt[lang].placeholderPrenom}" required>
+            <select name="wilaya" required></select>
+            <input type="tel" name="tel1" placeholder="${txt[lang].placeholderTel1}" required>
+            <input type="tel" name="tel2" placeholder="${txt[lang].placeholderTel2}">
+            <label><input type="radio" name="livraison" value="bureau" checked> ${txt[lang].radioBureau}</label>
+            <label><input type="radio" name="livraison" value="domicile"> ${txt[lang].radioDomicile}</label>
+            <input type="hidden" name="produit" value="${prod.name}">
+            <input type="hidden" name="total">
+            <button type="submit" class="btn">${txt[lang].submit}</button>
+          </form>
+        </div>`;
+      document.body.appendChild(overlay);
+      fillWilayaSelects();
+      const form = overlay.querySelector('#commandeForm');
+      const wilSel = form.wilaya;
+      const totalInput = form.total;
+      function updTotal(){
+        const liv = parseInt(wilSel.value)||0; const tot = prod.price + liv;
+        totalInput.value = tot;
+      }
+      wilSel.onchange = updTotal; updTotal();
+      form.onsubmit = e=>{
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form));
+        data.date = new Date().toLocaleString('fr-DZ');
+        saveCommande(data);
+        alert(lang==='fr'?'Commande enregistrée !':'تم حفظ الطلب !');
+        overlay.remove();
+        showCommandes();
+      };
+    }
+    function saveCommande(obj){
+      const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      arr.push(obj);
+      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
+    }
+    function showCommandes(){
+      const cont = document.getElementById('commandesList');
+      const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
+      cont.innerHTML = '<ol>' + arr.map(c=>`
+        <li><strong>${c.nom} ${c.prenom}</strong> | ${c.wilaya} | ${c.tel1} ${c.tel2?'/'+c.tel2:''} | ${c.livraison} | ${c.produit} | ${c.total} DA | ${c.date}</li>
+      `).join('') + '</ol>';
+    }
+  </script>
 </body>
 </html>
