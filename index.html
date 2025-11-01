@@ -557,9 +557,9 @@
       let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
       const ids = [...checks].map(ch=>parseInt(ch.dataset.id));
       arr = arr.filter(c=>!ids.includes(c.id));
-      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
-      showCommandes();
-    }
-  </script>
-</body>
+              localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
+        showCommandes();
+      };
+    </script>
+  </body>
 </html>
