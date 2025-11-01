@@ -78,12 +78,12 @@
     let lang = 'fr';
     const body = document.body;
     const txt = {
-      fr:{h1:'Techno Directe',btnLang:'العربية',modalTitle:'Formulaire de commande',placeholderNom:'Nom',placeholderPrenom:'Prénom',placeholderTel1:'Téléphone 1',placeholderTel2:'Téléphone 2 (facultatif)',radioBureau:'Bureau de poste',radioDomicile:'À domicile',submit:'Envoyer la commande',labelWilaya:'Wilaya de livraison :',commanderWhatsapp:'Commander sur WhatsApp',commanderForm:'Remplir le formulaire',total:'Total :',adminTitle:'Zone Admin – Commandes formulaire',addAffiche:'+ Ajouter une affiche (max 20)',save:'Sauvegarder les changements'},
-      ar:{h1:'تكنو دايركت',btnLang:'Français',modalTitle:'نموذج الطلب',placeholderNom:'اللقب',placeholderPrenom:'الاسم',placeholderTel1:'الهاتف 1',placeholderTel2:'الهاتف 2 (اختياري)',radioBureau:'مكتب البريد',radioDomicile:'توصيل للمنزل',submit:'إرسال الطلب',labelWilaya:'ولاية التوصيل :',commanderWhatsapp:'اطلب عبر واتساب',commanderForm:'املأ النموذج',total:'المجموع :',adminTitle:'منطقة الأدمن – طلبات النموذج',addAffiche:'+ إضافة ملصق (max 20)',save:'حفظ التغييرات'}
+      fr:{h1:'Techno Directe',btnLang:'العربية',modalTitle:'Formulaire de commande',placeholderNom:'Nom',placeholderPrenom:'Prénom',placeholderTel1:'Téléphone 1',placeholderTel2:'Téléphone 2 (facultatif)',radioBureau:'Bureau de poste',radioDomicile:'À domicile',submit:'Envoyer la commande',labelWilaya:'Wilaya de livraison :',commanderWhatsapp:'Commander sur WhatsApp',commanderForm:'Commander ici',total:'Total :',adminTitle:'Zone Admin – Commandes formulaire',addAffiche:'+ Ajouter une affiche (max 20)',save:'Sauvegarder les changements'},
+      ar:{h1:'تكنو دايركت',btnLang:'Français',modalTitle:'نموذج الطلب',placeholderNom:'اللقب',placeholderPrenom:'الاسم',placeholderTel1:'الهاتف 1',placeholderTel2:'الهاتف 2 (اختياري)',radioBureau:'مكتب البريد',radioDomicile:'توصيل للمنزل',submit:'إرسال الطلب',labelWilaya:'ولاية التوصيل :',commanderWhatsapp:'اطلب عبر واتساب',commanderForm:'اطلب هنا',total:'المجموع :',adminTitle:'منطقة الأدمن – طلبات النموذج',addAffiche:'+ إضافة ملصق (max 20)',save:'حفظ التغييرات'}
     };
     const DEFAULT_CATALOG = [
       {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60'},
-      {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60'},
+      {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo/1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60'},
       {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60'}
     ];
     let catalogue = [];
@@ -159,6 +159,14 @@
       document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
       document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
       document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
+      // boutons formulaire
+      document.addEventListener('click', e=>{
+        if (e.target && e.target.classList.contains('formulaire')){
+          const prodId = e.target.dataset.id;
+          const prod = catalogue.find(p=>p.id==prodId);
+          openFormModal(prod);
+        }
+      });
     }
     function updateLang(){
       body.dir = lang==='ar'?'rtl':'ltr';
@@ -192,9 +200,9 @@
         div.className = 'admin-item';
         div.innerHTML = `
           <h4>Affiche ${idx+1}</h4>
-          <input type="text" placeholder="Nom" value="${prod.name}" onchange="catalogue[${idx}].name=this.value">
-          <input type="text" placeholder="Description" value="${prod.desc}" onchange="catalogue[${idx}].desc=this.value">
-          <input type="number" placeholder="Prix" value="${prod.price}" onchange="catalogue[${idx}].price=parseInt(this.value)||0">
+          <input type="text" placeholder="Nom" value="${prod.name}" onchange="catalogue[${idx}].name=this.value; saveCatalog();">
+          <input type="text" placeholder="Description" value="${prod.desc}" onchange="catalogue[${idx}].desc=this.value; saveCatalog();">
+          <input type="number" placeholder="Prix" value="${prod.price}" onchange="catalogue[${idx}].price=parseInt(this.value)||0; saveCatalog();">
           <input type="file" accept="image/*" onchange="changeImage(${idx},this)">
           <img src="${prod.img}" style="max-width:120px;display:block;margin:.3rem 0;">
           <button class="btn" onclick="removeAffiche(${idx})">Supprimer</button>
@@ -209,7 +217,7 @@
       reader.onload = e=>{
         catalogue[idx].img = e.target.result;
         renderAdminList();
-        saveCatalog(); // sauvegarde immédiate
+        saveCatalog(); // ← public verra la nouvelle photo
       };
       reader.readAsDataURL(file);
     }
@@ -250,7 +258,7 @@
           </form>
         </div>`;
       document.body.appendChild(overlay);
-      // remplir la liste des wilayas
+      // remplir wilayas
       const wilSel = overlay.querySelector('select[name=wilaya]');
       wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
       WILAYAS.forEach(w=>{
