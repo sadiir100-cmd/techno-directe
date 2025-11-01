@@ -2,121 +2,147 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Commandes reçues</title>
+  <title>Techno Directe – Catalogue + Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 1.5rem;
-      background-color: #f8f9fa;
-      color: #333;
-    }
-    h2 {
-      text-align: center;
-      margin-top: 1rem;
-      color: #007bff;
-    }
-    .card {
-      display: inline-block;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 1rem;
-      margin: .7rem;
-      width: 240px;
-      text-align: center;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .card img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      transition: transform 0.2s;
-    }
-    .card img:hover {
-      transform: scale(1.05);
-    }
-    .btn {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: .5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .btn:hover {
-      background-color: #0056b3;
-    }
-    footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: .95rem;
-      color: #333;
-    }
-    footer a {
-      color: #007bff;
-      text-decoration: none;
-    }
-    footer a:hover {
-      text-decoration: underline;
-    }
+    :root{--accent:#ff6b00;--dark:#222;--light:#f7f7f7;--font:'Cairo',sans-serif;}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font);}
+    body{background:var(--light);color:var(--dark);line-height:1.6;}
+    header{background:var(--dark);color:#fff;padding:1.2rem 1rem;text-align:center;position:relative;}
+    header h1{font-size:2rem;font-weight:700;}
+    #zoneDblClick{position:absolute;top:0;left:0;width:80px;height:80px;}
+    .lang-switch{position:absolute;right:1rem;top:1.2rem;background:var(--accent);color:#fff;border:none;padding:.4rem .8rem;border-radius:4px;cursor:pointer;}
+    body[dir="rtl"] .lang-switch{left:1rem;right:auto;}
+    .container{max-width:1000px;margin:auto;padding:1rem;}
+    .cartable{background:#fff3cd;color:#856404;padding:1rem;text-align:center;border-radius:6px;font-weight:bold;margin-bottom:1rem;}
+    .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;}
+    .card img{width:100%;height:200px;object-fit:cover;cursor:pointer;transition:transform .2s;}
+    .card img:hover{transform:scale(1.03);}
+    .info{padding:1rem;}
+    .price{font-size:1.5rem;font-weight:700;color:var(--accent);}
+    .btn{background:var(--accent);color:#fff;padding:.75rem 1.2rem;border:none;border-radius:4px;cursor:pointer;font-size:1rem;margin:.3rem .3rem 0 0;display:inline-block;text-decoration:none;}
+    .btn:hover{background:#e55a00;}
+    select{margin:.5rem 0;padding:.5rem;width:100%;max-width:300px;}
+    @media(min-width:600px){.card{flex-direction:row;}.card img{width:260px;height:auto;}}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:999;}
+    .modal{background:#fff;border-radius:8px;width:90%;max-width:500px;padding:1.5rem;position:relative;}
+    .modal .close{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1.4rem;cursor:pointer;}
+    body[dir="rtl"] .modal .close{left:.7rem;right:auto;}
+    .admin-panel{background:#ffeaa7;padding:1rem;border-radius:6px;margin:2rem 0;display:none;}
+    .admin-item{border:1px solid var(--accent);padding:.7rem;margin:.5rem 0;border-radius:4px;background:#fff;}
+    .admin-item input[type=text],.admin-item input[type=number],.admin-item input[type=file]{width:100%;margin:.3rem 0;}
+    .admin-item img{max-width:120px;display:block;margin:.3rem 0;}
+    #addAffiches{margin-bottom:1rem;}
+    #commandesList{max-height:300px;overflow:auto;background:#fff;padding:.5rem;border:1px solid #ccc;border-radius:4px;margin-top:.7rem;}
+    .cmd-line{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;}
+    .cmd-line button{background:none;border:none;color:var(--accent);font-size:1.2rem;cursor:pointer;}
+    /* ✅ Image agrandie */
+    .zoom-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;}
+    .zoom-overlay img{max-width:90%;max-height:90%;border-radius:10px;animation:fadeIn .3s ease;}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    footer{margin-top:2rem;text-align:center;padding:1.5rem;font-size:.9rem;color:#444;background:#fff;border-top:1px solid #ddd;}
+    footer a{color:#007bff;text-decoration:none;}
+    footer a:hover{text-decoration:underline;}
   </style>
 </head>
 <body>
+  <header>
+    <div id="zoneDblClick"></div>
+    <h1 id="h1-title">Techno Directe</h1>
+    <button class="lang-switch" id="langBtn">العربية</button>
+  </header>
 
-  <!-- ✅ Texte au début -->
-  <h2>🎒 Cartable gratuit + Garantie incluse 🎉</h2>
+  <div class="container">
+    <!-- ✅ Ajout texte cartable -->
+    <div class="cartable">🎒 Cartable gratuit + Garantie incluse 🎉</div>
 
-  <!-- ✅ Ton bloc original -->
-  <h3 style="margin-top:1.2rem">
-    Commandes reçues (formulaire)
-    <label style="margin-left:1rem;font-size:.9rem;font-weight:normal;">
-      <input type="checkbox" id="selectAll"> Tout sélectionner
-    </label>
-    <button class="btn" onclick="deleteSelected()" style="margin-left:.5rem;">Tout supprimer</button>
-  </h3>
+    <div id="catalogue"></div>
 
-  <div id="commandesList"></div>
+    <div class="admin-panel" id="adminPanel">
+      <h2>Zone Admin</h2>
+      <button class="btn" id="addAffiches">+ Ajouter une affiche (max 20)</button>
+      <div id="adminList"></div>
+      <button class="btn" onclick="saveCatalog()">Sauvegarder les changements</button>
 
-  <!-- ✅ Pied de page -->
+      <h3 style="margin-top:1.2rem">Commandes reçues (formulaire)
+        <label style="margin-left:1rem;font-size:.9rem;font-weight:normal;">
+          <input type="checkbox" id="selectAll"> Tout sélectionner
+        </label>
+        <button class="btn" onclick="deleteSelected()" style="margin-left:.5rem;">Tout supprimer</button>
+      </h3>
+      <div id="commandesList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="passModal">
+    <div class="modal">
+      <button class="close" onclick="closePassModal()">&times;</button>
+      <h3>Entrez le mot de passe</h3>
+      <input type="password" id="passInput" placeholder="Mot de passe" style="width:100%;padding:.5rem;margin:.7rem 0;">
+      <button class="btn" onclick="checkPass()">Valider</button>
+    </div>
+  </div>
+
+  <!-- ✅ Footer mis à jour -->
   <footer>
     <p>
-      📞 Contacts : 
-      <strong>0699039372</strong> / <strong>0560072059</strong> 
+      📞 Contacts : <strong>0699039372</strong> / <strong>0560072059</strong> 
       <span style="color:green;">(WhatsApp disponible)</span>
     </p>
     <p>
-      🔵 Facebook : 
-      <a href="https://www.facebook.com/technodirect" target="_blank">TECHNO DIRECT</a> <br>
-      🟣 Instagram : 
-      <a href="https://www.instagram.com/techno__direct" target="_blank">TECHNO _DIRECT</a>
+      🔵 Facebook : <a href="https://www.facebook.com/technodirect" target="_blank">TECHNO DIRECT</a><br>
+      🟣 Instagram : <a href="https://www.instagram.com/techno__direct" target="_blank">TECHNO _DIRECT</a>
     </p>
   </footer>
 
-  <!-- ✅ Script pour les photos cliquables -->
   <script>
-  document.querySelectorAll('.card img').forEach(img => {
-    img.style.cursor = 'pointer';
-    img.addEventListener('click', () => {
-      const popup = document.createElement('div');
-      popup.style.position = 'fixed';
-      popup.style.top = 0;
-      popup.style.left = 0;
-      popup.style.width = '100%';
-      popup.style.height = '100%';
-      popup.style.background = 'rgba(0,0,0,0.8)';
-      popup.style.display = 'flex';
-      popup.style.alignItems = 'center';
-      popup.style.justifyContent = 'center';
-      popup.style.zIndex = 1000;
-      popup.innerHTML = `
-        <img src="${img.src}" style="max-width:90%; max-height:90%; border-radius:10px;">
-      `;
-      popup.addEventListener('click', () => popup.remove());
-      document.body.appendChild(popup);
-    });
-  });
-  </script>
+    // ===========================
+    // TON SCRIPT ORIGINAL
+    // ===========================
+    const adminPanel = document.getElementById('adminPanel');
+    const passModal = document.getElementById('passModal');
+    const passInput = document.getElementById('passInput');
+    const selectAll = document.getElementById('selectAll');
+    const commandesList = document.getElementById('commandesList');
 
+    document.getElementById('zoneDblClick').addEventListener('dblclick', () => {
+      passModal.style.display = 'flex';
+      passInput.focus();
+    });
+
+    function closePassModal(){ passModal.style.display='none'; }
+    function checkPass(){
+      if(passInput.value==='admin123'){
+        adminPanel.style.display='block';
+        passModal.style.display='none';
+      } else {
+        alert('Mot de passe incorrect');
+      }
+    }
+
+    selectAll.addEventListener('change',()=>{
+      document.querySelectorAll('#commandesList input[type=checkbox]').forEach(cb=>cb.checked=selectAll.checked);
+    });
+
+    function deleteSelected(){
+      const checked = document.querySelectorAll('#commandesList input[type=checkbox]:checked');
+      if(checked.length===0) return alert('Aucune commande sélectionnée');
+      if(confirm('Supprimer les commandes sélectionnées ?')){
+        checked.forEach(cb=>cb.parentElement.remove());
+      }
+    }
+
+    // ✅ Zoom sur image quand on clique
+    document.addEventListener('click', e=>{
+      if(e.target.tagName==='IMG' && e.target.closest('.card')){
+        const zoom = document.createElement('div');
+        zoom.className = 'zoom-overlay';
+        zoom.innerHTML = `<img src="${e.target.src}" alt="">`;
+        zoom.onclick = ()=>zoom.remove();
+        document.body.appendChild(zoom);
+      }
+    });
+  </script>
 </body>
 </html>
