@@ -178,10 +178,11 @@
       });
     }
     function handleFreeDeliveryUI(){
+      const freeMode = WILAYAS.every(w=>w.prix===0);
       document.querySelectorAll('.card').forEach(card=>{
         const sel = card.querySelector('.wilaya');
         const badge = card.querySelector('.freeBadge');
-        if (freeDeliveryMode){
+        if (freeMode){
           sel.style.display='none';
           badge.style.display='inline-block';
         }else{
@@ -196,7 +197,6 @@
       document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
       document.getElementById('freeDeliveryBtn').onclick = ()=>{
         if (!confirm('Activer la livraison gratuite pour les 58 wilayas ?')) return;
-        freeDeliveryMode = true;
         WILAYAS.forEach(w=>w.prix=0);
         renderCatalog();
         alert('Livraison gratuite activée !');
@@ -336,16 +336,21 @@
             <select name="wilaya" required></select>
             <input type="tel" name="tel1" placeholder="${txt[lang].placeholderTel1}" required>
             <input type="tel" name="tel2" placeholder="${txt[lang].placeholderTel2}">
-            <label><input type="radio" name="livraison" value="bureau" checked> ${txt[lang].radioBureau}</label>
-            <label><input type="radio" name="livraison" value="domicile"> ${txt[lang].radioDomicile}</label>
-            <input type="hidden" name="produit" value="${prod.name}">
-            <input type="hidden" name="total">
-            <button type="submit" class="btn">${txt[lang].submit}</button>
-          </form>
-        </div>`;
-      document.body.appendChild(overlay);
-      const wilSel = overlay.querySelector('select[name=wilaya]');
-      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'(){
+            <label><input type="radio" name="livraison" value="bureau" checked> ${txt[lang].radioB opt = document.createElement('option');
+          opt.value = w.prix;
+          opt.textContent = lang==='fr'? w.fr : w.ar;
+          opt.dataset.nom = w.fr;
+          sel.appendChild(opt);
+        });
+      });
+    }
+    function attachCardEvents(){
+      document.querySelectorAll('.card').forEach(card=>{
+        const prix = parseInt(card.querySelector('.prix-produit').dataset.prix);
+        const sel = card.querySelector('.wilaya');
+        const mont = card.querySelector('.montant');
+        const whats = card.querySelector('.whatsapp');
+        function upd(){
           const liv = parseInt(sel.value)||0; const tot = prix + liv;
           mont.textContent = tot.toLocaleString('fr-DZ') + ' DA';
           const prodName = card.querySelector('h2').textContent;
@@ -475,74 +480,4 @@
         </div>`;
       document.body.appendChild(overlay);
       const wilSel = overlay.querySelector('select[name=wilaya]');
-      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
-      WILAYAS.forEach(w=>{
-        const opt = document.createElement('option');
-        opt.value = w.prix;
-        opt.textContent = lang==='fr'? w.fr : w.ar;
-        opt.dataset.nom = w.fr;
-        wilSel.appendChild(opt);
-      });
-      const totalInput = overlay.querySelector('input[name=total]');
-      function updTotal(){
-        const liv = parseInt(wilSel.value)||0; const tot = prod.price + liv;
-        totalInput.value = tot;
-      }
-      wilSel.onchange = updTotal; updTotal();
-      overlay.querySelector('#commandeForm').onsubmit = e=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.target));
-        const selected = wilSel.options[wilSel.selectedIndex];
-        data.wilayaNom = selected ? selected.textContent : '';
-        data.date = new Date().toLocaleString('fr-DZ');
-        saveCommande(data);
-        alert(lang==='fr'?'Commande enregistrée !':'تم حفظ الطلب !');
-        overlay.remove();
-        showCommandes();
-      };
-    }
-    function saveCommande(obj){
-      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      obj.id = Date.now();
-      arr.push(obj);
-      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
-    }
-    function showCommandes(){
-      const cont = document.getElementById('commandesList');
-      const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
-      let html = '';
-      arr.forEach((c,i)=>{
-        html += `
-          <div class="cmd-line">
-            <label>
-              <input type="checkbox" class="cmdCheck" data-id="${c.id}">
-              <strong>${c.nom} ${c.prenom}</strong> | ${c.wilayaNom} | ${c.tel1} ${c.tel2?'/'+c.tel2:''} | ${c.livraison} | ${c.produit} | ${c.total} DA | ${c.date}
-            </label>
-            <button onclick="deleteOne(${c.id})" title="Supprimer">❌</button>
-          </div>`;
-      });
-      cont.innerHTML = html;
-      document.getElementById('selectAll').onchange = e=>{
-        document.querySelectorAll('.cmdCheck').forEach(ch=>ch.checked = e.target.checked);
-      };
-    }
-    function deleteOne(id){
-      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      arr = arr.filter(c=>c.id !== id);
-      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
-      showCommandes();
-    }
-    function deleteSelected(){
-      const checks = document.querySelectorAll('.cmdCheck:checked');
-      if (!checks.length) return alert('Aucune commande sélectionnée');
-      if (!confirm('Supprimer les commandes sélectionnées ?')) return;
-      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      const ids = [...checks].map(ch=>parseInt(ch.dataset.id));
-      arr = arr.filter(c=>!ids.includes(c.id));
-      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
-      showCommandes();
-    }
-  </script>
-</body>
-</html>
+      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'
