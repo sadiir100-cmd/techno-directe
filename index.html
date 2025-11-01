@@ -231,3 +231,125 @@
   </script>
 </body>
 </html>
+<!-- 🔐 Panneau Admin Techno Direct -->
+<style>
+  #openAdmin {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background: #222;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: none;
+    z-index: 9999;
+  }
+
+  #adminPanel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 3px solid #222;
+    padding: 15px;
+    display: none;
+    z-index: 9999;
+    max-height: 70vh;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+  }
+
+  #adminPanel input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  #adminPanel button {
+    background: #222;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+  }
+
+  .closeAdmin {
+    float: right;
+    color: red;
+    font-weight: bold;
+  }
+</style>
+
+<div id="openAdmin">⚙️ Ouvrir Admin</div>
+
+<div id="adminPanel">
+  <span class="closeAdmin" onclick="document.getElementById('adminPanel').style.display='none'">✖</span>
+  <h3>🧠 Panneau Admin – Techno Direct</h3>
+  <label>Nom du produit :</label>
+  <input type="text" id="adminNom" placeholder="Ex: HP ZBook 14u G6">
+  <label>Prix (DA) :</label>
+  <input type="number" id="adminPrix" placeholder="60000">
+  <label>URL de l’image :</label>
+  <input type="text" id="adminImage" placeholder="https://...jpg">
+  <button onclick="updateProduct()">✅ Appliquer au produit sélectionné</button>
+</div>
+
+<script>
+  let selectedCard = null;
+  let lastTap = 0;
+
+  // 🟩 Geste secret pour afficher le bouton d’accès admin
+  document.body.addEventListener('touchstart', function (e) {
+    if (e.touches[0].clientY < 100 && e.touches[0].clientX < 100) {
+      const now = new Date().getTime();
+      if (now - lastTap < 500) {
+        const pass = prompt("🔐 Entrez le mot de passe admin :");
+        if (pass === "technoid") { // <-- change ici ton mot de passe secret
+          document.getElementById('openAdmin').style.display = 'block';
+        } else {
+          alert("❌ Mot de passe incorrect");
+        }
+      }
+      lastTap = now;
+    }
+  });
+
+  // 🟨 Ouvrir le panneau admin
+  document.getElementById('openAdmin').addEventListener('click', () => {
+    document.getElementById('adminPanel').style.display = 'block';
+  });
+
+  // 🟦 Sélection d’un produit pour modification
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => {
+      selectedCard = card;
+      const titre = card.querySelector('h2').innerText;
+      const prix = card.querySelector('.prix-produit').getAttribute('data-prix');
+      const img = card.querySelector('img').src;
+      document.getElementById('adminNom').value = titre;
+      document.getElementById('adminPrix').value = prix;
+      document.getElementById('adminImage').value = img;
+      alert(`🧩 Produit sélectionné : ${titre}`);
+    });
+  });
+
+  // 🟥 Appliquer les modifications
+  function updateProduct() {
+    if (!selectedCard) return alert("⚠️ Sélectionne d’abord un produit !");
+    const nom = document.getElementById('adminNom').value;
+    const prix = document.getElementById('adminPrix').value;
+    const img = document.getElementById('adminImage').value;
+
+    selectedCard.querySelector('h2').innerText = nom;
+    selectedCard.querySelector('.prix-produit').innerText = `${prix} DA`;
+    selectedCard.querySelector('.prix-produit').setAttribute('data-prix', prix);
+    selectedCard.querySelector('.montant').innerText = `${prix} DA`;
+    selectedCard.querySelector('img').src = img;
+
+    alert("✅ Produit mis à jour !");
+    document.getElementById('adminPanel').style.display = 'none';
+  }
+</script>
