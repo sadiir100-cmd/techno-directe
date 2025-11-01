@@ -47,6 +47,7 @@
     <h1 id="h1-title">Techno Directe</h1>
     <button class="lang-switch" id="langBtn">العربية</button>
   </header>
+  <!-- BANDEAU CARTABLE GRATUIT + GARANTIE -->
   <div id="topBanner">🎒 CARTABLE GRATUIT + GARANTIE 🎒</div>
 
   <div class="container">
@@ -78,6 +79,7 @@
     </div>
   </div>
 
+  <!-- FOOTER NUMÉROS + RÉSEAUX -->
   <footer style="text-align:center;padding:1.5rem;font-size:.85rem;color:#777;">
     Contact WhatsApp : 0699039372 • 0560072059<br>
     Facebook : TECHNO DIRECT • Instagram : TECHNO_DIRECT
@@ -101,7 +103,7 @@
     const DEFAULT_CATALOG = [
       {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60'},
       {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo/1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60'},
-      {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60'}
+      {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo/1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60'}
     ];
     let catalogue = [];
 
@@ -201,12 +203,8 @@
         renderCatalog();
         alert('Livraison gratuite activée !');
       };
+      // ZOOM IMAGE
       document.addEventListener('click', e=>{
-        if (e.target && e.target.classList.contains('formulaire')){
-          const prodId = e.target.dataset.id;
-          const prod = catalogue.find(p=>p.id==prodId);
-          openFormModal(prod);
-        }
         if (e.target.closest('.card img')){
           const src = e.target.src;
           const overlay = document.createElement('div');
@@ -214,6 +212,14 @@
           overlay.innerHTML = `<img src="${src}" style="max-width:90%;max-height:90%;object-fit:contain">`;
           overlay.onclick = ()=>overlay.remove();
           document.body.appendChild(overlay);
+        }
+      });
+      // boutons formulaire
+      document.addEventListener('click', e=>{
+        if (e.target && e.target.classList.contains('formulaire')){
+          const prodId = e.target.dataset.id;
+          const prod = catalogue.find(p=>p.id==prodId);
+          openFormModal(prod);
         }
       });
     }
@@ -336,19 +342,12 @@
             <select name="wilaya" required></select>
             <input type="tel" name="tel1" placeholder="${txt[lang].placeholderTel1}" required>
             <input type="tel" name="tel2" placeholder="${txt[lang].placeholderTel2}">
-            <label><input type="radio" name="livraison" value="bureau" checked> ${txt[lang].radioB opt = document.createElement('option');
-          opt.value = w.prix;
-          opt.textContent = lang==='fr'? w.fr : w.ar;
-          opt.dataset.nom = w.fr;
-          sel.appendChild(opt);
-        });
-      });
-    }
-    function attachCardEvents(){
-      document.querySelectorAll('.card').forEach(card=>{
-        const prix = parseInt(card.querySelector('.prix-produit').dataset.prix);
-        const sel = card.querySelector('.wilaya');
-        const mont = card.querySelector('.montant');
+            <label><input type="radio" name="livraison" value="bureau" checked> ${txt[lang].radioBureau}</label>
+            <label><input type="radio" name="livraison" value="domicile"> ${txt[lang].radioDomicile}</label>
+            <input type="hidden" name="produit" value="${prod.name}">
+            <input type="hidden" name="total">
+            <button type="submit" class="btn">${txt[lang].submit}</button>
+          </');
         const whats = card.querySelector('.whatsapp');
         function upd(){
           const liv = parseInt(sel.value)||0; const tot = prix + liv;
@@ -380,12 +379,25 @@
       document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
       document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
       document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
-      // boutons formulaire
+      document.getElementById('freeDeliveryBtn').onclick = ()=>{
+        if (!confirm('Activer la livraison gratuite pour les 58 wilayas ?')) return;
+        WILAYAS.forEach(w=>w.prix=0);
+        renderCatalog();
+        alert('Livraison gratuite activée !');
+      };
       document.addEventListener('click', e=>{
         if (e.target && e.target.classList.contains('formulaire')){
           const prodId = e.target.dataset.id;
           const prod = catalogue.find(p=>p.id==prodId);
           openFormModal(prod);
+        }
+        if (e.target.closest('.card img')){
+          const src = e.target.src;
+          const overlay = document.createElement('div');
+          overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out`;
+          overlay.innerHTML = `<img src="${src}" style="max-width:90%;max-height:90%;object-fit:contain">`;
+          overlay.onclick = ()=>overlay.remove();
+          document.body.appendChild(overlay);
         }
       });
     }
@@ -480,4 +492,74 @@
         </div>`;
       document.body.appendChild(overlay);
       const wilSel = overlay.querySelector('select[name=wilaya]');
-      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'
+      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
+      WILAYAS.forEach(w=>{
+        const opt = document.createElement('option');
+        opt.value = w.prix;
+        opt.textContent = lang==='fr'? w.fr : w.ar;
+        opt.dataset.nom = w.fr;
+        wilSel.appendChild(opt);
+      });
+      const totalInput = overlay.querySelector('input[name=total]');
+      function updTotal(){
+        const liv = parseInt(wilSel.value)||0; const tot = prod.price + liv;
+        totalInput.value = tot;
+      }
+      wilSel.onchange = updTotal; updTotal();
+      overlay.querySelector('#commandeForm').onsubmit = e=>{
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        const selected = wilSel.options[wilSel.selectedIndex];
+        data.wilayaNom = selected ? selected.textContent : '';
+        data.date = new Date().toLocaleString('fr-DZ');
+        saveCommande(data);
+        alert(lang==='fr'?'Commande enregistrée !':'تم حفظ الطلب !');
+        overlay.remove();
+        showCommandes();
+      };
+    }
+    function saveCommande(obj){
+      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      obj.id = Date.now();
+      arr.push(obj);
+      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
+    }
+    function showCommandes(){
+      const cont = document.getElementById('commandesList');
+      const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
+      let html = '';
+      arr.forEach((c,i)=>{
+        html += `
+          <div class="cmd-line">
+            <label>
+              <input type="checkbox" class="cmdCheck" data-id="${c.id}">
+              <strong>${c.nom} ${c.prenom}</strong> | ${c.wilayaNom} | ${c.tel1} ${c.tel2?'/'+c.tel2:''} | ${c.livraison} | ${c.produit} | ${c.total} DA | ${c.date}
+            </label>
+            <button onclick="deleteOne(${c.id})" title="Supprimer">❌</button>
+          </div>`;
+      });
+      cont.innerHTML = html;
+      document.getElementById('selectAll').onchange = e=>{
+        document.querySelectorAll('.cmdCheck').forEach(ch=>ch.checked = e.target.checked);
+      };
+    }
+    function deleteOne(id){
+      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      arr = arr.filter(c=>c.id !== id);
+      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
+      showCommandes();
+    }
+    function deleteSelected(){
+      const checks = document.querySelectorAll('.cmdCheck:checked');
+      if (!checks.length) return alert('Aucune commande sélectionnée');
+      if (!confirm('Supprimer les commandes sélectionnées ?')) return;
+      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      const ids = [...checks].map(ch=>parseInt(ch.dataset.id));
+      arr = arr.filter(c=>!ids.includes(c.id));
+      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
+      showCommandes();
+    }
+  </script>
+</body>
+</html>
