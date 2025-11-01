@@ -265,6 +265,7 @@
         const opt = document.createElement('option');
         opt.value = w.prix;
         opt.textContent = lang==='fr'? w.fr : w.ar;
+        opt.dataset.nom = w.fr;
         wilSel.appendChild(opt);
       });
       const totalInput = overlay.querySelector('input[name=total]');
@@ -276,6 +277,9 @@
       overlay.querySelector('#commandeForm').onsubmit = e=>{
         e.preventDefault();
         const data = Object.fromEntries(new FormData(e.target));
+        // on ajoute le NOM de la wilaya
+        const selected = wilSel.options[wilSel.selectedIndex];
+        data.wilayaNom = selected ? selected.textContent : '';
         data.date = new Date().toLocaleString('fr-DZ');
         saveCommande(data);
         alert(lang==='fr'?'Commande enregistrée !':'تم حفظ الطلب !');
@@ -293,7 +297,7 @@
       const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
       if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
       cont.innerHTML = '<ol>' + arr.map(c=>`
-        <li><strong>${c.nom} ${c.prenom}</strong> | ${c.wilaya} | ${c.tel1} ${c.tel2?'/'+c.tel2:''} | ${c.livraison} | ${c.produit} | ${c.total} DA | ${c.date}</li>
+        <li><strong>${c.nom} ${c.prenom}</strong> | ${c.wilayaNom} | ${c.tel1} ${c.tel2?'/'+c.tel2:''} | ${c.livraison} | ${c.produit} | ${c.total} DA | ${c.date}</li>
       `).join('') + '</ol>';
     }
   </script>
