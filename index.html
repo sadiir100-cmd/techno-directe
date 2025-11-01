@@ -15,8 +15,9 @@
     .lang-switch{position:absolute;right:1rem;top:1.2rem;background:var(--accent);color:#fff;border:none;padding:.4rem .8rem;border-radius:4px;cursor:pointer;}
     body[dir="rtl"] .lang-switch{left:1rem;right:auto;}
     .container{max-width:1000px;margin:auto;padding:1rem;}
-    .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;}
-    .card img{width:100%;height:200px;object-fit:cover;}
+    .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;cursor:grab;}
+    .card.dragging{opacity:.5;}
+    .card img{width:100%;height:200px;object-fit:cover;cursor:pointer;}
     .info{padding:1rem;}
     .price{font-size:1.5rem;font-weight:700;color:var(--accent);}
     .btn{background:var(--accent);color:#fff;padding:.75rem 1.2rem;border:none;border-radius:4px;cursor:pointer;font-size:1rem;margin:.3rem .3rem 0 0;display:inline-block;text-decoration:none;}
@@ -35,6 +36,10 @@
     #commandesList{max-height:300px;overflow:auto;background:#fff;padding:.5rem;border:1px solid #ccc;border-radius:4px;margin-top:.7rem;}
     .cmd-line{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;}
     .cmd-line button{background:none;border:none;color:var(--accent);font-size:1.2rem;cursor:pointer;}
+    .free-banner{background:var(--accent);color:#fff;text-align:center;padding:.5rem;font-weight:700;margin-bottom:1rem;border-radius:4px;}
+    .social{margin:.5rem 0;font-size:.9rem;}
+    .sort-hint{font-size:.8rem;color:#555;margin-left:1rem;}
+    .top-banner{background:#ffeaa7;color:var(--dark);text-align:center;padding:.5rem;font-weight:700;margin-bottom:1rem;border-radius:4px;}
   </style>
 </head>
 <body>
@@ -45,10 +50,14 @@
   </header>
 
   <div class="container">
+    <div class="top-banner">📦 Cartable gratuit + garantie</div>
+    <div class="free-banner" id="freeBanner" style="display:none;">🚚 Livraison gratuite 58 wilaya</div>
     <div id="catalogue"></div>
     <div class="admin-panel" id="adminPanel">
       <h2>Zone Admin</h2>
+      <label><input type="checkbox" id="freeDeliveryToggle"> Mode livraison gratuite</label>
       <button class="btn" id="addAffiches">+ Ajouter une affiche (max 20)</button>
+      <button class="btn" id="toggleSort">🔒 Verrouiller glisser/déposer</button><span class="sort-hint" id="sortHint"> (déverrouillé)</span>
       <div id="adminList"></div>
       <button class="btn" onclick="saveCatalog()">Sauvegarder les changements</button>
 
@@ -72,7 +81,8 @@
   </div>
 
   <footer style="text-align:center;padding:1.5rem;font-size:.85rem;color:#777;">
-    Contact : 07 00 00 00 00 (WhatsApp / appel)
+    Contact : 0699039372 / 0560072059 (WhatsApp / appel)<br>
+    <div class="social">Facebook : TECHNO_DIRECT | Instagram : TECHNO_DIRECT</div>
   </footer>
 
   <script>
@@ -84,15 +94,16 @@
       {fr:'ADRAR',ar:'أدرار',prix:1400},{fr:'CHLEF',ar:'الشلف',prix:800},{fr:'LAGHOUAT',ar:'الأغواط',prix:950},{fr:'OUM EL BOUAGHI',ar:'أم البواقي',prix:800},{fr:'BATNA',ar:'باتنة',prix:800},{fr:'BEJAIA',ar:'بجاية',prix:450},{fr:'BISKRA',ar:'بسكرة',prix:950},{fr:'BECHAR',ar:'بشار',prix:1100},{fr:'BLIDA',ar:'البليدة',prix:750},{fr:'BOUIRA',ar:'البويرة',prix:700},{fr:'TAMANRASSET',ar:'تمنراست',prix:1600},{fr:'TEBESSA',ar:'تبسة',prix:800},{fr:'TLEMCEN',ar:'تلمسان',prix:900},{fr:'TIARET',ar:'تيارت',prix:800},{fr:'TIZI OUZOU',ar:'تيزي وزو',prix:650},{fr:'ALGER',ar:'الجزائر',prix:600},{fr:'DJELFA',ar:'الجلفة',prix:950},{fr:'JUEL',ar:'جيجل',prix:700},{fr:'SETIF',ar:'سطيف',prix:750},{fr:'SAIDA',ar:'سعيدة',prix:800},{fr:'SKIKDA',ar:'سكيكدة',prix:750},{fr:'SIDIBELABBES',ar:'سيدي بلعباس',prix:750},{fr:'ANNABA',ar:'عنابة',prix:800},{fr:'GUELMA',ar:'قالمة',prix:800},{fr:'CONSTANTINE',ar:'قسنطينة',prix:750},{fr:'MEDEA',ar:'المدية',prix:750},{fr:'MOSTAGANEM',ar:'معسكر',prix:750},{fr:'M\'SILA',ar:'المسيلة',prix:850},{fr:'MASCARA',ar:'مascara',prix:750},{fr:'OUARGLA',ar:'ورقلة',prix:1000},{fr:'ORAN',ar:'وهران',prix:700},{fr:'EL BAYADH',ar:'البيض',prix:1050},{fr:'ILLIZI',ar:'إيليزي',prix:1100},{fr:'BORDJ BOU ARRERIDJ',ar:'برج بوعريريج',prix:750},{fr:'BOUMERDES',ar:'بومرداس',prix:750},{fr:'EL TARF',ar:'الطارف',prix:850},{fr:'TINDOUF',ar:'تندوف',prix:1600},{fr:'TISSEMSILT',ar:'تيسمسيلت',prix:800},{fr:'EL OUED',ar:'الوادي',prix:1000},{fr:'KHENCHELA',ar:'خنشلة',prix:800},{fr:'SOUK AHRAS',ar:'سوق أهراس',prix:800},{fr:'TIPAZA',ar:'تيبازة',prix:900},{fr:'MILA',ar:'ميلة',prix:800},{fr:'AIN DEFLA',ar:'عين الدفلى',prix:850},{fr:'NAAMA',ar:'النعامة',prix:800},{fr:'AIN TEMOUCHENT',ar:'عين تموشنت',prix:800},{fr:'GHARDAIA',ar:'غرداية',prix:800},{fr:'RELIZANE',ar:'غليزان',prix:800},{fr:'TIMIMOUN',ar:'تيميمون',prix:800},{fr:'BORDJ BADJI MOKHTAR',ar:'برج باجي مختار',prix:800},{fr:'OULED DJELLAL',ar:'أولاد جلال',prix:800},{fr:'BENI ABBES',ar:'بني عباس',prix:800},{fr:'IN SALAH',ar:'عين صالح',prix:800},{fr:'IN GUEZZAM',ar:'عين قزام',prix:800},{fr:'TOUGGOURT',ar:'تقرت',prix:800},{fr:'DJANET',ar:'جانت',prix:800},{fr:'MGHAIR',ar:'الاغواط',prix:800},{fr:'EL MENIAA',ar:'المنيعة',prix:800}
     ];
     let lang = 'fr';
+    let sortLocked = false;
     const body = document.body;
     const txt = {
       fr:{h1:'Techno Directe',btnLang:'العربية',modalTitle:'Formulaire de commande',placeholderNom:'Nom',placeholderPrenom:'Prénom',placeholderTel1:'Téléphone 1',placeholderTel2:'Téléphone 2 (facultatif)',radioBureau:'Bureau de poste',radioDomicile:'À domicile',submit:'Envoyer la commande',labelWilaya:'Wilaya de livraison :',commanderWhatsapp:'Commander sur WhatsApp',commanderForm:'Commander ici',total:'Total :',adminTitle:'Zone Admin – Commandes formulaire',addAffiche:'+ Ajouter une affiche (max 20)',save:'Sauvegarder les changements'},
       ar:{h1:'تكنو دايركت',btnLang:'Français',modalTitle:'نموذج الطلب',placeholderNom:'اللقب',placeholderPrenom:'الاسم',placeholderTel1:'الهاتف 1',placeholderTel2:'الهاتف 2 (اختياري)',radioBureau:'مكتب البريد',radioDomicile:'توصيل للمنزل',submit:'إرسال الطلب',labelWilaya:'ولاية التوصيل :',commanderWhatsapp:'اطلب عبر واتساب',commanderForm:'اطلب هنا',total:'المجموع :',adminTitle:'منطقة الأدمن – طلبات النموذج',addAffiche:'+ إضافة ملصق (max 20)',save:'حفظ التغييرات'}
     };
     const DEFAULT_CATALOG = [
-      {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60 '},
-      {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo/1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60 '},
-      {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo/1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60 '}
+      {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60'},
+      {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo/1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60'},
+      {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo/1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60'}
     ];
     let catalogue = [];
 
@@ -113,11 +124,13 @@
     function renderCatalog(){
       const cont = document.getElementById('catalogue');
       cont.innerHTML = '';
-      catalogue.forEach(prod=>{
+      catalogue.forEach((prod, idx)=>{
         const card = document.createElement('div');
         card.className = 'card';
+        card.draggable = !sortLocked;
+        card.dataset.index = idx;
         card.innerHTML = `
-          <img src="${prod.img}" alt="${prod.name}">
+          <img src="${prod.img}" alt="${prod.name}" onclick="openImageModal('${prod.img}')">
           <div class="info">
             <h2>${prod.name}</h2>
             <p>${prod.desc}</p>
@@ -133,13 +146,14 @@
       });
       fillWilayaSelects();
       attachCardEvents();
+      attachDragEvents();
     }
     function fillWilayaSelects(){
       document.querySelectorAll('.wilaya').forEach(sel=>{
         sel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
         WILAYAS.forEach(w=>{
           const opt = document.createElement('option');
-          opt.value = w.prix;
+          opt.value = document.getElementById('freeDeliveryToggle').checked ? 0 : w.prix;
           opt.textContent = lang==='fr'? w.fr : w.ar;
           opt.dataset.nom = w.fr;
           sel.appendChild(opt);
@@ -159,16 +173,46 @@
           const wtxt = lang==='fr'?
             `Bonjour Techno Directe, je veux commander : ${prodName} (Total : ${tot} DA)`:
             `مرحبا تكنو دايركت، أريد طلب : ${prodName} (المجموع : ${tot} دج)`;
-          whats.href = `https://wa.me/ ${PHONE1}?text=${encodeURIComponent(wtxt)}`;
+          whats.href = `https://wa.me/${PHONE1}?text=${encodeURIComponent(wtxt)}`;
         }
         sel.onchange = upd; upd();
       });
+    }
+    function attachDragEvents(){
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card=>{
+        card.ondragstart = e=>{
+          if(sortLocked) return false;
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/html', e.target.dataset.index);
+          e.target.classList.add('dragging');
+        };
+        card.ondragend = e=>e.target.classList.remove('dragging');
+        card.ondragover = e=>{
+          if(sortLocked) return false;
+          e.preventDefault();
+          const dragging = document.querySelector('.dragging');
+          const afterElement = getDragAfterElement(document.getElementById('catalogue'), e.clientY);
+          if(afterElement==null) document.getElementById('catalogue').appendChild(dragging);
+          else document.getElementById('catalogue').insertBefore(dragging, afterElement);
+        };
+      });
+    }
+    function getDragAfterElement(container, y){
+      const draggableElements = [...container.querySelectorAll('.card:not(.dragging)')];
+      return draggableElements.reduce((closest, child)=>{
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height/2;
+        if(offset<0 && offset>closest.offset) return {offset:offset, element:child};
+        else return closest;
+      }, {offset:Number.NEGATIVE_INFINITY}).element;
     }
     function attachEvents(){
       document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
       document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
       document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
-      // boutons formulaire
+      document.getElementById('toggleSort').onclick = ()=>{ sortLocked = !sortLocked; document.getElementById('toggleSort').textContent = sortLocked ? '🔓 Déverrouiller glisser/déposer' : '🔒 Verrouiller glisser/déposer'; document.getElementById('sortHint').textContent = sortLocked ? ' (verrouillé)' : ' (déverrouillé)'; renderCatalog(); };
+      document.getElementById('freeDeliveryToggle').onchange = ()=>{ fillWilayaSelects(); attachCardEvents(); document.getElementById('freeBanner').style.display = document.getElementById('freeDeliveryToggle').checked ? 'block' : 'none'; };
       document.addEventListener('click', e=>{
         if (e.target && e.target.classList.contains('formulaire')){
           const prodId = e.target.dataset.id;
@@ -240,10 +284,189 @@
     function addEmptyAffiche(){
       if (catalogue.length >= MAX_AFFICHES) return alert('Max 20 affiches');
       const newId = catalogue.length ? Math.max(...catalogue.map(p=>p.id)) + 1 : 1;
-      catalogue.push({id:newId, name:'Nouveau PC',desc:'Description ici',price:50000,img:'https://via.placeholder.com/800x600?text=Nouveau+PC '});
+      catalogue.push({id:newId, name:'Nouveau PC',desc:'Description ici',price:50000,img:'https://via.placeholder.com/800x600?text=Nouveau+PC'});
       renderAdminList();
       renderCatalog();
       saveCatalog();
+    }
+    function openImageModal(src){
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.style.display = 'flex';
+      overlay.innerHTML = `
+        <div class="modal">
+          <button class="close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+          <img src="${src}" style="width:100%;border-radius:6px;">
+        </div>`;
+      document.body.appendChild(overlay);
+    }
+    function openFormModal(prod){
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.style.display = 'flex';
+      overlay.innerHTML = `
+        <div class="modal">
+          <button class="close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+          <h2>${txt[lang].modalTitle}</h2>
+          <form id="commandeForm">
+            <input type="text" name="nom" placeholder="${txt[lang].placeholderNom}" required>
+            <input type="text" name="prenom" placeholder="${txt[lang].placeholderPrenom}" required>
+            <select name="wilaya" required></select>
+            <input type="tel" name="tel1" placeholder="${txt[lang].placeholderTel1}" required>
+            <input type="tel" name="tel2" placeholder="${txt[lang].placeholderTel2}">
+            <label><input type="radio" name="livraison" value="bureau" checked> ${txt[lang].radioBureau}</label>
+            <label><input type="radio" name="livraison" value="domicile"> ${txt[lang].radioDomicile}</label>
+            <input type="hidden" name="produit" value="${prod.name}">
+            <input type="hidden" name="total">
+            <button type="submit" class="btn">${txt[lang].submit}</button>
+          </form>
+        </div>`;
+      document.body.appendChild(overlay);
+      const wilSel = overlay.querySelector('select[name=wilaya]');
+      wilSel.innerHTML = '<option value="">-- '+ (lang==;
+          sel.appendChild(opt);
+        });
+      });
+    }
+    function attachCardEvents(){
+      document.querySelectorAll('.card').forEach(card=>{
+        const prix = parseInt(card.querySelector('.prix-produit').dataset.prix);
+        const sel = card.querySelector('.wilaya');
+        const mont = card.querySelector('.montant');
+        const whats = card.querySelector('.whatsapp');
+        function upd(){
+          const liv = parseInt(sel.value)||0; const tot = prix + liv;
+          mont.textContent = tot.toLocaleString('fr-DZ') + ' DA';
+          const prodName = card.querySelector('h2').textContent;
+          const wtxt = lang==='fr'?
+            `Bonjour Techno Directe, je veux commander : ${prodName} (Total : ${tot} DA)`:
+            `مرحبا تكنو دايركت، أريد طلب : ${prodName} (المجموع : ${tot} دج)`;
+          whats.href = `https://wa.me/${PHONE1}?text=${encodeURIComponent(wtxt)}`;
+        }
+        sel.onchange = upd; upd();
+      });
+    }
+    function attachDragEvents(){
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card=>{
+        card.ondragstart = e=>{
+          if(sortLocked) return false;
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/html', e.target.dataset.index);
+          e.target.classList.add('dragging');
+        };
+        card.ondragend = e=>e.target.classList.remove('dragging');
+        card.ondragover = e=>{
+          if(sortLocked) return false;
+          e.preventDefault();
+          const dragging = document.querySelector('.dragging');
+          const afterElement = getDragAfterElement(document.getElementById('catalogue'), e.clientY);
+          if(afterElement==null) document.getElementById('catalogue').appendChild(dragging);
+          else document.getElementById('catalogue').insertBefore(dragging, afterElement);
+        };
+      });
+    }
+    function getDragAfterElement(container, y){
+      const draggableElements = [...container.querySelectorAll('.card:not(.dragging)')];
+      return draggableElements.reduce((closest, child)=>{
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height/2;
+        if(offset<0 && offset>closest.offset) return {offset:offset, element:child};
+        else return closest;
+      }, {offset:Number.NEGATIVE_INFINITY}).element;
+    }
+    function attachEvents(){
+      document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
+      document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
+      document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
+      document.getElementById('toggleSort').onclick = ()=>{ sortLocked = !sortLocked; document.getElementById('toggleSort').textContent = sortLocked ? '🔓 Déverrouiller glisser/déposer' : '🔒 Verrouiller glisser/déposer'; document.getElementById('sortHint').textContent = sortLocked ? ' (verrouillé)' : ' (déverrouillé)'; renderCatalog(); };
+      document.getElementById('freeDeliveryToggle').onchange = ()=>{ fillWilayaSelects(); attachCardEvents(); document.getElementById('freeBanner').style.display = document.getElementById('freeDeliveryToggle').checked ? 'block' : 'none'; };
+      document.addEventListener('click', e=>{
+        if (e.target && e.target.classList.contains('formulaire')){
+          const prodId = e.target.dataset.id;
+          const prod = catalogue.find(p=>p.id==prodId);
+          openFormModal(prod);
+        }
+      });
+    }
+    function updateLang(){
+      body.dir = lang==='fr'?'ltr':'rtl';
+      body.lang = lang;
+      document.getElementById('h1-title').textContent = txt[lang].h1;
+      document.getElementById('langBtn').textContent = txt[lang].btnLang;
+      document.getElementById('addAffiches').textContent = txt[lang].addAffiche;
+    }
+    function closePassModal(){
+      document.getElementById('passModal').style.display = 'none';
+      document.getElementById('passInput').value = '';
+    }
+    function checkPass(){
+      if (document.getElementById('passInput').value === PASSWORD){
+        closePassModal();
+        openAdminPanel();
+      } else {
+        alert('Mot de passe incorrect');
+      }
+    }
+    function openAdminPanel(){
+      document.getElementById('adminPanel').style.display = 'block';
+      renderAdminList();
+      showCommandes();
+    }
+    function renderAdminList(){
+      const list = document.getElementById('adminList');
+      list.innerHTML = '';
+      catalogue.forEach((prod,idx)=>{
+        const div = document.createElement('div');
+        div.className = 'admin-item';
+        div.innerHTML = `
+          <h4>Affiche ${idx+1}</h4>
+          <input type="text" placeholder="Nom" value="${prod.name}" onchange="catalogue[${idx}].name=this.value; saveCatalog();">
+          <input type="text" placeholder="Description" value="${prod.desc}" onchange="catalogue[${idx}].desc=this.value; saveCatalog();">
+          <input type="number" placeholder="Prix" value="${prod.price}" onchange="catalogue[${idx}].price=parseInt(this.value)||0; saveCatalog();">
+          <input type="file" accept="image/*" onchange="changeImage(${idx},this)">
+          <img src="${prod.img}" style="max-width:120px;display:block;margin:.3rem 0;">
+          <button class="btn" onclick="removeAffiche(${idx})">Supprimer</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+    function changeImage(idx,input){
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e=>{
+        catalogue[idx].img = e.target.result;
+        renderAdminList();
+        saveCatalog();
+      };
+      reader.readAsDataURL(file);
+    }
+    function removeAffiche(idx){
+      if (catalogue.length <= 1) return alert('Il faut au moins 1 affiche');
+      catalogue.splice(idx,1);
+      renderAdminList();
+      renderCatalog();
+      saveCatalog();
+    }
+    function addEmptyAffiche(){
+      if (catalogue.length >= MAX_AFFICHES) return alert('Max 20 affiches');
+      const newId = catalogue.length ? Math.max(...catalogue.map(p=>p.id)) + 1 : 1;
+      catalogue.push({id:newId, name:'Nouveau PC',desc:'Description ici',price:50000,img:'https://via.placeholder.com/800x600?text=Nouveau+PC'});
+      renderAdminList();
+      renderCatalog();
+      saveCatalog();
+    }
+    function openImageModal(src){
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.style.display = 'flex';
+      overlay.innerHTML = `
+        <div class="modal">
+          <button class="close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+          <img src="${src}" style="width:100%;border-radius:6px;">
+        </div>`;
+      document.body.appendChild(overlay);
     }
     function openFormModal(prod){
       const overlay = document.createElement('div');
@@ -271,7 +494,7 @@
       wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
       WILAYAS.forEach(w=>{
         const opt = document.createElement('option');
-        opt.value = w.prix;
+        opt.value = document.getElementById('freeDeliveryToggle').checked ? 0 : w.prix;
         opt.textContent = lang==='fr'? w.fr : w.ar;
         opt.dataset.nom = w.fr;
         wilSel.appendChild(opt);
@@ -296,7 +519,6 @@
     }
     function saveCommande(obj){
       let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      // on ajoute un id unique pour pouvoir supprimer une à une
       obj.id = Date.now();
       arr.push(obj);
       localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
@@ -305,8 +527,6 @@
       const cont = document.getElementById('commandesList');
       const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
       if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
-
-      // bouton tout sélectionner
       let html = '';
       arr.forEach((c,i)=>{
         html += `
@@ -319,8 +539,6 @@
           </div>`;
       });
       cont.innerHTML = html;
-
-      // cocher/décocher « tout sélectionner »
       document.getElementById('selectAll').onchange = e=>{
         document.querySelectorAll('.cmdCheck').forEach(ch=>ch.checked = e.target.checked);
       };
