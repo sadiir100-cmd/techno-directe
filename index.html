@@ -14,6 +14,7 @@
     #zoneDblClick{position:absolute;top:0;left:0;width:80px;height:80px;}
     .lang-switch{position:absolute;right:1rem;top:1.2rem;background:var(--accent);color:#fff;border:none;padding:.4rem .8rem;border-radius:4px;cursor:pointer;}
     body[dir="rtl"] .lang-switch{left:1rem;right:auto;}
+    #topBanner{background:var(--accent);color:#fff;text-align:center;padding:.6rem;font-weight:700;}
     .container{max-width:1000px;margin:auto;padding:1rem;}
     .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;}
     .card img{width:100%;height:200px;object-fit:cover;cursor:zoom-in;}
@@ -31,27 +32,30 @@
     .admin-item{border:1px solid var(--accent);padding:.7rem;margin:.5rem 0;border-radius:4px;background:#fff;}
     .admin-item input[type=text],.admin-item input[type=number],.admin-item input[type=file]{width:100%;margin:.3rem 0;}
     .admin-item img{max-width:120px;display:block;margin:.3rem 0;}
+    #adminList.sortable .admin-item{cursor:grab;transition:transform .2s;}
+    #adminList.sortable .admin-item.dragging{opacity:.5;transform:scale(1.02);}
     #addAffiches{margin-bottom:1rem;}
     #commandesList{max-height:300px;overflow:auto;background:#fff;padding:.5rem;border:1px solid #ccc;border-radius:4px;margin-top:.7rem;}
     .cmd-line{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;}
     .cmd-line button{background:none;border:none;color:var(--accent);font-size:1.2rem;cursor:pointer;}
-    .bandeau-promo{background:var(--accent);color:#fff;text-align:center;padding:.6rem 1rem;font-weight:700;font-size:1.1rem;}
-    #imgModal img{max-width:90%;max-height:90%;border-radius:8px;}
+    .freeBadge{background:#28a745;color:#fff;padding:2px 6px;border-radius:3px;font-size:.75rem;margin-left:.5rem;}
   </style>
 </head>
 <body>
-  <div class="bandeau-promo">🎁 Cartable gratuit + Garantie sur tous nos PC !</div>
   <header>
     <div id="zoneDblClick"></div>
     <h1 id="h1-title">Techno Directe</h1>
     <button class="lang-switch" id="langBtn">العربية</button>
   </header>
+  <div id="topBanner">🎒 CARTABLE GRATUIT + GARANTIE 🎒</div>
 
   <div class="container">
     <div id="catalogue"></div>
     <div class="admin-panel" id="adminPanel">
       <h2>Zone Admin</h2>
       <button class="btn" id="addAffiches">+ Ajouter une affiche (max 20)</button>
+      <button class="btn" id="toggleSortBtn">Activer le tri (glisser-déposer)</button>
+      <button class="btn" id="freeDeliveryBtn" style="background:#28a745;margin-top:.5rem;">Activer livraison gratuite 58 wilayas</button>
       <div id="adminList"></div>
       <button class="btn" onclick="saveCatalog()">Sauvegarder les changements</button>
 
@@ -65,10 +69,6 @@
     </div>
   </div>
 
-  <!-- Modales -->
-  <div class="modal-overlay" id="imgModal" onclick="this.style.display='none'">
-    <div class="modal" style="background:none;box-shadow:none;width:auto;padding:0;"><img id="imgModalSrc" src="" alt="Aperçu"></div>
-  </div>
   <div class="modal-overlay" id="passModal">
     <div class="modal">
       <button class="close" onclick="closePassModal()">&times;</button>
@@ -79,8 +79,8 @@
   </div>
 
   <footer style="text-align:center;padding:1.5rem;font-size:.85rem;color:#777;">
-    <p>Contact WhatsApp / appel : <a href="https://wa.me/213699039372" style="color:var(--accent);">0699 03 93 72</a> – <a href="https://wa.me/213560072059" style="color:var(--accent);">0560 07 20 59</a></p>
-    <p>Suivez-nous : <a href="https://facebook.com/TECHNODIRECT" target="_blank" style="color:var(--accent);">Facebook TECHNO DIRECT</a> – <a href="https://instagram.com/TECHNO_DIRECT" target="_blank" style="color:var(--accent);">Instagram TECHNO_DIRECT</a></p>
+    Contact WhatsApp : 0699039372 • 0560072059<br>
+    Facebook : TECHNO DIRECT • Instagram : TECHNO_DIRECT
   </footer>
 
   <script>
@@ -88,6 +88,7 @@
     const MAX_AFFICHES = 20;
     const PHONE1 = '213699039372';
     const PHONE2 = '213560072059';
+    let freeDeliveryMode = false; // mode livraison gratuite
     const WILAYAS = [
       {fr:'ADRAR',ar:'أدرار',prix:1400},{fr:'CHLEF',ar:'الشلف',prix:800},{fr:'LAGHOUAT',ar:'الأغواط',prix:950},{fr:'OUM EL BOUAGHI',ar:'أم البواقي',prix:800},{fr:'BATNA',ar:'باتنة',prix:800},{fr:'BEJAIA',ar:'بجاية',prix:450},{fr:'BISKRA',ar:'بسكرة',prix:950},{fr:'BECHAR',ar:'بشار',prix:1100},{fr:'BLIDA',ar:'البليدة',prix:750},{fr:'BOUIRA',ar:'البويرة',prix:700},{fr:'TAMANRASSET',ar:'تمنراست',prix:1600},{fr:'TEBESSA',ar:'تبسة',prix:800},{fr:'TLEMCEN',ar:'تلمسان',prix:900},{fr:'TIARET',ar:'تيارت',prix:800},{fr:'TIZI OUZOU',ar:'تيزي وزو',prix:650},{fr:'ALGER',ar:'الجزائر',prix:600},{fr:'DJELFA',ar:'الجلفة',prix:950},{fr:'JUEL',ar:'جيجل',prix:700},{fr:'SETIF',ar:'سطيف',prix:750},{fr:'SAIDA',ar:'سعيدة',prix:800},{fr:'SKIKDA',ar:'سكيكدة',prix:750},{fr:'SIDIBELABBES',ar:'سيدي بلعباس',prix:750},{fr:'ANNABA',ar:'عنابة',prix:800},{fr:'GUELMA',ar:'قالمة',prix:800},{fr:'CONSTANTINE',ar:'قسنطينة',prix:750},{fr:'MEDEA',ar:'المدية',prix:750},{fr:'MOSTAGANEM',ar:'معسكر',prix:750},{fr:'M\'SILA',ar:'المسيلة',prix:850},{fr:'MASCARA',ar:'مascara',prix:750},{fr:'OUARGLA',ar:'ورقلة',prix:1000},{fr:'ORAN',ar:'وهران',prix:700},{fr:'EL BAYADH',ar:'البيض',prix:1050},{fr:'ILLIZI',ar:'إيليزي',prix:1100},{fr:'BORDJ BOU ARRERIDJ',ar:'برج بوعريريج',prix:750},{fr:'BOUMERDES',ar:'بومرداس',prix:750},{fr:'EL TARF',ar:'الطارف',prix:850},{fr:'TINDOUF',ar:'تندوف',prix:1600},{fr:'TISSEMSILT',ar:'تيسمسيلت',prix:800},{fr:'EL OUED',ar:'الوادي',prix:1000},{fr:'KHENCHELA',ar:'خنشلة',prix:800},{fr:'SOUK AHRAS',ar:'سوق أهراس',prix:800},{fr:'TIPAZA',ar:'تيبازة',prix:900},{fr:'MILA',ar:'ميلة',prix:800},{fr:'AIN DEFLA',ar:'عين الدفلى',prix:850},{fr:'NAAMA',ar:'النعامة',prix:800},{fr:'AIN TEMOUCHENT',ar:'عين تموشنت',prix:800},{fr:'GHARDAIA',ar:'غرداية',prix:800},{fr:'RELIZANE',ar:'غليزان',prix:800},{fr:'TIMIMOUN',ar:'تيميمون',prix:800},{fr:'BORDJ BADJI MOKHTAR',ar:'برج باجي مختار',prix:800},{fr:'OULED DJELLAL',ar:'أولاد جلال',prix:800},{fr:'BENI ABBES',ar:'بني عباس',prix:800},{fr:'IN SALAH',ar:'عين صالح',prix:800},{fr:'IN GUEZZAM',ar:'عين قزام',prix:800},{fr:'TOUGGOURT',ar:'تقرت',prix:800},{fr:'DJANET',ar:'جانت',prix:800},{fr:'MGHAIR',ar:'الاغواط',prix:800},{fr:'EL MENIAA',ar:'المنيعة',prix:800}
     ];
@@ -125,14 +126,17 @@
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-          <img src="${prod.img}" alt="${prod.name}" onclick="openImg('${prod.img}')">
+          <img src="${prod.img}" alt="${prod.name}">
           <div class="info">
             <h2>${prod.name}</h2>
             <p>${prod.desc}</p>
             <p class="price prix-produit" data-prix="${prod.price}">${prod.price.toLocaleString('fr-DZ')} DA</p>
-            <label class="label-wilaya">${txt[lang].labelWilaya}
-              <select class="wilaya" required></select>
-            </label>
+            <div class="livraison-box">
+              <label class="label-wilaya">${txt[lang].labelWilaya}
+                <select class="wilaya" required></select>
+              </label>
+              <span class="freeBadge" style="display:none;">${lang==='fr'?'Livraison gratuite 58 wilayas':'توصيل مجاني ٥٨ ولاية'}</span>
+            </div>
             <p class="total"><strong>${txt[lang].total} <span class="montant">${prod.price.toLocaleString('fr-DZ')} DA</span></strong></p>
             <a class="btn whatsapp" href="#">${txt[lang].commanderWhatsapp}</a>
             <button class="btn formulaire" data-id="${prod.id}">${txt[lang].commanderForm}</button>
@@ -141,6 +145,7 @@
       });
       fillWilayaSelects();
       attachCardEvents();
+      handleFreeDeliveryUI();
     }
     function fillWilayaSelects(){
       document.querySelectorAll('.wilaya').forEach(sel=>{
@@ -172,15 +177,43 @@
         sel.onchange = upd; upd();
       });
     }
+    function handleFreeDeliveryUI(){
+      document.querySelectorAll('.card').forEach(card=>{
+        const sel = card.querySelector('.wilaya');
+        const badge = card.querySelector('.freeBadge');
+        if (freeDeliveryMode){
+          sel.style.display='none';
+          badge.style.display='inline-block';
+        }else{
+          sel.style.display='inline-block';
+          badge.style.display='none';
+        }
+      });
+    }
     function attachEvents(){
       document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
       document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
       document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
+      document.getElementById('freeDeliveryBtn').onclick = ()=>{
+        if (!confirm('Activer la livraison gratuite pour les 58 wilayas ?')) return;
+        freeDeliveryMode = true;
+        WILAYAS.forEach(w=>w.prix=0);
+        renderCatalog();
+        alert('Livraison gratuite activée !');
+      };
       document.addEventListener('click', e=>{
         if (e.target && e.target.classList.contains('formulaire')){
           const prodId = e.target.dataset.id;
           const prod = catalogue.find(p=>p.id==prodId);
           openFormModal(prod);
+        }
+        if (e.target.closest('.card img')){
+          const src = e.target.src;
+          const overlay = document.createElement('div');
+          overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out`;
+          overlay.innerHTML = `<img src="${src}" style="max-width:90%;max-height:90%;object-fit:contain">`;
+          overlay.onclick = ()=>overlay.remove();
+          document.body.appendChild(overlay);
         }
       });
     }
@@ -252,6 +285,43 @@
       renderCatalog();
       saveCatalog();
     }
+    let sortable = false;
+    document.getElementById('toggleSortBtn').onclick = ()=>{
+      sortable = !sortable;
+      const list = document.getElementById('adminList');
+      list.classList.toggle('sortable', sortable);
+      document.getElementById('toggleSortBtn').textContent = sortable ? 'Désactiver le tri' : 'Activer le tri (glisser-déposer)';
+      sortable ? enableDrag() : disableDrag();
+    };
+    function enableDrag(){
+      const items = document.querySelectorAll('#adminList .admin-item');
+      items.forEach(item=>{
+        item.draggable = true;
+        item.ondragstart = e=>{
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/html', item.innerHTML);
+          item.classList.add('dragging');
+        };
+        item.ondragend = ()=>item.classList.remove('dragging');
+        item.ondragover = e=>e.preventDefault();
+        item.ondrop = e=>{
+          e.preventDefault();
+          const dragging = document.querySelector('.dragging');
+          if (item === dragging) return;
+          const all = [...document.querySelectorAll('#adminList .admin-item')];
+          const dragIndex = all.indexOf(dragging);
+          const dropIndex = all.indexOf(item);
+          const [removed] = catalogue.splice(dragIndex,1);
+          catalogue.splice(dropIndex,0,removed);
+          renderAdminList();
+          saveCatalog();
+          enableDrag();
+        };
+      });
+    }
+    function disableDrag(){
+      document.querySelectorAll('#adminList .admin-item').forEach(i=>i.draggable=false);
+    }
     function openFormModal(prod){
       const overlay = document.createElement('div');
       overlay.className = 'modal-overlay';
@@ -275,65 +345,7 @@
         </div>`;
       document.body.appendChild(overlay);
       const wilSel = overlay.querySelector('select[name=wilaya]');
-      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
-      WILAYAS.forEach(w=>{
-        const opt = document.createElement('option');
-        opt.value = w.prix;
-        opt.textContent = lang==='fr'? w.fr : w.ar;
-        opt.dataset.nom = w.fr;
-        wilSel.appendChild(opt);
-      });
-      const totalInput = overlay.querySelector('input[name=total]');
-      function updTotal(){
-        const liv = parseInt(wilSel.value)||0; const tot = prod.price + liv;
-        totalInput.value = tot;
-      }
-      wilSel.onchange = updTotal; updTotal();
-      overlay.querySelector('#commandeForm').onsubmit = e=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.target));
-        const selected = wilSel.options[wilSel.selectedIndex];
-        data.wilayaNom = selected ? selected.textContent : '';
-        data.date = new Date().toLocaleString('fr-DZ');
-        saveCommande(data);
-        alert(lang==='fr'?'Commande enregistrée !':'تم حفظ الطلب !');
-        overlay.remove();
-        showCommandes();
-      };
-    }
-    function saveCommande(obj){
-      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      obj.id = Date.now();
-      arr.push(obj);
-      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
-    }
-    function showCommandes(){
-      const cont = document.getElementById('commandesList');
-      const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
-      let html = '';
-      arr.forEach(c=>{
-        html += `
-          <div class="cmd-line">
-            <label>
-              <input type="checkbox" class="cmdCheck" data-id="${c.id}">
-              <strong>${c.nom} ${c.prenom}</strong> | ${c.wilayaNom} | ${c.tel1} ${c.tel2?'/'+c.tel2:''} | ${c.livraison} | ${c.produit} | ${c.total} DA | ${c.date}
-            </label>
-            <button onclick="deleteOne(${c.id})" title="Supprimer">❌</button>
-          </div>`;
-      });
-      cont.innerHTML = html;
-      document.getElementById('selectAll').onchange = e=>{
-        document.querySelectorAll('.cmdCheck').forEach(ch=>ch.checked = e.target.checked);
-      };
-    }
-    function deleteOne(id){
-      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      arr = arr.filter(c=>c.idInt(card.querySelector('.prix-produit').dataset.prix);
-        const sel = card.querySelector('.wilaya');
-        const mont = card.querySelector('.montant');
-        const whats = card.querySelector('.whatsapp');
-        function upd(){
+      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'(){
           const liv = parseInt(sel.value)||0; const tot = prix + liv;
           mont.textContent = tot.toLocaleString('fr-DZ') + ' DA';
           const prodName = card.querySelector('h2').textContent;
@@ -343,6 +355,20 @@
           whats.href = `https://wa.me/${PHONE1}?text=${encodeURIComponent(wtxt)}`;
         }
         sel.onchange = upd; upd();
+      });
+    }
+    function handleFreeDeliveryUI(){
+      const freeMode = WILAYAS.every(w=>w.prix===0);
+      document.querySelectorAll('.card').forEach(card=>{
+        const sel = card.querySelector('.wilaya');
+        const badge = card.querySelector('.freeBadge');
+        if (freeMode){
+          sel.style.display='none';
+          badge.style.display='inline-block';
+        }else{
+          sel.style.display='inline-block';
+          badge.style.display='none';
+        }
       });
     }
     function attachEvents(){
@@ -486,7 +512,7 @@
       const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
       if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
       let html = '';
-      arr.forEach(c=>{
+      arr.forEach((c,i)=>{
         html += `
           <div class="cmd-line">
             <label>
@@ -516,18 +542,6 @@
       arr = arr.filter(c=>!ids.includes(c.id));
       localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
       showCommandes();
-    }
-    // AFFICHAGE IMAGE
-    function openImg(src){
-      const overlay = document.createElement('div');
-      overlay.className = 'modal-overlay';
-      overlay.style.display = 'flex';
-      overlay.innerHTML = `
-        <div class="modal">
-          <button class="close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-          <img src="${src}" style="width:100%;border-radius:6px;">
-        </div>`;
-      document.body.appendChild(overlay);
     }
   </script>
 </body>
