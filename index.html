@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Techno Directe – PC reconditionnés</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* --- MODIFIE LA POLICE ICI --- */
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    :root{
+      --accent:#ff6b00;      /* couleur principale */
+      --dark:#222;
+      --light:#f7f7f7;
+      --font:'Cairo', sans-serif; /* <-- police */
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font);}
+    body{background:var(--light);color:var(--dark);line-height:1.6;}
+    header{background:var(--dark);color:#fff;padding:1.2rem 1rem;text-align:center;}
+    header h1{font-size:2rem;font-weight:700;}
+    .container{max-width:1000px;margin:auto;padding:1rem;}
+    .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;}
+    .card img{width:100%;height:200px;object-fit:cover;}
+    .info{padding:1rem;}
+    .price{font-size:1.5rem;font-weight:700;color:var(--accent);}
+    .btn{background:var(--accent);color:#fff;padding:.75rem 1.2rem;border:none;border-radius:4px;cursor:pointer;font-size:1rem;margin:.25rem;display:inline-block;text-decoration:none;}
+    .btn:hover{background:#e55a00;}
+    footer{text-align:center;padding:1.5rem;font-size:.85rem;color:#777;}
+    select, input{width:100%;padding:.5rem;margin:.25rem 0;max-width:300px;}
+    .hidden{display:none;}
+    @media(min-width:600px){.card{flex-direction:row;}.card img{width:260px;height:auto;}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Techno Directe</h1>
+  </header>
+
+  <div class="container">
+    <!-- Produit 1 -->
+    <div class="card" data-produit="HP EliteBook 840 G5">
+      <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60" alt="HP EliteBook">
+      <div class="info">
+        <h2>HP EliteBook 840 G5</h2>
+        <p>Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD</p>
+        <p class="price prix-produit" data-prix="50000">50 000 DA</p>
+        <label>Wilaya de livraison :
+          <select class="wilaya" required>
+            <option value="">-- Choisir --</option>
+            <option value="1400">ADRAR</option><option value="800">CHLEF</option><option value="950">LAGHOUAT</option><option value="800">OUM EL BOUAGHI</option><option value="800">BATNA</option><option value="450">BEJAIA</option><option value="950">BISKRA</option><option value="1100">BECHAR</option><option value="750">BLIDA</option><option value="700">BOUIRA</option><option value="1600">TAMANRASSET</option><option value="800">TEBESSA</option><option value="900">TLEMCEN</option><option value="800">TIARET</option><option value="650">TIZI OUZOU</option><option value="600">ALGER</option><option value="950">DJELFA</option><option value="700">JUEL</option><option value="750">SETIF</option><option value="800">SAIDA</option><option value="750">SKIKDA</option><option value="750">SIDIBELABBES</option><option value="800">ANNABA</option><option value="800">GUELMA</option><option value="750">CONSTANTINE</option><option value="750">MEDEA</option><option value="750">MOSTAGANEM</option><option value="850">M'SILA</option><option value="750">MASCARA</option><option value="1000">OUARGLA</option><option value="700">ORAN</option><option value="1050">EL BAYADH</option><option value="1100">ILLIZI</option><option value="750">BORDJ BOU ARRERIDJ</option><option value="750">BOUMERDES</option><option value="850">EL TARF</option><option value="1600">TINDOUF</option><option value="800">TISSEMSILT</option><option value="1000">EL OUED</option><option value="800">KHENCHELA</option><option value="800">SOUK AHRAS</option><option value="900">TIPAZA</option><option value="800">MILA</option><option value="850">AIN DEFLA</option><option value="800">NAAMA</option><option value="800">AIN TEMOUCHENT</option><option value="800">GHARDAIA</option><option value="800">RELIZANE</option><option value="800">TIMIMOUN</option><option value="800">BORDJ BADJI MOKHTAR</option><option value="800">OULED DJELLAL</option><option value="800">BENI ABBES</option><option value="800">IN SALAH</option><option value="800">IN GUEZZAM</option><option value="800">TOUGGOURT</option><option value="800">DJANET</option><option value="800">MGHAIR</option><option value="800">EL MENIAA</option>
+          </select>
+        </label>
+        <p class="total"><strong>Total : <span class="montant">50 000 DA</span></strong></p>
+        <a class="btn" href="https://wa.me/213699039372?text=Bonjour%20Techno%20Directe,%20je%20veux%20le%20HP%20EliteBook%20840%20G5%20à%2050%20000%20DA." target="_blank">WhatsApp 1</a>
+        <a class="btn" href="https://wa.me/213560072059?text=Bonjour%20Techno%20Directe,%20je%20veux%20le%20HP%20EliteBook%20840%20G5%20à%2050%20000%20DA." target="_blank">WhatsApp 2</a>
+        <button class="btn" onclick="ouvrirFormulaire(this)">Commander direct</button>
+      </div>
+    </div>
+
+    <!-- Produit 2 -->
+    <div class="card" data-produit="Lenovo ThinkPad T480">
+      <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" alt="ThinkPad">
+      <div class="info">
+        <h2>Lenovo ThinkPad T480</h2>
+        <p>Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD</p>
+        <p class="price prix-produit" data-prix="72000">72 000 DA</p>
+        <label>Wilaya de livraison :
+          <select class="wilaya" required>
+            <option value="">-- Choisir --</option>
+            <option value="1400">ADRAR</option><option value="800">CHLEF</option><option value="950">LAGHOUAT</option><option value="800">OUM EL BOUAGHI</option><option value="800">BATNA</option><option value="450">BEJAIA</option><option value="950">BISKRA</option><option value="1100">BECHAR</option><option value="750">BLIDA</option><option value="700">BOUIRA</option><option value="1600">TAMANRASSET</option><option value="800">TEBESSA</option><option value="900">TLEMCEN</option><option value="800">TIARET</option><option value="650">TIZI OUZOU</option><option value="600">ALGER</option><option value="950">DJELFA</option><option value="700">JUEL</option><option value="750">SETIF</option><option value="800">SAIDA</option><option value="750">SKIKDA</option><option value="750">SIDIBELABBES</option><option value="800">ANNABA</option><option value="800">GUELMA</option><option value="750">CONSTANTINE</option><option value="750">MEDEA</option><option value="750">MOSTAGANEM</option><option value="850">M'SILA</option><option value="750">MASCARA</option><option value="1000">OUARGLA</option><option value="700">ORAN</option><option value="1050">EL BAYADH</option><option value="1100">ILLIZI</option><option value="750">BORDJ BOU ARRERIDJ</option><option value="750">BOUMERDES</option><option value="850">EL TARF</option><option value="1600">TINDOUF</option><option value="800">TISSEMSILT</option><option value="1000">EL OUED</option><option value="800">KHENCHELA</option><option value="800">SOUK AHRAS</option><option value="900">TIPAZA</option><option value="800">MILA</option><option value="850">AIN DEFLA</option><option value="800">NAAMA</option><option value="800">AIN TEMOUCHENT</option><option value="800">GHARDAIA</option><option value="800">RELIZANE</option><option value="800">TIMIMOUN</option><option value="800">BORDJ BADJI MOKHTAR</option><option value="800">OULED DJELLAL</option><option value="800">BENI ABBES</option><option value="800">IN SALAH</option><option value="800">IN GUEZZAM</option><option value="800">TOUGGOURT</option><option value="800">DJANET</option><option value="800">MGHAIR</option><option value="800">EL MENIAA</option>
+          </select>
+        </label>
+        <p class="total"><strong>Total : <span class="montant">72 000 DA</span></strong></p>
+        <a class="btn" href="https://wa.me/213699039372?text=Bonjour%20Techno%20Directe,%20je%20veux%20le%20ThinkPad%20T480%20à%2072%20000%20DA." target="_blank">WhatsApp 1</a>
+        <a class="btn" href="https://wa.me/213560072059?text=Bonjour%20Techno%20Directe,%20je%20veux%20le%20ThinkPad%20T480%20à%2072%20000%20DA." target="_blank">WhatsApp 2</a>
+        <button class="btn" onclick="ouvrirFormulaire(this)">Commander direct</button>
+      </div>
+    </div>
+
+    <!-- Produit 3 -->
+    <div class="card" data-produit="MacBook Air 2018">
+      <img src="https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60" alt="MacBook">
+      <div class="info">
+        <h2>MacBook Air 2018</h2>
+        <p>Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina</p>
+        <p class="price prix-produit" data-prix="94000">94 000 DA</p>
+        <label>Wilaya de livraison :
+          <select class="wilaya" required>
+            <option value="">-- Choisir --</option>
+            <option value="1400">ADRAR</option><option value="800">CHLEF</option><option value="950">LAGHOUAT</option><option value="800">OUM EL BOUAGHI</option><option value="800">BATNA</option><option value="450">BEJAIA</option><option value="950">BISKRA</option><option value="1100">BECHAR</option><option value="750">BLIDA</option><option value="700">BOUIRA</option><option value="1600">TAMANRASSET</option><option value="800">TEBESSA</option><option value="900">TLEMCEN</option><option value="800">TIARET</option><option value="650">TIZI OUZOU</option><option value="600">ALGER</option><option value="950">DJELFA</option><option value="700">JUEL</option><option value="750">SETIF</option><option value="800">SAIDA</option><option value="750">SKIKDA</option><option value="750">SIDIBELABBES</option><option value="800">ANNABA</option><option value="800">GUELMA</option><option value="750">CONSTANTINE</option><option value="750">MEDEA</option><option value="750">MOSTAGANEM</option><option value="850">M'SILA</option><option value="750">MASCARA</option><option value="1000">OUARGLA</option><option value="700">ORAN</option><option value="1050">EL BAYADH</option><option value="1100">ILLIZI</option><option value="750">BORDJ BOU ARRERIDJ</option><option value="750">BOUMERDES</option><option value="850">EL TARF</option><option value="1600">TINDOUF</option><option value="800">TISSEMSILT</option><option value="1000">EL OUED</option><option value="800">KHENCHELA</option><option value="800">SOUK AHRAS</option><option value="900">TIPAZA</option><option value="800">MILA</option><option value="850">AIN DEFLA</option><option value="800">NAAMA</option><option value="800">AIN TEMOUCHENT</option><option value="800">GHARDAIA</option><option value="800">RELIZANE</option><option value="800">TIMIMOUN</option><option value="800">BORDJ BADJI MOKHTAR</option><option value="800">OULED DJELLAL</option><option value="800">BENI ABBES</option><option value="800">IN SALAH</option><option value="800">IN GUEZZAM</option><option value="800">TOUGGOURT</option><option value="800">DJANET</option><option value="800">MGHAIR</option><option value="800">EL MENIAA</option>
+          </select>
+        </label>
+        <p class="total"><strong>Total : <span class="montant">94 000 DA</span></strong></p>
+        <a class="btn" href="https://wa.me/213699039372?text=Bonjour%20Techno%20Directe,%20je%20veux%20le%20MacBook%20Air%202018%20à%2094%20000%20DA." target="_blank">WhatsApp 1</a>
+        <a class="btn" href="https://wa.me/213560072059?text=Bonjour%20Techno%20Directe,%20je%20veux%20le%20MacBook%20Air%202018%20à%2094%20000%20DA." target="_blank">WhatsApp 2</a>
+        <button class="btn" onclick="ouvrirFormulaire(this)">Commander direct</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FORMULAIRE CACHÉ -->
+  <div id="formulaireModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:1rem;z-index:999;">
+    <div style="background:#fff;border-radius:8px;padding:1.5rem;width:100%;max-width:400px;">
+      <h3>Commande <span id="formProduit"></span></h3>
+      <form id="formCommande">
+        <input type="text" name="nom" placeholder="Nom" required>
+        <input type="text" name="prenom" placeholder="Prénom" required>
+        <input type="tel" name="tel1" placeholder="Téléphone 1" required>
+        <input type="tel" name="tel2" placeholder="Téléphone 2 (facultatif)">
+        <select name="wilaya" required>
+          <option value="">-- Wilaya --</option>
+          <option value="1400">ADRAR</option><option value="800">CHLEF</option><option value="950">LAGHOUAT</option><option value="800">OUM EL BOUAGHI</option><option value="800">BATNA</option><option value="450">BEJAIA</option><option value="950">BISKRA</option><option value="1100">BECHAR</option><option value="750">BLIDA</option><option value="700">BOUIRA</option><option value="1600">TAMANRASSET</option><option value="800">TEBESSA</option><option value="900">TLEMCEN</option><option value="800">TIARET</option><option value="650">TIZI OUZOU</option><option value="600">ALGER</option><option value="950">DJELFA</option><option value="700">JUEL</option><option value="750">SETIF</option><option value="800">SAIDA</option><option value="750">SKIKDA</option><option value="750">SIDIBELABBES</option><option value="800">ANNABA</option><option value="800">GUELMA</option><option value="750">CONSTANTINE</option><option value="750">MEDEA</option><option value="750">MOSTAGANEM</option><option value="850">M'SILA</option><option value="750">MASCARA</option><option value="1000">OUARGLA</option><option value="700">ORAN</option><option value="1050">EL BAYADH</option><option value="1100">ILLIZI</option><option value="750">BORDJ BOU ARRERIDJ</option><option value="750">BOUMERDES</option><option value="850">EL TARF</option><option value="1600">TINDOUF</option><option value="800">TISSEMSILT</option><option value="1000">EL OUED</option><option value="800">KHENCHELA</option><option value="800">SOUK AHRAS</option><option value="900">TIPAZA</option><option value="800">MILA</option><option value="850">AIN DEFLA</option><option value="800">NAAMA</option><option value="800">AIN TEMOUCHENT</option><option value="800">GHARDAIA</option><option value="800">RELIZANE</option><option value="800">TIMIMOUN</option><option value="800">BORDJ BADJI MOKHTAR</option><option value="800">OULED DJELLAL</option><option value="800">BENI ABBES</option><option value="800">IN SALAH</option><option value="800">IN GUEZZAM</option><option value="800">TOUGGOURT</option><option value="800">DJANET</option><option value="800">MGHAIR</option><option value="800">EL MENIAA</option>
+        </select>
+        <label>Livraison :<br>
+          <select name="livraison" required>
+            <option value="">-- Choisir --</option>
+            <option value="domicile">À domicile</option>
+            <option value="bureau">Au bureau / Stop-desk</option>
+          </select>
+        </label>
+        <input type="hidden" name="produit" id="hiddenProduit">
+        <input type="hidden" name="total" id="hiddenTotal">
+        <button type="submit" class="btn">Envoyer commande</button>
+        <button type="button" class="btn" onclick="fermerFormulaire()" style="background:#777;">Annuler</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ZONE ADMIN (visible si ?admin=1) -->
+  <div id="adminZone" class="hidden" style="padding:1rem;background:#ffe6cc;border-top:3px solid var(--accent);">
+    <h3>Commandes via formulaire (privé)</h3>
+    <pre id="cmdList" style="white-space:pre-wrap;"></pre>
+    <button class="btn" onclick="telechargerCSV()">Télécharger CSV</button>
+    <button class="btn" onclick="viderCommandes()">Vider la liste</button>
+  </div>
+
+  <footer>Contact : 06 99 03 93 72 | 05 60 07 20 59</footer>
+
+  <script>
+    /* ---------- MISE À JOUR PRIX / LIEN WHATSAPP ---------- */
+    document.querySelectorAll('.card').forEach(card=>{
+      const prixProduit = parseInt(card.querySelector('.prix-produit').dataset.prix);
+      const selectWilaya = card.querySelector('.wilaya');
+      const spanMontant = card.querySelector('.montant');
+      const btnsWhatsApp = card.querySelectorAll('a[href^="https://wa.me"]');
+
+      function update(){
+        const livraison = parseInt(selectWilaya.value) || 0;
+        const total = prixProduit + livraison;
+        spanMontant.textContent = total.toLocaleString('fr-DZ') + ' DA';
+        const wilayaText = selectWilaya.options[selectWilaya.selectedIndex]?.text || '';
+        btnsWhatsApp.forEach(btn=>{
+          btn.href = `https://wa.me/${btn.href.includes('699039372')?'213699039372':'213560072059'}?text=${encodeURIComponent(
+            `Bonjour Techno Directe, je veux commander ce PC (${card.querySelector('h2').textContent}) pour livraison à ${wilayaText}. Total : ${total} DA.`
+          )}`;
+        });
+      }
+      selectWilaya.addEventListener('change', update);
+      update();
+    });
+
+    /* ---------- FORMULAIRE DIRECT ---------- */
+    function ouvrirFormulaire(btn){
+      const card = btn.closest('.card');
+      const produit = card.dataset.produit;
+      const prix = parseInt(card.querySelector('.prix-produit').dataset.prix);
+      const wilayaSel = card.querySelector('.wilaya');
+      if(!wilayaSel.value){alert('Veuillez choisir la wilaya');return;}
+      const total = prix + parseInt(wilayaSel.value);
+      document.getElementById('formProduit').textContent = '('+produit+')';
+      document.getElementById('hiddenProduit').value = produit;
+      document.getElementById('hiddenTotal').value = total;
+      document.getElementById('formulaireModal').classList.remove('hidden');
+    }
+    function fermerFormulaire(){
+      document.getElementById('formulaireModal').classList.add('hidden');
+    }
+    document.getElementById('formCommande').addEventListener('submit',function(e){
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(this));
+      data.date = new Date().toLocaleString('fr-DZ');
+      let cmds = JSON.parse(localStorage.getItem('technoCmds')||'[]');
+      cmds.push(data);
+      localStorage.setItem('technoCmds', JSON.stringify(cmds));
+      alert('Commande enregistrée !');
+      fermerFormulaire();
+      if(location.search.includes('admin=1')) afficherCmds();
+    });
+
+    /* ---------- ADMIN ---------- */
+    function afficherCmds(){
+      const cmds = JSON.parse(localStorage.getItem('technoCmds')||'[]');
+      const pre = document.getElementById('cmdList');
+      if(cmds.length){
+        pre.textContent = cmds.map((c,i)=>`${i+1}. ${c.date} | ${c.nom} ${c.prenom} | ${c.wilaya} | ${c.tel1} | ${c.tel2||'-'} | ${c.livraison} | ${c.produit} | ${c.total} DA`).join('\n');
+      }else pre.textContent = "Aucune commande pour l'instant.";
+    }
+    function telechargerCSV(){
+      const cmds = JSON.parse(localStorage.getItem('technoCmds')||'[]');
+      if(!cmds.length){alert('Pas de commandes');return;}
+      const entetes = Object.keys(cmds[0]).join(';');
+      const lignes  = cmds.map(c=>Object.values(c).join(';'));
+      const csv = [entetes,...lignes].join('\n');
+      const blob = new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'commandes_techno_directe.csv';
+      link.click();
+    }
+    function placeholder="Nom" required>
+        <input type="text" name="prenom" placeholder="Prénom" required>
+        <input type="tel" name="tel1" placeholder="Téléphone 1" required>
+        <input type="tel" name="tel2" placeholder="Téléphone 2 (facultatif)">
+        <select name="wilaya" required>
+          <option value="">-- Wilaya --</option>
+          <option value="1400">ADRAR</option><option value="800">CHLEF</option><option value="950">LAGHOUAT</option><option value="800">OUM EL BOUAGHI</option><option value="800">BATNA</option><option value="450">BEJAIA</option><option value="950">BISKRA</option><option value="1100">BECHAR</option><option value="750">BLIDA</option><option value="700">BOUIRA</option><option value="1600">TAMANRASSET</option><option value="800">TEBESSA</option><option value="900">TLEMCEN</option><option value="800">TIARET</option><option value="650">TIZI OUZOU</option><option value="600">ALGER</option><option value="950">DJELFA</option><option value="700">JUEL</option><option value="750">SETIF</option><option value="800">SAIDA</option><option value="750">SKIKDA</option><option value="750">SIDIBELABBES</option><option value="800">ANNABA</option><option value="800">GUELMA</option><option value="750">CONSTANTINE</option><option value="750">MEDEA</option><option value="750">MOSTAGANEM</option><option value="850">M'SILA</option><option value="750">MASCARA</option><option value="1000">OUARGLA</option><option value="700">ORAN</option><option value="1050">EL BAYADH</option><option value="1100">ILLIZI</option><option value="750">BORDJ BOU ARRERIDJ</option><option value="750">BOUMERDES</option><option value="850">EL TARF</option><option value="1600">TINDOUF</option><option value="800">TISSEMSILT</option><option value="1000">EL OUED</option><option value="800">KHENCHELA</option><option value="800">SOUK AHRAS</option><option value="900">TIPAZA</option><option value="800">MILA</option><option value="850">AIN DEFLA</option><option value="800">NAAMA</option><option value="800">AIN TEMOUCHENT</option><option value="800">GHARDAIA</option><option value="800">RELIZANE</option><option value="800">TIMIMOUN</option><option value="800">BORDJ BADJI MOKHTAR</option><option value="800">OULED DJELLAL</option><option value="800">BENI ABBES</option><option value="800">IN SALAH</option><option value="800">IN GUEZZAM</option><option value="800">TOUGGOURT</option><option value="800">DJANET</option><option value="800">MGHAIR</option><option value="800">EL MENIAA</option>
+        </select>
+        <label>Livraison :<br>
+          <select name="livraison" required>
+            <option value="">-- Choisir --</option>
+            <option value="domicile">À domicile</option>
+            <option value="bureau">Au bureau / Stop-desk</option>
+          </select>
+        </label>
+        <input type="hidden" name="produit" id="hiddenProduit">
+        <input type="hidden" name="total" id="hiddenTotal">
+        <button type="submit" class="btn">Envoyer commande</button>
+        <button type="button" class="btn" onclick="fermerFormulaire()" style="background:#777;">Annuler</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ZONE ADMIN (visible si ?admin=1) -->
+  <div id="adminZone" class="hidden" style="padding:1rem;background:#ffe6cc;border-top:3px solid var(--accent);">
+    <h3>Commandes via formulaire (privé)</h3>
+    <pre id="cmdList" style="white-space:pre-wrap;"></pre>
+    <button class="btn" onclick="telechargerCSV()">Télécharger CSV</button>
+    <button class="btn" onclick="viderCommandes()">Vider la liste</button>
+  </div>
+
+  <footer>Contact : 06 99 03 93 72 | 05 60 07 20 59</footer>
+
+  <script>
+    /* ---------- TRADUCTION ---------- */
+    function traduirePage(){
+      const url='https://translate.google.com/translate?sl=fr&tl=ar&u='+encodeURIComponent(location.href);
+      open(url,'_blank');
+    }
+
+    /* ---------- FORMULAIRE ---------- */
+    function ouvrirFormulaire(btn){
+      const card=btn.closest('.card');
+      const produit=card.dataset.produit;
+      const wilayaSel=card.querySelector('.wilaya');
+      if(!wilayaSel.value){alert('Veuillez choisir la wilaya');return;}
+      const total=parseInt(card.querySelector('.prix-produit').dataset.prix)+parseInt(wilayaSel.value);
+      document.getElementById('formProduit').textContent='('+produit+')';
+      document.getElementById('hiddenProduit').value=produit;
+      document.getElementById('hiddenTotal').value=total;
+      document.getElementById('formulaireModal').classList.remove('hidden');
+    }
+    function fermerFormulaire(){
+      document.getElementById('formulaireModal').classList.add('hidden');
+    }
+    document.getElementById('formCommande').addEventListener('submit',function(e){
+      e.preventDefault();
+      const data=Object.fromEntries(new FormData(this));
+      data.date=new Date().toLocaleString('fr-DZ');
+      let cmds=JSON.parse(localStorage.getItem('technoCmds')||'[]');
+      cmds.push(data);
+      localStorage.setItem('technoCmds',JSON.stringify(cmds));
+      alert('Commande enregistrée !');
+      fermerFormulaire();
+      if(location.search.includes('admin=1')) afficherCmds();
+    });
+
+    /* ---------- ADMIN ---------- */
+    function afficherCmds(){
+      const cmds=JSON.parse(localStorage.getItem('technoCmds')||'[]');
+      const pre=document.getElementById('cmdList');
+      if(cmds.length){
+        pre.textContent=cmds.map((c,i)=>`${i+1}. ${c.date} | ${c.nom} ${c.prenom} | ${c.wilaya} | ${c.tel1} | ${c.tel2||'-'} | ${c.livraison} | ${c.produit} | ${c.total} DA`).join('\n');
+      }else pre.textContent="Aucune commande pour l'instant.";
+    }
+    function telechargerCSV(){
+      const cmds=JSON.parse(localStorage.getItem('technoCmds')||'[]');
+      if(!cmds.length){alert('Pas de commandes');return;}
+      const entetes=Object.keys(cmds[0]).join(';');
+      const lignes=cmds.map(c=>Object.values(c).join(';'));
+      const csv=[entetes,...lignes].join('\n');
+      const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+      const link=document.createElement('a');
+      link.href=URL.createObjectURL(blob);
+      link.download='commandes_techno_directe.csv';
+      link.click();
+    }
+    function viderCommandes(){
+      if(confirm('Vider définitivement la liste ?')){
+        localStorage.removeItem('technoCmds');
+        afficherCmds();
+      }
+    }
+
+    /* affiche admin si ?admin=1 */
+    if(location.search.includes('admin=1')){
+      document.getElementById('adminZone').classList.remove('hidden');
+      afficherCmds();
+    }
+  </script>
+</body>
+</html>
