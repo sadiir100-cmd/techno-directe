@@ -16,7 +16,7 @@
     body[dir="rtl"] .lang-switch{left:1rem;right:auto;}
     .container{max-width:1000px;margin:auto;padding:1rem;}
     .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;}
-    .card img{width:100%;height:200px;object-fit:cover;}
+    .card img{width:100%;height:200px;object-fit:cover;cursor:zoom-in;}
     .info{padding:1rem;}
     .price{font-size:1.5rem;font-weight:700;color:var(--accent);}
     .btn{background:var(--accent);color:#fff;padding:.75rem 1.2rem;border:none;border-radius:4px;cursor:pointer;font-size:1rem;margin:.3rem .3rem 0 0;display:inline-block;text-decoration:none;}
@@ -35,15 +35,17 @@
     #commandesList{max-height:300px;overflow:auto;background:#fff;padding:.5rem;border:1px solid #ccc;border-radius:4px;margin-top:.7rem;}
     .cmd-line{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;}
     .cmd-line button{background:none;border:none;color:var(--accent);font-size:1.2rem;cursor:pointer;}
+    .bandeau-promo{background:var(--accent);color:#fff;text-align:center;padding:.6rem 1rem;font-weight:700;font-size:1.1rem;}
+    #imgModal img{max-width:90%;max-height:90%;border-radius:8px;}
   </style>
 </head>
 <body>
+  <div class="bandeau-promo">🎁 Cartable gratuit + Garantie sur tous nos PC !</div>
   <header>
     <div id="zoneDblClick"></div>
     <h1 id="h1-title">Techno Directe</h1>
     <button class="lang-switch" id="langBtn">العربية</button>
   </header>
-
   <div class="container">
     <div id="catalogue"></div>
     <div class="admin-panel" id="adminPanel">
@@ -51,7 +53,6 @@
       <button class="btn" id="addAffiches">+ Ajouter une affiche (max 20)</button>
       <div id="adminList"></div>
       <button class="btn" onclick="saveCatalog()">Sauvegarder les changements</button>
-
       <h3 style="margin-top:1.2rem">Commandes reçues (formulaire)
         <label style="margin-left:1rem;font-size:.9rem;font-weight:normal;">
           <input type="checkbox" id="selectAll"> Tout sélectionner
@@ -62,6 +63,10 @@
     </div>
   </div>
 
+  <!-- Modales -->
+  <div class="modal-overlay" id="imgModal" onclick="this.style.display='none'">
+    <div class="modal" style="background:none;box-shadow:none;width:auto;padding:0;"><img id="imgModalSrc" src="" alt="Aperçu"></div>
+  </div>
   <div class="modal-overlay" id="passModal">
     <div class="modal">
       <button class="close" onclick="closePassModal()">&times;</button>
@@ -72,9 +77,9 @@
   </div>
 
   <footer style="text-align:center;padding:1.5rem;font-size:.85rem;color:#777;">
-    Contact : 07 00 00 00 00 (WhatsApp / appel)
+    <p>Contact WhatsApp / appel : <a href="https://wa.me/213699039372" style="color:var(--accent);">0699 03 93 72</a> – <a href="https://wa.me/213560072059" style="color:var(--accent);">0560 07 20 59</a></p>
+    <p>Suivez-nous : <a href="https://facebook.com/TECHNODIRECT" target="_blank" style="color:var(--accent);">Facebook TECHNO DIRECT</a> – <a href="https://instagram.com/TECHNO_DIRECT" target="_blank" style="color:var(--accent);">Instagram TECHNO_DIRECT</a></p>
   </footer>
-
   <script>
     const PASSWORD = 'technoid';
     const MAX_AFFICHES = 20;
@@ -117,7 +122,7 @@
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-          <img src="${prod.img}" alt="${prod.name}">
+          <img src="${prod.img}" alt="${prod.name}" onclick="openImg('${prod.img}')">
           <div class="info">
             <h2>${prod.name}</h2>
             <p>${prod.desc}</p>
@@ -168,7 +173,6 @@
       document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
       document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
       document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
-      // boutons formulaire
       document.addEventListener('click', e=>{
         if (e.target && e.target.classList.contains('formulaire')){
           const prodId = e.target.dataset.id;
@@ -296,7 +300,6 @@
     }
     function saveCommande(obj){
       let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
-      // on ajoute un id unique pour pouvoir supprimer une à une
       obj.id = Date.now();
       arr.push(obj);
       localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
@@ -305,10 +308,8 @@
       const cont = document.getElementById('commandesList');
       const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
       if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
-
-      // bouton tout sélectionner
       let html = '';
-      arr.forEach((c,i)=>{
+      arr.forEach(c=>{
         html += `
           <div class="cmd-line">
             <label>
@@ -319,8 +320,180 @@
           </div>`;
       });
       cont.innerHTML = html;
-
-      // cocher/décocher « tout sélectionner »
+      document.getElementById('selectAll').onchange = e=>{
+        document.querySelectorAll('.cmdCheck').forEach(ch=>ch.checked = e.target.checked);
+      };
+    }
+    function deleteOne(id){
+      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      arr = arr.filter(c=>c.id !== id);
+      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
+      showCommandes();
+    }
+    function deleteSelected(){
+      const checks = document.querySelectorAll('.cmdCheck:checked');
+      if (!checks.length) return alert('Aucune commande sélectionnée');
+      if (!confirm('Supprimer les commandes sélection.toLocaleString('fr-DZ') + ' DA';
+          const prodName = card.querySelector('h2').textContent;
+          const wtxt = lang==='fr'?
+            `Bonjour Techno Directe, je veux commander : ${prodName} (Total : ${tot} DA)`:
+            `مرحبا تكنو دايركت، أريد طلب : ${prodName} (المجموع : ${tot} دج)`;
+          whats.href = `https://wa.me/${PHONE1}?text=${encodeURIComponent(wtxt)}`;
+        }
+        sel.onchange = upd; upd();
+      });
+    }
+    function attachEvents(){
+      document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
+      document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
+      document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
+      document.addEventListener('click', e=>{
+        if (e.target && e.target.classList.contains('formulaire')){
+          const prodId = e.target.dataset.id;
+          const prod = catalogue.find(p=>p.id==prodId);
+          openFormModal(prod);
+        }
+      });
+    }
+    function updateLang(){
+      body.dir = lang==='ar'?'rtl':'ltr';
+      body.lang = lang;
+      document.getElementById('h1-title').textContent = txt[lang].h1;
+      document.getElementById('langBtn').textContent = txt[lang].btnLang;
+      document.getElementById('addAffiches').textContent = txt[lang].addAffiche;
+    }
+    function closePassModal(){
+      document.getElementById('passModal').style.display = 'none';
+      document.getElementById('passInput').value = '';
+    }
+    function checkPass(){
+      if (document.getElementById('passInput').value === PASSWORD){
+        closePassModal();
+        openAdminPanel();
+      } else {
+        alert('Mot de passe incorrect');
+      }
+    }
+    function openAdminPanel(){
+      document.getElementById('adminPanel').style.display = 'block';
+      renderAdminList();
+      showCommandes();
+    }
+    function renderAdminList(){
+      const list = document.getElementById('adminList');
+      list.innerHTML = '';
+      catalogue.forEach((prod,idx)=>{
+        const div = document.createElement('div');
+        div.className = 'admin-item';
+        div.innerHTML = `
+          <h4>Affiche ${idx+1}</h4>
+          <input type="text" placeholder="Nom" value="${prod.name}" onchange="catalogue[${idx}].name=this.value; saveCatalog();">
+          <input type="text" placeholder="Description" value="${prod.desc}" onchange="catalogue[${idx}].desc=this.value; saveCatalog();">
+          <input type="number" placeholder="Prix" value="${prod.price}" onchange="catalogue[${idx}].price=parseInt(this.value)||0; saveCatalog();">
+          <input type="file" accept="image/*" onchange="changeImage(${idx},this)">
+          <img src="${prod.img}" style="max-width:120px;display:block;margin:.3rem 0;">
+          <button class="btn" onclick="removeAffiche(${idx})">Supprimer</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+    function changeImage(idx,input){
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e=>{
+        catalogue[idx].img = e.target.result;
+        renderAdminList();
+        saveCatalog();
+      };
+      reader.readAsDataURL(file);
+    }
+    function removeAffiche(idx){
+      if (catalogue.length <= 1) return alert('Il faut au moins 1 affiche');
+      catalogue.splice(idx,1);
+      renderAdminList();
+      renderCatalog();
+      saveCatalog();
+    }
+    function addEmptyAffiche(){
+      if (catalogue.length >= MAX_AFFICHES) return alert('Max 20 affiches');
+      const newId = catalogue.length ? Math.max(...catalogue.map(p=>p.id)) + 1 : 1;
+      catalogue.push({id:newId, name:'Nouveau PC',desc:'Description ici',price:50000,img:'https://via.placeholder.com/800x600?text=Nouveau+PC'});
+      renderAdminList();
+      renderCatalog();
+      saveCatalog();
+    }
+    function openFormModal(prod){
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.style.display = 'flex';
+      overlay.innerHTML = `
+        <div class="modal">
+          <button class="close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+          <h2>${txt[lang].modalTitle}</h2>
+          <form id="commandeForm">
+            <input type="text" name="nom" placeholder="${txt[lang].placeholderNom}" required>
+            <input type="text" name="prenom" placeholder="${txt[lang].placeholderPrenom}" required>
+            <select name="wilaya" required></select>
+            <input type="tel" name="tel1" placeholder="${txt[lang].placeholderTel1}" required>
+            <input type="tel" name="tel2" placeholder="${txt[lang].placeholderTel2}">
+            <label><input type="radio" name="livraison" value="bureau" checked> ${txt[lang].radioBureau}</label>
+            <label><input type="radio" name="livraison" value="domicile"> ${txt[lang].radioDomicile}</label>
+            <input type="hidden" name="produit" value="${prod.name}">
+            <input type="hidden" name="total">
+            <button type="submit" class="btn">${txt[lang].submit}</button>
+          </form>
+        </div>`;
+      document.body.appendChild(overlay);
+      const wilSel = overlay.querySelector('select[name=wilaya]');
+      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
+      WILAYAS.forEach(w=>{
+        const opt = document.createElement('option');
+        opt.value = w.prix;
+        opt.textContent = lang==='fr'? w.fr : w.ar;
+        opt.dataset.nom = w.fr;
+        wilSel.appendChild(opt);
+      });
+      const totalInput = overlay.querySelector('input[name=total]');
+      function updTotal(){
+        const liv = parseInt(wilSel.value)||0; const tot = prod.price + liv;
+        totalInput.value = tot;
+      }
+      wilSel.onchange = updTotal; updTotal();
+      overlay.querySelector('#commandeForm').onsubmit = e=>{
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        const selected = wilSel.options[wilSel.selectedIndex];
+        data.wilayaNom = selected ? selected.textContent : '';
+        data.date = new Date().toLocaleString('fr-DZ');
+        saveCommande(data);
+        alert(lang==='fr'?'Commande enregistrée !':'تم حفظ الطلب !');
+        overlay.remove();
+        showCommandes();
+      };
+    }
+    function saveCommande(obj){
+      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      obj.id = Date.now();
+      arr.push(obj);
+      localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
+    }
+    function showCommandes(){
+      const cont = document.getElementById('commandesList');
+      const arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      if (!arr.length) return cont.innerHTML = '<p>Aucune commande</p>';
+      let html = '';
+      arr.forEach(c=>{
+        html += `
+          <div class="cmd-line">
+            <label>
+              <input type="checkbox" class="cmdCheck" data-id="${c.id}">
+              <strong>${c.nom} ${c.prenom}</strong> | ${c.wilayaNom} | ${c.tel1} ${c.tel2?'/'+c.tel2:''} | ${c.livraison} | ${c.produit} | ${c.total} DA | ${c.date}
+            </label>
+            <button onclick="deleteOne(${c.id})" title="Supprimer">❌</button>
+          </div>`;
+      });
+      cont.innerHTML = html;
       document.getElementById('selectAll').onchange = e=>{
         document.querySelectorAll('.cmdCheck').forEach(ch=>ch.checked = e.target.checked);
       };
@@ -340,6 +513,18 @@
       arr = arr.filter(c=>!ids.includes(c.id));
       localStorage.setItem('commandesFormulaire', JSON.stringify(arr));
       showCommandes();
+    }
+    // AFFICHAGE IMAGE
+    function openImg(src){
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.style.display = 'flex';
+      overlay.innerHTML = `
+        <div class="modal">
+          <button class="close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+          <img src="${src}" style="width:100%;border-radius:6px;">
+        </div>`;
+      document.body.appendChild(overlay);
     }
   </script>
 </body>
