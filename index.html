@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Techno Directe – Catalogue + Admin</title>
+  <title>Techno Directe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -46,6 +46,7 @@
     <h1 id="h1-title">Techno Directe</h1>
     <button class="lang-switch" id="langBtn">العربية</button>
   </header>
+
   <div class="container">
     <div id="catalogue"></div>
     <div class="admin-panel" id="adminPanel">
@@ -80,6 +81,7 @@
     <p>Contact WhatsApp / appel : <a href="https://wa.me/213699039372" style="color:var(--accent);">0699 03 93 72</a> – <a href="https://wa.me/213560072059" style="color:var(--accent);">0560 07 20 59</a></p>
     <p>Suivez-nous : <a href="https://facebook.com/TECHNODIRECT" target="_blank" style="color:var(--accent);">Facebook TECHNO DIRECT</a> – <a href="https://instagram.com/TECHNO_DIRECT" target="_blank" style="color:var(--accent);">Instagram TECHNO_DIRECT</a></p>
   </footer>
+
   <script>
     const PASSWORD = 'technoid';
     const MAX_AFFICHES = 20;
@@ -333,9 +335,9 @@
     function deleteSelected(){
       const checks = document.querySelectorAll('.cmdCheck:checked');
       if (!checks.length) return alert('Aucune commande sélectionnée');
-      if (!confirm('Supprimer les commandes sélection.toLocaleString('fr-DZ') + ' DA';
-          const prodName = card.querySelector('h2').textContent;
-          const wtxt = lang==='fr'?
+      if (!confirm('Supprimer les commandes sélectionnées ?')) return;
+      let arr = JSON.parse(localStorage.getItem('commandesFormulaire')||'[]');
+      const const wtxt = lang==='fr'?
             `Bonjour Techno Directe, je veux commander : ${prodName} (Total : ${tot} DA)`:
             `مرحبا تكنو دايركت، أريد طلب : ${prodName} (المجموع : ${tot} دج)`;
           whats.href = `https://wa.me/${PHONE1}?text=${encodeURIComponent(wtxt)}`;
