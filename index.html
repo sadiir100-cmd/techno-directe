@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Techno Directe – Admin + Catalogue</title>
+  <title>Techno Directe – Catalogue + Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -23,12 +23,10 @@
     .btn:hover{background:#e55a00;}
     select{margin:.5rem 0;padding:.5rem;width:100%;max-width:300px;}
     @media(min-width:600px){.card{flex-direction:row;}.card img{width:260px;height:auto;}}
-    /* MODALES */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:999;}
     .modal{background:#fff;border-radius:8px;width:90%;max-width:500px;padding:1.5rem;position:relative;}
     .modal .close{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1.4rem;cursor:pointer;}
     body[dir="rtl"] .modal .close{left:.7rem;right:auto;}
-    /* ADMIN */
     .admin-panel{background:#ffeaa7;padding:1rem;border-radius:6px;margin:2rem 0;display:none;}
     .admin-item{border:1px solid var(--accent);padding:.7rem;margin:.5rem 0;border-radius:4px;background:#fff;}
     .admin-item input[type=text],.admin-item input[type=number],.admin-item input[type=file]{width:100%;margin:.3rem 0;}
@@ -45,22 +43,17 @@
   </header>
 
   <div class="container">
-    <!-- CATALOGUE -->
     <div id="catalogue"></div>
-
-    <!-- ADMIN PANEL -->
     <div class="admin-panel" id="adminPanel">
       <h2>Zone Admin</h2>
       <button class="btn" id="addAffiches">+ Ajouter une affiche (max 20)</button>
       <div id="adminList"></div>
       <button class="btn" onclick="saveCatalog()">Sauvegarder les changements</button>
-
       <h3 style="margin-top:1.2rem">Commandes reçues (formulaire)</h3>
       <div id="commandesList"></div>
     </div>
   </div>
 
-  <!-- MODALE PASSWORD -->
   <div class="modal-overlay" id="passModal">
     <div class="modal">
       <button class="close" onclick="closePassModal()">&times;</button>
@@ -75,24 +68,19 @@
   </footer>
 
   <script>
-    /* ========= CONFIG ========= */
     const PASSWORD = 'technoid';
     const MAX_AFFICHES = 20;
-    const PHONE1 = '213699039372'; // 0699039372
-    const PHONE2 = '213560072059'; // 0560072059
+    const PHONE1 = '213699039372';
+    const PHONE2 = '213560072059';
     const WILAYAS = [
       {fr:'ADRAR',ar:'أدرار',prix:1400},{fr:'CHLEF',ar:'الشلف',prix:800},{fr:'LAGHOUAT',ar:'الأغواط',prix:950},{fr:'OUM EL BOUAGHI',ar:'أم البواقي',prix:800},{fr:'BATNA',ar:'باتنة',prix:800},{fr:'BEJAIA',ar:'بجاية',prix:450},{fr:'BISKRA',ar:'بسكرة',prix:950},{fr:'BECHAR',ar:'بشار',prix:1100},{fr:'BLIDA',ar:'البليدة',prix:750},{fr:'BOUIRA',ar:'البويرة',prix:700},{fr:'TAMANRASSET',ar:'تمنراست',prix:1600},{fr:'TEBESSA',ar:'تبسة',prix:800},{fr:'TLEMCEN',ar:'تلمسان',prix:900},{fr:'TIARET',ar:'تيارت',prix:800},{fr:'TIZI OUZOU',ar:'تيزي وزو',prix:650},{fr:'ALGER',ar:'الجزائر',prix:600},{fr:'DJELFA',ar:'الجلفة',prix:950},{fr:'JUEL',ar:'جيجل',prix:700},{fr:'SETIF',ar:'سطيف',prix:750},{fr:'SAIDA',ar:'سعيدة',prix:800},{fr:'SKIKDA',ar:'سكيكدة',prix:750},{fr:'SIDIBELABBES',ar:'سيدي بلعباس',prix:750},{fr:'ANNABA',ar:'عنابة',prix:800},{fr:'GUELMA',ar:'قالمة',prix:800},{fr:'CONSTANTINE',ar:'قسنطينة',prix:750},{fr:'MEDEA',ar:'المدية',prix:750},{fr:'MOSTAGANEM',ar:'معسكر',prix:750},{fr:'M\'SILA',ar:'المسيلة',prix:850},{fr:'MASCARA',ar:'مascara',prix:750},{fr:'OUARGLA',ar:'ورقلة',prix:1000},{fr:'ORAN',ar:'وهران',prix:700},{fr:'EL BAYADH',ar:'البيض',prix:1050},{fr:'ILLIZI',ar:'إيليزي',prix:1100},{fr:'BORDJ BOU ARRERIDJ',ar:'برج بوعريريج',prix:750},{fr:'BOUMERDES',ar:'بومرداس',prix:750},{fr:'EL TARF',ar:'الطارف',prix:850},{fr:'TINDOUF',ar:'تندوف',prix:1600},{fr:'TISSEMSILT',ar:'تيسمسيلت',prix:800},{fr:'EL OUED',ar:'الوادي',prix:1000},{fr:'KHENCHELA',ar:'خنشلة',prix:800},{fr:'SOUK AHRAS',ar:'سوق أهراس',prix:800},{fr:'TIPAZA',ar:'تيبازة',prix:900},{fr:'MILA',ar:'ميلة',prix:800},{fr:'AIN DEFLA',ar:'عين الدفلى',prix:850},{fr:'NAAMA',ar:'النعامة',prix:800},{fr:'AIN TEMOUCHENT',ar:'عين تموشنت',prix:800},{fr:'GHARDAIA',ar:'غرداية',prix:800},{fr:'RELIZANE',ar:'غليزان',prix:800},{fr:'TIMIMOUN',ar:'تيميمون',prix:800},{fr:'BORDJ BADJI MOKHTAR',ar:'برج باجي مختار',prix:800},{fr:'OULED DJELLAL',ar:'أولاد جلال',prix:800},{fr:'BENI ABBES',ar:'بني عباس',prix:800},{fr:'IN SALAH',ar:'عين صالح',prix:800},{fr:'IN GUEZZAM',ar:'عين قزام',prix:800},{fr:'TOUGGOURT',ar:'تقرت',prix:800},{fr:'DJANET',ar:'جانت',prix:800},{fr:'MGHAIR',ar:'الاغواط',prix:800},{fr:'EL MENIAA',ar:'المنيعة',prix:800}
     ];
-
-    /* ========= LANG / UTILS ========= */
     let lang = 'fr';
     const body = document.body;
     const txt = {
       fr:{h1:'Techno Directe',btnLang:'العربية',modalTitle:'Formulaire de commande',placeholderNom:'Nom',placeholderPrenom:'Prénom',placeholderTel1:'Téléphone 1',placeholderTel2:'Téléphone 2 (facultatif)',radioBureau:'Bureau de poste',radioDomicile:'À domicile',submit:'Envoyer la commande',labelWilaya:'Wilaya de livraison :',commanderWhatsapp:'Commander sur WhatsApp',commanderForm:'Remplir le formulaire',total:'Total :',adminTitle:'Zone Admin – Commandes formulaire',addAffiche:'+ Ajouter une affiche (max 20)',save:'Sauvegarder les changements'},
       ar:{h1:'تكنو دايركت',btnLang:'Français',modalTitle:'نموذج الطلب',placeholderNom:'اللقب',placeholderPrenom:'الاسم',placeholderTel1:'الهاتف 1',placeholderTel2:'الهاتف 2 (اختياري)',radioBureau:'مكتب البريد',radioDomicile:'توصيل للمنزل',submit:'إرسال الطلب',labelWilaya:'ولاية التوصيل :',commanderWhatsapp:'اطلب عبر واتساب',commanderForm:'املأ النموذج',total:'المجموع :',adminTitle:'منطقة الأدمن – طلبات النموذج',addAffiche:'+ إضافة ملصق (max 20)',save:'حفظ التغييرات'}
     };
-
-    /* ========= CATALOGUE ========= */
     const DEFAULT_CATALOG = [
       {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60'},
       {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60'},
@@ -100,14 +88,12 @@
     ];
     let catalogue = [];
 
-    /* ========= INIT ========= */
     initCatalog();
     renderCatalog();
     attachEvents();
     updateLang();
     showCommandes();
 
-    /* ========= FUNCTIONS ========= */
     function initCatalog(){
       const saved = localStorage.getItem('technoCatalog');
       if (saved) catalogue = JSON.parse(saved);
@@ -170,19 +156,8 @@
       });
     }
     function attachEvents(){
-      // langue
       document.getElementById('langBtn').onclick = ()=>{ lang = lang==='fr'?'ar':'fr'; updateLang(); fillWilayaSelects(); renderCatalog(); };
-      // double-click zone
       document.getElementById('zoneDblClick').ondblclick = ()=>{ document.getElementById('passModal').style.display = 'flex'; };
-      // formulaire modal
-      document.querySelectorAll('.formulaire').forEach(btn=>{
-        btn.onclick = (e)=>{
-          const prodId = e.target.dataset.id;
-          const prod = catalogue.find(p=>p.id==prodId);
-          openFormModal(prod);
-        };
-      });
-      // admin add affiche
       document.getElementById('addAffiches').onclick = ()=>{ addEmptyAffiche(); };
     }
     function updateLang(){
@@ -192,7 +167,6 @@
       document.getElementById('langBtn').textContent = txt[lang].btnLang;
       document.getElementById('addAffiches').textContent = txt[lang].addAffiche;
     }
-    /* ========= PASSWORD + ADMIN ========= */
     function closePassModal(){
       document.getElementById('passModal').style.display = 'none';
       document.getElementById('passInput').value = '';
@@ -235,6 +209,7 @@
       reader.onload = e=>{
         catalogue[idx].img = e.target.result;
         renderAdminList();
+        saveCatalog(); // sauvegarde immédiate
       };
       reader.readAsDataURL(file);
     }
@@ -243,6 +218,7 @@
       catalogue.splice(idx,1);
       renderAdminList();
       renderCatalog();
+      saveCatalog();
     }
     function addEmptyAffiche(){
       if (catalogue.length >= MAX_AFFICHES) return alert('Max 20 affiches');
@@ -250,13 +226,8 @@
       catalogue.push({id:newId, name:'Nouveau PC',desc:'Description ici',price:50000,img:'https://via.placeholder.com/800x600?text=Nouveau+PC'});
       renderAdminList();
       renderCatalog();
+      saveCatalog();
     }
-    function saveCatalog(){
-      localStorage.setItem('technoCatalog', JSON.stringify(catalogue));
-      alert('Catalogue sauvegardé ! Les visiteurs verront les changements.');
-      renderCatalog();
-    }
-    /* ========= COMMANDES ========= */
     function openFormModal(prod){
       const overlay = document.createElement('div');
       overlay.className = 'modal-overlay';
@@ -279,18 +250,24 @@
           </form>
         </div>`;
       document.body.appendChild(overlay);
-      fillWilayaSelects();
-      const form = overlay.querySelector('#commandeForm');
-      const wilSel = form.wilaya;
-      const totalInput = form.total;
+      // remplir la liste des wilayas
+      const wilSel = overlay.querySelector('select[name=wilaya]');
+      wilSel.innerHTML = '<option value="">-- '+ (lang==='fr'?'Choisir':'اختر') +' --</option>';
+      WILAYAS.forEach(w=>{
+        const opt = document.createElement('option');
+        opt.value = w.prix;
+        opt.textContent = lang==='fr'? w.fr : w.ar;
+        wilSel.appendChild(opt);
+      });
+      const totalInput = overlay.querySelector('input[name=total]');
       function updTotal(){
         const liv = parseInt(wilSel.value)||0; const tot = prod.price + liv;
         totalInput.value = tot;
       }
       wilSel.onchange = updTotal; updTotal();
-      form.onsubmit = e=>{
+      overlay.querySelector('#commandeForm').onsubmit = e=>{
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(form));
+        const data = Object.fromEntries(new FormData(e.target));
         data.date = new Date().toLocaleString('fr-DZ');
         saveCommande(data);
         alert(lang==='fr'?'Commande enregistrée !':'تم حفظ الطلب !');
