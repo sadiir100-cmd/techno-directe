@@ -1,410 +1,269 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Techno Direct – Catalogue & Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Techno Direct – Vente PC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    * {
-      font-family: 'Cairo', sans-serif;
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --accent: #ff6b00;
+      --bg: #f5f5f5;
+      --dark: #1c1c1c;
+      --light: #fff;
+      --radius: 10px;
     }
-
     body {
-      background: #121212;
-      color: #fff;
-      overflow-x: hidden;
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--dark);
     }
-
     header {
-      background: #ff6b00;
-      color: white;
-      padding: 15px 25px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-    }
-
-    header .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    header img {
-      height: 55px;
-      width: auto;
-    }
-
-    header h1 {
-      font-size: 1.8em;
-      font-weight: 700;
-    }
-
-    .lang-btn {
-      background: transparent;
-      border: 2px solid white;
-      color: white;
-      padding: 5px 15px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .lang-btn:hover {
-      background: white;
-      color: #ff6b00;
-    }
-
-    .banner {
-      background: linear-gradient(90deg, #ff6b00, #ff8800);
+      background: var(--accent);
       color: white;
       text-align: center;
-      padding: 12px 0;
+      padding: 15px;
+      font-size: 22px;
       font-weight: bold;
-      font-size: 1.1em;
-      letter-spacing: 0.5px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
     }
-
-    .catalogue {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    header span {
+      display: block;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
-      padding: 25px;
+      padding: 20px;
     }
-
     .card {
-      background: #1e1e1e;
-      border-radius: 10px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 280px;
       overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-      cursor: pointer;
-      transition: transform 0.3s ease;
+      transition: 0.3s;
     }
-
     .card:hover {
       transform: scale(1.03);
     }
-
     .card img {
       width: 100%;
-      height: 180px;
+      height: 200px;
       object-fit: cover;
-      border-bottom: 3px solid #ff6b00;
     }
-
     .info {
-      padding: 12px;
-      text-align: center;
+      padding: 10px 15px;
     }
-
     .info h3 {
-      margin-bottom: 5px;
-      color: #ff6b00;
-      font-size: 1.1em;
-    }
-
-    .info p {
-      color: #ddd;
-      font-size: 0.9em;
-      margin-bottom: 8px;
-    }
-
-    .info strong {
-      color: #fff;
-    }
-
-    .footer {
-      background: #000;
-      color: white;
-      text-align: center;
-      padding: 25px;
-      margin-top: 40px;
-      border-top: 2px solid #ff6b00;
-    }
-
-    .footer p {
       margin: 5px 0;
-      font-size: 0.9em;
+      font-size: 18px;
+      color: var(--accent);
     }
-
-    .footer .socials {
-      margin-top: 10px;
-      color: #ff6b00;
+    .info p {
+      font-size: 14px;
+      margin: 5px 0;
     }
-
-    /* Modal produit */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+    .info .price {
+      font-weight: bold;
+      font-size: 16px;
+      color: var(--dark);
     }
-
-    .modal-content {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-      width: 90%;
-      text-align: center;
-      border: 2px solid #ff6b00;
-    }
-
-    .modal-content img {
+    button {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 10px;
       width: 100%;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .close-btn {
-      color: #ff6b00;
-      float: right;
-      font-size: 1.5em;
+      font-weight: bold;
+      border-radius: 0 0 var(--radius) var(--radius);
       cursor: pointer;
     }
-
-    /* Zone admin */
-    .admin-panel {
-      margin: 30px;
+    button:hover {
+      background: #e65a00;
+    }
+    footer {
+      background: var(--dark);
+      color: white;
+      text-align: center;
       padding: 20px;
-      background: #1a1a1a;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      font-size: 14px;
+      margin-top: 40px;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 5px;
     }
 
-    .admin-panel h2 {
-      color: #ff6b00;
-      margin-bottom: 15px;
+    /* Zone admin (hidden by default) */
+    #adminPanel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      overflow: auto;
+      z-index: 999;
+      padding: 20px;
     }
-
-    .admin-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
+    #adminPanel h2 {
+      color: var(--accent);
     }
-
-    .admin-controls button {
-      background: #ff6b00;
+    #adminPanel input, #adminPanel textarea, #adminPanel select {
+      width: 100%;
+      margin: 5px 0 10px;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+    #adminPanel button {
+      margin-top: 10px;
+      background: var(--accent);
       color: white;
       border: none;
-      padding: 10px 15px;
+      padding: 10px;
       border-radius: 5px;
       cursor: pointer;
-      transition: 0.3s;
     }
-
-    .admin-controls button:hover {
-      background: #ff8800;
+    #adminPanel table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
     }
-
-    .hidden {
-      display: none;
+    #adminPanel th, #adminPanel td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
     }
-
-    .dragging {
-      opacity: 0.5;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      background: #ff6b00;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      display: none;
-      font-weight: bold;
-    }
+    .hidden {display:none;}
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo-container">
-      <img src="1416B38E-F6A2-41A1-A25E-3A6AD679001C.png" alt="Logo Techno Direct">
-      <h1>Techno Direct</h1>
-    </div>
-    <button class="lang-btn" onclick="toggleLang()">Arabe</button>
+
+  <header ondblclick="openLogin()">
+    🖥️ Techno Direct
+    <span>Cartable gratuit + Garantie</span>
   </header>
 
-  <div class="banner" id="bannerText">🎒 Cartable gratuit + Garantie incluse</div>
+  <main id="catalogue">
+    <!-- 5 affiches par défaut -->
+  </main>
 
-  <section class="catalogue" id="catalogue">
-
-    <!-- =================== PRODUITS =================== -->
-
-    <!-- Produit 1 -->
-    <div class="card" data-produit="HP ZBook 14u G6" data-prix="60000 DA" data-description="Écran Full HD • Intel i7 8e Gen • 16 GigaOKT RAM • 512 GigaOKT SSD • Garantie + chargeur original inclus">
-      <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60" alt="HP ZBook 14u G6">
-      <div class="info">
-        <h3>HP ZBook 14u G6</h3>
-        <p>Core i7 • 16 GigaOKT • SSD 512 GigaOKT</p>
-        <strong>Prix : 60 000 DA</strong>
-      </div>
-    </div>
-
-    <!-- Produit 2 -->
-    <div class="card" data-produit="Lenovo ThinkPad T480" data-prix="72000 DA" data-description="Core i7 8e Gen • 16 GigaOKT • SSD 512 GigaOKT • Écran Full HD • Garantie et chargeur inclus">
-      <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" alt="ThinkPad T480">
-      <div class="info">
-        <h3>Lenovo ThinkPad T480</h3>
-        <p>Core i7 • 16 GigaOKT • SSD 512 GigaOKT</p>
-        <strong>Prix : 72 000 DA</strong>
-      </div>
-    </div>
-
-    <!-- Produit 3 -->
-    <div class="card" data-produit="Dell Latitude 7490" data-prix="68000 DA" data-description="Core i7 8e Gen • 16 GigaOKT RAM • SSD 512 GigaOKT • Écran 14'' Full HD • Garantie + chargeur original">
-      <img src="https://images.unsplash.com/photo-1587202372775-98927c31e6b3?auto=format&fit=crop&w=800&q=60" alt="Dell Latitude 7490">
-      <div class="info">
-        <h3>Dell Latitude 7490</h3>
-        <p>Core i7 • 16 GigaOKT • SSD 512 GigaOKT</p>
-        <strong>Prix : 68 000 DA</strong>
-      </div>
-    </div>
-
-    <!-- Produit 4 -->
-    <div class="card" data-produit="HP EliteBook 840 G5" data-prix="59000 DA" data-description="Core i5 8e Gen • 8 GigaOKT RAM • 256 GigaOKT SSD • Full HD • Garantie + chargeur original">
-      <img src="https://images.unsplash.com/photo-1527443154391-507e9dc6c5cc?auto=format&fit=crop&w=800&q=60" alt="EliteBook 840 G5">
-      <div class="info">
-        <h3>HP EliteBook 840 G5</h3>
-        <p>Core i5 • 8 GigaOKT • SSD 256 GigaOKT</p>
-        <strong>Prix : 59 000 DA</strong>
-      </div>
-    </div>
-  </section>
-
-  <!-- =================== MODALE PRODUIT =================== -->
-  <div class="modal" id="productModal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-      <img id="modalImage" src="" alt="">
-      <h2 id="modalTitle"></h2>
-      <p id="modalDescription"></p>
-      <strong id="modalPrice"></strong>
-    </div>
-  </div>
-
-  <!-- =================== ADMIN PANEL =================== -->
-  <section class="admin-panel" id="adminPanel">
-    <h2>🔧 Panneau Administrateur</h2>
-    <div class="admin-controls">
-      <button onclick="toggleAdminMode()">Afficher / Masquer Admin</button>
-      <button onclick="addProduct()">Ajouter un produit</button>
-      <button onclick="saveOrder()">Sauvegarder l’ordre</button>
-      <button onclick="exportData()">Exporter le catalogue</button>
-    </div>
-    <p style="font-size: 0.9em; color:#ccc;">Utilise le mode admin pour réorganiser les cartes ou en ajouter de nouvelles facilement.</p>
-  </section>
-
-  <div class="toast" id="toast">✅ Changement enregistré</div>
-
-  <!-- =================== FOOTER =================== -->
-  <footer class="footer">
-    <p>© 2025 Techno Direct. Tous droits réservés.</p>
-    <div class="socials">
-      📱 Instagram : <strong>techno__direct</strong> | Facebook : <strong>techno direct</strong>
-    </div>
+  <footer>
+    <p>📞 0699039372 | 0560072059</p>
+    <p>📷 Instagram: <a href="https://instagram.com/techno__direct">@techno__direct</a></p>
+    <p>📘 Facebook: <a href="https://facebook.com/techno direct">techno direct</a></p>
   </footer>
 
-  <script>
-    // ----- Langue Arabe / Français -----
-    function toggleLang() {
-      const btn = document.querySelector(".lang-btn");
-      const banner = document.getElementById("bannerText");
+  <!-- Zone admin -->
+  <div id="adminPanel">
+    <h2>Zone Administrative</h2>
+    <button onclick="closeAdmin()">Fermer</button>
+    <h3>Ajouter ou modifier une affiche</h3>
+    <input id="nomPC" placeholder="Nom du PC">
+    <input id="prixPC" type="number" placeholder="Prix du PC (DA)">
+    <textarea id="descPC" placeholder="Description du produit"></textarea>
+    <input id="imagePC" placeholder="URL de l'image du PC">
+    <button onclick="ajouterAffiche()">Sauvegarder Affiche</button>
 
-      if (btn.textContent === "Arabe") {
-        btn.textContent = "Français";
-        banner.textContent = "🎒 حقيبة مجانية + ضمان وشاحن أصلي";
-        document.querySelectorAll(".info strong").forEach(el => {
-          el.textContent = el.textContent.replace("Prix", "السعر");
-        });
+    <h3>Commandes reçues</h3>
+    <table id="commandesTable">
+      <tr><th>Nom</th><th>Téléphone</th><th>Wilaya</th><th>Livraison</th><th>Supprimer</th></tr>
+    </table>
+    <button onclick="supprimerTout()">Supprimer toutes les commandes</button>
+
+    <h3>Options</h3>
+    <button onclick="toggleLivraison()">Activer / Désactiver Livraison Gratuite</button>
+  </div>
+
+  <script>
+    let adminVisible = false;
+    let livraisonGratuite = false;
+    let affiches = JSON.parse(localStorage.getItem("affiches")) || [
+      {nom: "HP ZBook 14u G6", prix: 60000, desc: "PC professionnel garanti, chargeur original.", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60"},
+      {nom: "Lenovo ThinkPad T480", prix: 72000, desc: "Solide et rapide, idéal bureautique.", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60"},
+      {nom: "Dell Latitude 3310", prix: 65000, desc: "Portable durable et pratique.", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60"},
+      {nom: "HP EliteBook 840 G3", prix: 58000, desc: "Fin, léger, rapide, écran Full HD.", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=60"},
+      {nom: "Lenovo IdeaPad 3", prix: 54000, desc: "Excellent rapport qualité/prix.", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60"},
+    ];
+
+    function afficherAffiches(){
+      let container = document.getElementById("catalogue");
+      container.innerHTML = "";
+      affiches.forEach((pc, i)=>{
+        let html = `
+          <div class="card">
+            <img src="${pc.image}" alt="${pc.nom}">
+            <div class="info">
+              <h3>${pc.nom}</h3>
+              <p>${pc.desc}</p>
+              <p class="price">${pc.prix.toLocaleString()} DA</p>
+            </div>
+            <button onclick="commander('${pc.nom}', ${pc.prix})">Commander</button>
+          </div>`;
+        container.innerHTML += html;
+      });
+    }
+
+    afficherAffiches();
+
+    function commander(nom, prix){
+      let nomClient = prompt("Votre prénom et nom :");
+      let tel = prompt("Votre numéro de téléphone :");
+      let wilaya = prompt("Votre wilaya :");
+      let type = prompt("Livraison à domicile / bureau ?");
+      let final = livraisonGratuite ? prix : prix + 800; // exemple ajout livraison moyenne
+      alert(`Commande envoyée ! Total estimé : ${final} DA`);
+      enregistrerCommande(nomClient, tel, wilaya, type);
+      window.open(`https://wa.me/213699039372?text=Je veux commander ${nom}`, "_blank");
+    }
+
+    function enregistrerCommande(nom, tel, wilaya, type){
+      let table = document.getElementById("commandesTable");
+      let tr = document.createElement("tr");
+      tr.innerHTML = `<td>${nom}</td><td>${tel}</td><td>${wilaya}</td><td>${type}</td><td><button onclick="this.parentNode.parentNode.remove()">❌</button></td>`;
+      table.appendChild(tr);
+    }
+
+    function openLogin(){
+      let pwd = prompt("Mot de passe :");
+      if(pwd === "technoid"){
+        document.getElementById("adminPanel").style.display = "block";
       } else {
-        btn.textContent = "Arabe";
-        banner.textContent = "🎒 Cartable gratuit + Garantie incluse";
-        document.querySelectorAll(".info strong").forEach(el => {
-          el.textContent = el.textContent.replace("السعر", "Prix");
-        });
+        alert("Mot de passe incorrect");
       }
     }
 
-    // ----- Modal Produit -----
-    const modal = document.getElementById("productModal");
-    const cards = document.querySelectorAll(".card");
-
-    cards.forEach(card => {
-      card.addEventListener("click", () => {
-        document.getElementById("modalImage").src = card.querySelector("img").src;
-        document.getElementById("modalTitle").textContent = card.dataset.produit;
-        document.getElementById("modalDescription").textContent = card.dataset.description;
-        document.getElementById("modalPrice").textContent = "💰 " + card.dataset.prix;
-        modal.style.display = "flex";
-      });
-    });
-
-    function closeModal() {
-      modal.style.display = "none";
+    function closeAdmin(){
+      document.getElementById("adminPanel").style.display = "none";
+      localStorage.setItem("affiches", JSON.stringify(affiches));
     }
 
-    // ----- Admin Mode -----
-    let adminMode = false;
-
-    function toggleAdminMode() {
-      adminMode = !adminMode;
-      document.body.classList.toggle("admin-active", adminMode);
-      showToast(adminMode ? "Mode admin activé" : "Mode admin désactivé");
+    function ajouterAffiche(){
+      let nom = document.getElementById("nomPC").value;
+      let prix = parseInt(document.getElementById("prixPC").value);
+      let desc = document.getElementById("descPC").value;
+      let img = document.getElementById("imagePC").value;
+      affiches.push({nom, prix, desc, image: img});
+      localStorage.setItem("affiches", JSON.stringify(affiches));
+      afficherAffiches();
+      alert("Affiche sauvegardée !");
     }
 
-    function addProduct() {
-      const catalogue = document.getElementById("catalogue");
-      const newCard = document.createElement("div");
-      newCard.className = "card";
-      newCard.dataset.produit = "Nouveau produit";
-      newCard.dataset.prix = "0 DA";
-      newCard.dataset.description = "Description ici";
-      newCard.innerHTML = `
-        <img src="https://via.placeholder.com/400x250?text=New+Product" alt="New">
-        <div class="info">
-          <h3>Nouveau produit</h3>
-          <p>Ajoutez les détails ici</p>
-          <strong>Prix : 0 DA</strong>
-        </div>`;
-      catalogue.appendChild(newCard);
-      showToast("✅ Produit ajouté !");
+    function supprimerTout(){
+      document.getElementById("commandesTable").innerHTML = "<tr><th>Nom</th><th>Téléphone</th><th>Wilaya</th><th>Livraison</th><th>Supprimer</th></tr>";
     }
 
-    function saveOrder() {
-      showToast("💾 Sauvegardé !");
+    function toggleLivraison(){
+      livraisonGratuite = !livraisonGratuite;
+      alert(livraisonGratuite ? "Livraison gratuite activée !" : "Livraison normale rétablie");
     }
-
-    function exportData() {
-      showToast("📦 Catalogue exporté !");
-    }
-
-    // ----- Toast Message -----
-    function showToast(msg) {
-      const toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.style.display = "block";
-      setTimeout(() => toast.style.display = "none", 2000);
-    }
-
-    // ----- Fermeture du modal -----
-    window.onclick = (e) => {
-      if (e.target === modal) modal.style.display = "none";
-    };
   </script>
 </body>
 </html>
