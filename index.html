@@ -2,33 +2,38 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Techno Direct – Vente PC</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Techno Direct – Vente de PC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --accent: #ff6b00;
-      --bg: #f5f5f5;
-      --dark: #1c1c1c;
-      --light: #fff;
+      --orange: #ff6600;
+      --noir: #222;
+      --gris: #f3f3f3;
+      --blanc: #fff;
       --radius: 10px;
     }
+    * { box-sizing: border-box; }
     body {
       font-family: 'Cairo', sans-serif;
       margin: 0;
-      background: var(--bg);
-      color: var(--dark);
+      background: var(--gris);
+      color: var(--noir);
     }
     header {
-      background: var(--accent);
+      background: var(--orange);
       color: white;
-      text-align: center;
       padding: 15px;
-      font-size: 22px;
+      text-align: center;
+      font-size: 24px;
       font-weight: bold;
+      cursor: pointer;
+      user-select: none;
     }
     header span {
       display: block;
-      font-size: 16px;
+      font-size: 14px;
+      font-weight: 400;
       margin-top: 5px;
     }
     main {
@@ -39,231 +44,541 @@
       padding: 20px;
     }
     .card {
-      background: white;
+      background: var(--blanc);
+      width: 300px;
       border-radius: var(--radius);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 280px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       overflow: hidden;
-      transition: 0.3s;
+      transition: transform 0.3s;
     }
     .card:hover {
       transform: scale(1.03);
     }
     .card img {
       width: 100%;
-      height: 200px;
+      height: 190px;
       object-fit: cover;
     }
     .info {
-      padding: 10px 15px;
+      padding: 15px;
     }
     .info h3 {
-      margin: 5px 0;
+      margin: 0;
+      color: var(--orange);
       font-size: 18px;
-      color: var(--accent);
     }
     .info p {
       font-size: 14px;
       margin: 5px 0;
     }
-    .info .price {
-      font-weight: bold;
+    .price {
       font-size: 16px;
-      color: var(--dark);
-    }
-    button {
-      background: var(--accent);
-      border: none;
-      color: white;
-      padding: 10px;
-      width: 100%;
       font-weight: bold;
-      border-radius: 0 0 var(--radius) var(--radius);
-      cursor: pointer;
+      color: var(--noir);
+      margin-top: 10px;
     }
-    button:hover {
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: var(--gris);
+    }
+    .buttons button {
+      flex: 1;
+      margin: 0 5px;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+    }
+    .btn-whatsapp:hover {
+      background: #1ea955;
+    }
+    .btn-commande {
+      background: var(--orange);
+      color: white;
+    }
+    .btn-commande:hover {
       background: #e65a00;
     }
     footer {
-      background: var(--dark);
+      background: var(--noir);
       color: white;
       text-align: center;
       padding: 20px;
-      font-size: 14px;
-      margin-top: 40px;
+      margin-top: 30px;
     }
     footer a {
-      color: var(--accent);
+      color: var(--orange);
       text-decoration: none;
       margin: 0 5px;
     }
-
-    /* Zone admin (hidden by default) */
+    /* Fenêtre commande */
+    #formCommande {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .commande-box {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+    }
+    .commande-box h2 {
+      margin-top: 0;
+      text-align: center;
+      color: var(--orange);
+    }
+    .commande-box input, .commande-box select {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .commande-box button {
+      width: 100%;
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .commande-box button:hover {
+      background: #e55a00;
+    }
+    /* Zone admin */
     #adminPanel {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100%;
       height: 100%;
       background: rgba(0,0,0,0.9);
       color: white;
-      overflow: auto;
-      z-index: 999;
+      overflow-y: auto;
       padding: 20px;
+      z-index: 1000;
     }
     #adminPanel h2 {
-      color: var(--accent);
+      color: var(--orange);
     }
     #adminPanel input, #adminPanel textarea, #adminPanel select {
       width: 100%;
-      margin: 5px 0 10px;
+      margin: 6px 0;
       padding: 8px;
       border-radius: 5px;
       border: none;
     }
     #adminPanel button {
-      margin-top: 10px;
-      background: var(--accent);
+      background: var(--orange);
       color: white;
       border: none;
       padding: 10px;
       border-radius: 5px;
+      font-weight: bold;
       cursor: pointer;
+      margin-top: 5px;
     }
     #adminPanel table {
       width: 100%;
-      margin-top: 20px;
       border-collapse: collapse;
+      margin-top: 20px;
     }
     #adminPanel th, #adminPanel td {
-      border: 1px solid #444;
+      border: 1px solid #666;
       padding: 8px;
       text-align: center;
     }
-    .hidden {display:none;}
+    #closeAdmin {
+      background: red;
+      float: right;
+    }
   </style>
 </head>
 <body>
+<header ondblclick="loginAdmin()">
+  🖥️ Techno Direct
+  <span>Cartable gratuit + Garantie</span>
+</header>
 
-  <header ondblclick="openLogin()">
-    🖥️ Techno Direct
-    <span>Cartable gratuit + Garantie</span>
-  </header>
+<main id="catalogue"></main>
 
-  <main id="catalogue">
-    <!-- 5 affiches par défaut -->
-  </main>
+<footer>
+  <p>📞 0699039372 | 0560072059</p>
+  <p>📷 Instagram : <a href="https://instagram.com/techno__direct">@techno__direct</a></p>
+  <p>📘 Facebook : <a href="https://facebook.com/technodirect">Techno Direct</a></p>
+</footer>
 
-  <footer>
-    <p>📞 0699039372 | 0560072059</p>
-    <p>📷 Instagram: <a href="https://instagram.com/techno__direct">@techno__direct</a></p>
-    <p>📘 Facebook: <a href="https://facebook.com/techno direct">techno direct</a></p>
-  </footer>
-
-  <!-- Zone admin -->
-  <div id="adminPanel">
-    <h2>Zone Administrative</h2>
-    <button onclick="closeAdmin()">Fermer</button>
-    <h3>Ajouter ou modifier une affiche</h3>
-    <input id="nomPC" placeholder="Nom du PC">
-    <input id="prixPC" type="number" placeholder="Prix du PC (DA)">
-    <textarea id="descPC" placeholder="Description du produit"></textarea>
-    <input id="imagePC" placeholder="URL de l'image du PC">
-    <button onclick="ajouterAffiche()">Sauvegarder Affiche</button>
-
-    <h3>Commandes reçues</h3>
-    <table id="commandesTable">
-      <tr><th>Nom</th><th>Téléphone</th><th>Wilaya</th><th>Livraison</th><th>Supprimer</th></tr>
-    </table>
-    <button onclick="supprimerTout()">Supprimer toutes les commandes</button>
-
-    <h3>Options</h3>
-    <button onclick="toggleLivraison()">Activer / Désactiver Livraison Gratuite</button>
+<!-- Fenêtre Commande -->
+<div id="formCommande">
+  <div class="commande-box">
+    <h2>Commander maintenant</h2>
+    <input id="cmdNom" placeholder="Votre prénom et nom">
+    <input id="cmdTel" placeholder="Numéro de téléphone">
+    <input id="cmdTel2" placeholder="Deuxième numéro (facultatif)">
+    <select id="cmdWilaya">
+      <option value="">Choisir votre wilaya</option>
+    </select>
+    <select id="cmdType">
+      <option value="Domicile">Livraison à domicile</option>
+      <option value="Bureau">Livraison au bureau / Stop desk</option>
+    </select>
+    <button onclick="validerCommande()">Commander</button>
   </div>
+</div>
 
-  <script>
-    let adminVisible = false;
-    let livraisonGratuite = false;
-    let affiches = JSON.parse(localStorage.getItem("affiches")) || [
-      {nom: "HP ZBook 14u G6", prix: 60000, desc: "PC professionnel garanti, chargeur original.", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60"},
-      {nom: "Lenovo ThinkPad T480", prix: 72000, desc: "Solide et rapide, idéal bureautique.", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60"},
-      {nom: "Dell Latitude 3310", prix: 65000, desc: "Portable durable et pratique.", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60"},
-      {nom: "HP EliteBook 840 G3", prix: 58000, desc: "Fin, léger, rapide, écran Full HD.", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=60"},
-      {nom: "Lenovo IdeaPad 3", prix: 54000, desc: "Excellent rapport qualité/prix.", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60"},
-    ];
+<!-- Zone admin -->
+<div id="adminPanel">
+  <button id="closeAdmin" onclick="closeAdmin()">Fermer</button>
+  <h2>Zone Administrative Techno Direct</h2>
+  <h3>Ajouter / Modifier une Affiche</h3>
+  <input id="nomPC" placeholder="Nom du PC">
+  <input id="prixPC" type="number" placeholder="Prix du PC (DA)">
+  <textarea id="descPC" placeholder="Description du produit"></textarea>
+  <input id="imagePC" placeholder="URL de l'image du PC">
+  <button onclick="ajouterAffiche()">Sauvegarder / Ajouter</button>
 
-    function afficherAffiches(){
-      let container = document.getElementById("catalogue");
-      container.innerHTML = "";
-      affiches.forEach((pc, i)=>{
-        let html = `
-          <div class="card">
-            <img src="${pc.image}" alt="${pc.nom}">
-            <div class="info">
-              <h3>${pc.nom}</h3>
-              <p>${pc.desc}</p>
-              <p class="price">${pc.prix.toLocaleString()} DA</p>
-            </div>
-            <button onclick="commander('${pc.nom}', ${pc.prix})">Commander</button>
-          </div>`;
-        container.innerHTML += html;
-      });
-    }
+  <h3>Commandes reçues</h3>
+  <table id="tableCommandes">
+    <tr><th>Nom</th><th>Téléphone</th><th>Wilaya</th><th>Type Livraison</th><th>Supprimer</th></tr>
+  </table>
+  <button onclick="supprimerToutesCommandes()">🗑️ Supprimer toutes les commandes</button>
 
+  <h3>Prix de livraison par wilaya</h3>
+  <div id="prixWilayas"></div>
+  <button onclick="sauvegarderPrixWilaya()">💾 Sauvegarder les prix</button>
+
+  <h3>Options</h3>
+  <button onclick="toggleLivraisonGratuite()">🚚 Activer / Désactiver Livraison Gratuite</button>
+</div>
+
+<script>
+  // -----------------------------
+  // 🔸 VARIABLES PRINCIPALES
+  // -----------------------------
+  let affiches = JSON.parse(localStorage.getItem("affiches")) || [
+    { nom: "HP ZBook 14u G6", prix: 60000, desc: "PC professionnel avec garantie et chargeur original.", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60" },
+    { nom: "Lenovo ThinkPad T480", prix: 72000, desc: "Solide et rapide, parfait pour le travail.", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" },
+    { nom: "Dell Latitude 3310", prix: 65000, desc: "Portable durable, batterie longue durée.", image: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=800&q=60" },
+    { nom: "HP EliteBook 840 G3", prix: 58000, desc: "Écran Full HD, design fin et rapide.", image: "https://images.unsplash.com/photo-1587614382346-ac7c336b6f61?auto=format&fit=crop&w=800&q=60" },
+    { nom: "Lenovo IdeaPad 3", prix: 54000, desc: "Excellent rapport qualité/prix.", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=60" }
+  ];
+
+  let commandes = JSON.parse(localStorage.getItem("commandes")) || [];
+  let livraisonGratuite = JSON.parse(localStorage.getItem("livraisonGratuite")) || false;
+  let prixParWilaya = JSON.parse(localStorage.getItem("prixParWilaya")) || {};
+
+  // -----------------------------
+  // 🔸 INITIALISATION DU SITE
+  // -----------------------------
+  window.onload = function () {
     afficherAffiches();
+    remplirWilayas();
+    afficherCommandes();
+    afficherPrixWilayas();
+  };
 
-    function commander(nom, prix){
-      let nomClient = prompt("Votre prénom et nom :");
-      let tel = prompt("Votre numéro de téléphone :");
-      let wilaya = prompt("Votre wilaya :");
-      let type = prompt("Livraison à domicile / bureau ?");
-      let final = livraisonGratuite ? prix : prix + 800; // exemple ajout livraison moyenne
-      alert(`Commande envoyée ! Total estimé : ${final} DA`);
-      enregistrerCommande(nomClient, tel, wilaya, type);
-      window.open(`https://wa.me/213699039372?text=Je veux commander ${nom}`, "_blank");
+  // -----------------------------
+  // 🔸 AFFICHAGE DES AFFICHES
+  // -----------------------------
+  function afficherAffiches() {
+    const catalogue = document.getElementById("catalogue");
+    catalogue.innerHTML = "";
+    affiches.forEach((pc, index) => {
+      catalogue.innerHTML += `
+        <div class="card">
+          <img src="${pc.image}" alt="${pc.nom}">
+          <div class="info">
+            <h3>${pc.nom}</h3>
+            <p>${pc.desc}</p>
+            <p class="price">${pc.prix.toLocaleString()} DA</p>
+            ${livraisonGratuite ? '<p style="color:green;font-weight:bold;">🚚 Livraison gratuite</p>' : ''}
+          </div>
+          <div class="buttons">
+            <button class="btn-commande" onclick="ouvrirCommande(${index})">Commander ici</button>
+            <button class="btn-whatsapp" onclick="ouvrirWhatsApp('${pc.nom}')">WhatsApp</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function ouvrirWhatsApp(nom) {
+    window.open(`https://wa.me/213699039372?text=Salam, je veux commander ${nom} depuis le site Techno Direct.`, "_blank");
+  }
+
+  // -----------------------------
+  // 🔸 GESTION DU FORMULAIRE DE COMMANDE
+  // -----------------------------
+  let produitActuel = null;
+
+  function ouvrirCommande(index) {
+    produitActuel = affiches[index];
+    document.getElementById("formCommande").style.display = "flex";
+  }
+
+  function validerCommande() {
+    const nom = document.getElementById("cmdNom").value.trim();
+    const tel = document.getElementById("cmdTel").value.trim();
+    const tel2 = document.getElementById("cmdTel2").value.trim();
+    const wilaya = document.getElementById("cmdWilaya").value;
+    const type = document.getElementById("cmdType").value;
+
+    if (!nom || !tel || !wilaya) {
+      alert("Remplis tous les champs obligatoires !");
+      return;
     }
 
-    function enregistrerCommande(nom, tel, wilaya, type){
-      let table = document.getElementById("commandesTable");
-      let tr = document.createElement("tr");
-      tr.innerHTML = `<td>${nom}</td><td>${tel}</td><td>${wilaya}</td><td>${type}</td><td><button onclick="this.parentNode.parentNode.remove()">❌</button></td>`;
-      table.appendChild(tr);
+    let prixLivraison = livraisonGratuite ? 0 : (prixParWilaya[wilaya] || 800);
+    let prixTotal = produitActuel.prix + prixLivraison;
+
+    commandes.push({
+      produit: produitActuel.nom,
+      nom,
+      tel,
+      tel2,
+      wilaya,
+      type,
+      total: prixTotal
+    });
+
+    localStorage.setItem("commandes", JSON.stringify(commandes));
+    afficherCommandes();
+    fermerCommande();
+
+    alert("✅ Commande enregistrée avec succès !");
+  }
+
+  function fermerCommande() {
+    document.getElementById("formCommande").style.display = "none";
+    document.getElementById("cmdNom").value = "";
+    document.getElementById("cmdTel").value = "";
+    document.getElementById("cmdTel2").value = "";
+  }
+
+  // -----------------------------
+  // 🔸 ADMIN - CONNEXION
+  // -----------------------------
+  function loginAdmin() {
+    let pwd = prompt("Mot de passe :");
+    if (pwd === "technoid") {
+      document.getElementById("adminPanel").style.display = "block";
+    } else {
+      alert("Mot de passe incorrect !");
+    }
+  }
+
+  function closeAdmin() {
+    document.getElementById("adminPanel").style.display = "none";
+    localStorage.setItem("affiches", JSON.stringify(affiches));
+    localStorage.setItem("commandes", JSON.stringify(commandes));
+    localStorage.setItem("prixParWilaya", JSON.stringify(prixParWilaya));
+  }
+
+  // -----------------------------
+  // 🔸 ADMIN - AJOUT / MODIFICATION D’AFFICHE
+  // -----------------------------
+  function ajouterAffiche() {
+    let nom = document.getElementById("nomPC").value.trim();
+    let prix = parseInt(document.getElementById("prixPC").value);
+    let desc = document.getElementById("descPC").value.trim();
+    let image = document.getElementById("imagePC").value.trim();
+
+    if (!nom || !prix || !desc || !image) {
+      alert("Tous les champs sont obligatoires !");
+      return;
     }
 
-    function openLogin(){
-      let pwd = prompt("Mot de passe :");
-      if(pwd === "technoid"){
-        document.getElementById("adminPanel").style.display = "block";
-      } else {
-        alert("Mot de passe incorrect");
-      }
-    }
+    affiches.push({ nom, prix, desc, image });
+    localStorage.setItem("affiches", JSON.stringify(affiches));
+    afficherAffiches();
+    alert("✅ Nouvelle affiche sauvegardée !");
+  }
 
-    function closeAdmin(){
-      document.getElementById("adminPanel").style.display = "none";
-      localStorage.setItem("affiches", JSON.stringify(affiches));
-    }
+  // -----------------------------
+  // 🔸 ADMIN - GESTION COMMANDES
+  // -----------------------------
+  function afficherCommandes() {
+    const table = document.getElementById("tableCommandes");
+    table.innerHTML = "<tr><th>Nom</th><th>Téléphone</th><th>Wilaya</th><th>Type Livraison</th><th>Supprimer</th></tr>";
+    commandes.forEach((cmd, i) => {
+      table.innerHTML += `
+        <tr>
+          <td>${cmd.nom}</td>
+          <td>${cmd.tel}</td>
+          <td>${cmd.wilaya}</td>
+          <td>${cmd.type}</td>
+          <td><button onclick="supprimerCommande(${i})">❌</button></td>
+        </tr>
+      `;
+    });
+  }
 
-    function ajouterAffiche(){
-      let nom = document.getElementById("nomPC").value;
-      let prix = parseInt(document.getElementById("prixPC").value);
-      let desc = document.getElementById("descPC").value;
-      let img = document.getElementById("imagePC").value;
-      affiches.push({nom, prix, desc, image: img});
-      localStorage.setItem("affiches", JSON.stringify(affiches));
-      afficherAffiches();
-      alert("Affiche sauvegardée !");
+  function supprimerCommande(index) {
+    if (confirm("Supprimer cette commande ?")) {
+      commandes.splice(index, 1);
+      localStorage.setItem("commandes", JSON.stringify(commandes));
+      afficherCommandes();
     }
+  }
 
-    function supprimerTout(){
-      document.getElementById("commandesTable").innerHTML = "<tr><th>Nom</th><th>Téléphone</th><th>Wilaya</th><th>Livraison</th><th>Supprimer</th></tr>";
+  function supprimerToutesCommandes() {
+    if (confirm("Supprimer toutes les commandes ?")) {
+      commandes = [];
+      localStorage.setItem("commandes", JSON.stringify(commandes));
+      afficherCommandes();
     }
+  }
+</script>
 
-    function toggleLivraison(){
-      livraisonGratuite = !livraisonGratuite;
-      alert(livraisonGratuite ? "Livraison gratuite activée !" : "Livraison normale rétablie");
+<script>
+  // -----------------------------
+  // 🔸 GESTION DES WILAYAS
+  // -----------------------------
+  const wilayas = [
+    "Adrar", "Chlef", "Laghouat", "Oum El Bouaghi", "Batna", "Béjaïa", "Biskra", "Béchar", "Blida", "Bouira",
+    "Tamanrasset", "Tébessa", "Tlemcen", "Tiaret", "Tizi Ouzou", "Alger", "Djelfa", "Jijel", "Sétif", "Saïda",
+    "Skikda", "Sidi Bel Abbès", "Annaba", "Guelma", "Constantine", "Médéa", "Mostaganem", "MSila", "Mascara",
+    "Ouargla", "Oran", "El Bayadh", "Illizi", "Bordj Bou Arreridj", "Boumerdès", "El Tarf", "Tindouf", "Tissemsilt",
+    "El Oued", "Khenchela", "Souk Ahras", "Tipaza", "Mila", "Aïn Defla", "Naâma", "Aïn Témouchent", "Ghardaïa", "Relizane"
+  ];
+
+  function remplirWilayas() {
+    const select = document.getElementById("cmdWilaya");
+    if (!select) return;
+    wilayas.forEach(w => {
+      select.innerHTML += `<option value="${w}">${w}</option>`;
+    });
+  }
+
+  // -----------------------------
+  // 🔸 PRIX PAR WILAYA
+  // -----------------------------
+  function afficherPrixWilayas() {
+    const table = document.getElementById("tablePrixWilaya");
+    if (!table) return;
+    table.innerHTML = "<tr><th>Wilaya</th><th>Prix Livraison (DA)</th></tr>";
+    wilayas.forEach(w => {
+      let prix = prixParWilaya[w] || 800;
+      table.innerHTML += `
+        <tr>
+          <td>${w}</td>
+          <td><input type="number" value="${prix}" onchange="changerPrixWilaya('${w}', this.value)" /></td>
+        </tr>
+      `;
+    });
+  }
+
+  function changerPrixWilaya(wilaya, prix) {
+    prixParWilaya[wilaya] = parseInt(prix);
+    localStorage.setItem("prixParWilaya", JSON.stringify(prixParWilaya));
+  }
+
+  // -----------------------------
+  // 🔸 LIVRAISON GRATUITE
+  // -----------------------------
+  function toggleLivraisonGratuite() {
+    livraisonGratuite = !livraisonGratuite;
+    localStorage.setItem("livraisonGratuite", JSON.stringify(livraisonGratuite));
+    afficherAffiches();
+    document.getElementById("livraisonStatus").innerText = livraisonGratuite ? "✅ Livraison gratuite activée" : "🚚 Livraison normale";
+  }
+
+  // -----------------------------
+  // 🔸 SAUVEGARDE AUTOMATIQUE
+  // -----------------------------
+  function sauvegarderTout() {
+    localStorage.setItem("affiches", JSON.stringify(affiches));
+    localStorage.setItem("commandes", JSON.stringify(commandes));
+    localStorage.setItem("prixParWilaya", JSON.stringify(prixParWilaya));
+    localStorage.setItem("livraisonGratuite", JSON.stringify(livraisonGratuite));
+    alert("💾 Toutes les modifications ont été sauvegardées !");
+  }
+
+  // -----------------------------
+  // 🔸 BOUTON ADMIN CACHÉ EN HAUT À GAUCHE
+  // -----------------------------
+  document.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.key === "a") {
+      loginAdmin();
     }
-  </script>
+  });
+</script>
+
+<!-- ----------------------------- -->
+<!-- 🔸 FORMULAIRE COMMANDE POPUP -->
+<!-- ----------------------------- -->
+<div id="formCommande" class="popup">
+  <div class="popup-content">
+    <h3>🛒 Passer une commande</h3>
+    <input id="cmdNom" type="text" placeholder="Ton prénom complet" />
+    <input id="cmdTel" type="number" placeholder="Numéro principal" />
+    <input id="cmdTel2" type="number" placeholder="Numéro secondaire (facultatif)" />
+    <select id="cmdWilaya"></select>
+    <select id="cmdType">
+      <option value="Livraison à domicile">Livraison à domicile</option>
+      <option value="Stock Techno Direct">Récupérer au bureau</option>
+    </select>
+    <button onclick="validerCommande()">Commander</button>
+    <button onclick="fermerCommande()">Fermer</button>
+  </div>
+</div>
+
+<!-- ----------------------------- -->
+<!-- 🔸 ZONE ADMINISTRATIVE SECRÈTE -->
+<!-- ----------------------------- -->
+<div id="adminPanel" style="display:none;">
+  <h2>⚙️ Zone administrative - Techno Direct</h2>
+
+  <h3>📦 Ajouter une affiche publicitaire</h3>
+  <input id="nomPC" placeholder="Nom du PC">
+  <input id="prixPC" type="number" placeholder="Prix (DA)">
+  <input id="descPC" placeholder="Description">
+  <input id="imagePC" placeholder="Lien image">
+  <button onclick="ajouterAffiche()">Ajouter</button>
+
+  <h3>📋 Liste des commandes</h3>
+  <table id="tableCommandes"></table>
+  <button onclick="supprimerToutesCommandes()">🗑 Supprimer tout</button>
+
+  <h3>🚚 Prix de livraison par wilaya</h3>
+  <table id="tablePrixWilaya"></table>
+
+  <h3>🎁 Livraison gratuite</h3>
+  <button onclick="toggleLivraisonGratuite()">Activer / Désactiver</button>
+  <p id="livraisonStatus"></p>
+
+  <h3>💾 Sauvegarde</h3>
+  <button onclick="sauvegarderTout()">Sauvegarder toutes les modifications</button>
+
+  <button onclick="closeAdmin()">Fermer l'administration</button>
+</div>
+
+<!-- ----------------------------- -->
+<!-- 🔸 FOOTER AVEC CONTACT -->
+<!-- ----------------------------- -->
+<footer>
+  <p>📞 0699 03 93 72 — 0560 07 20 59</p>
+  <p>📸 Instagram: <a href="https://instagram.com/techno__direct" target="_blank">@techno__direct</a></p>
+  <p>📘 Facebook: <a href="https://facebook.com/techno direct" target="_blank">techno direct</a></p>
+  <p>© 2025 Techno Direct — Tous droits réservés</p>
+</footer>
 </body>
 </html>
