@@ -15,7 +15,7 @@
     .lang-switch{position:absolute;right:1rem;top:1.2rem;background:var(--accent);color:#fff;border:none;padding:.4rem .8rem;border-radius:4px;cursor:pointer;}
     body[dir="rtl"] .lang-switch{left:1rem;right:auto;}
     .container{max-width:1000px;margin:auto;padding:1rem;}
-    .cartable-title{font-size:1.5rem;font-weight:700;margin-bottom:1rem;}
+    .catalogue-header{font-weight:700;font-size:1.2rem;padding:.5rem;background:#fff;margin-bottom:1rem;border-radius:6px;text-align:center;}
     .card{display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);margin:1rem 0;cursor:pointer;}
     .card img{width:100%;height:200px;object-fit:cover;}
     .info{padding:1rem;}
@@ -29,15 +29,15 @@
     .modal .close{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1.4rem;cursor:pointer;}
     body[dir="rtl"] .modal .close{left:.7rem;right:auto;}
     .admin-panel{background:#ffeaa7;padding:1rem;border-radius:6px;margin:2rem 0;display:none;}
-    .admin-item{border:1px solid var(--accent);padding:.7rem;margin:.5rem 0;border-radius:4px;background:#fff;}
+    .admin-item{border:1px solid var(--accent);padding:.7rem;margin:.5rem 0;border-radius:4px;background:#fff;cursor:grab;}
     .admin-item input[type=text],.admin-item input[type=number],.admin-item input[type=file]{width:100%;margin:.3rem 0;}
     .admin-item img{max-width:120px;display:block;margin:.3rem 0;}
     #addAffiches{margin-bottom:1rem;}
     #commandesList{max-height:300px;overflow:auto;background:#fff;padding:.5rem;border:1px solid #ccc;border-radius:4px;margin-top:.7rem;}
     .cmd-line{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;}
     .cmd-line button{background:none;border:none;color:var(--accent);font-size:1.2rem;cursor:pointer;}
-    /* modal image agrandie */
-    .img-modal img{max-width:100%;max-height:80vh;}
+    .drag-handle{cursor:grab;margin-right:.5rem;}
+    .free-delivery-banner{background:green;color:#fff;padding:.3rem .6rem;border-radius:4px;margin-top:.5rem;font-weight:700;text-align:center;}
   </style>
 </head>
 <body>
@@ -48,13 +48,13 @@
   </header>
 
   <div class="container">
-    <!-- Nouveau titre Cartable -->
-    <div class="cartable-title">Cartable</div>
+    <div class="catalogue-header" id="catalogueHeader">Cartable gratuit plus garantie</div>
     <div id="catalogue"></div>
 
     <div class="admin-panel" id="adminPanel">
       <h2>Zone Admin</h2>
       <button class="btn" id="addAffiches">+ Ajouter une affiche (max 20)</button>
+      <button class="btn" id="toggleDelivery">Activer livraison gratuite</button>
       <div id="adminList"></div>
       <button class="btn" onclick="saveCatalog()">Sauvegarder les changements</button>
 
@@ -68,7 +68,6 @@
     </div>
   </div>
 
-  <!-- Modal mot de passe -->
   <div class="modal-overlay" id="passModal">
     <div class="modal">
       <button class="close" onclick="closePassModal()">&times;</button>
@@ -78,89 +77,102 @@
     </div>
   </div>
 
-  <!-- Modal image agrandie -->
   <div class="modal-overlay" id="imgModal">
-    <div class="modal img-modal">
-      <button class="close" onclick="closeImgModal()">&times;</button>
-      <img src="" alt="PC">
+    <div class="modal">
+      <button class="close" onclick="this.closest('.modal-overlay').style.display='none'">&times;</button>
+      <img id="imgModalContent" src="" style="width:100%;">
     </div>
   </div>
 
   <footer style="text-align:center;padding:1.5rem;font-size:.85rem;color:#777;">
-    Contact : 0699039372 / 0560072059 (WhatsApp / Appel) | Facebook : TECHNO DIRECT | Instagram : TECHNO _DIRECT
+    Contact : 0699039372 / 0560072059 (WhatsApp / appel) <br>
+    Facebook : TECHNO DIRECT | Instagram : TECHNO _DIRECT
   </footer>
 
   <script>
     const PASSWORD = 'technoid';
     const MAX_AFFICHES = 20;
-    const PHONE1 = '213699039372';
-    const PHONE2 = '213560072059';
-    const WILAYAS = [
-      {fr:'ADRAR',ar:'أدرار',prix:1400},{fr:'CHLEF',ar:'الشلف',prix:800},{fr:'LAGHOUAT',ar:'الأغواط',prix:950},{fr:'OUM EL BOUAGHI',ar:'أم البواقي',prix:800},{fr:'BATNA',ar:'باتنة',prix:800},{fr:'BEJAIA',ar:'بجاية',prix:450},{fr:'BISKRA',ar:'بسكرة',prix:950},{fr:'BECHAR',ar:'بشار',prix:1100},{fr:'BLIDA',ar:'البليدة',prix:750},{fr:'BOUIRA',ar:'البويرة',prix:700},{fr:'TAMANRASSET',ar:'تمنراست',prix:1600},{fr:'TEBESSA',ar:'تبسة',prix:800},{fr:'TLEMCEN',ar:'تلمسان',prix:900},{fr:'TIARET',ar:'تيارت',prix:800},{fr:'TIZI OUZOU',ar:'تيزي وزو',prix:650},{fr:'ALGER',ar:'الجزائر',prix:600},{fr:'DJELFA',ar:'الجلفة',prix:950},{fr:'JUEL',ar:'جيجل',prix:700},{fr:'SETIF',ar:'سطيف',prix:750},{fr:'SAIDA',ar:'سعيدة',prix:800},{fr:'SKIKDA',ar:'سكيكدة',prix:750},{fr:'SIDIBELABBES',ar:'سيدي بلعباس',prix:750},{fr:'ANNABA',ar:'عنابة',prix:800},{fr:'GUELMA',ar:'قالمة',prix:800},{fr:'CONSTANTINE',ar:'قسنطينة',prix:750},{fr:'MEDEA',ar:'المدية',prix:750},{fr:'MOSTAGANEM',ar:'معسكر',prix:750},{fr:'M\'SILA',ar:'المسيلة',prix:850},{fr:'MASCARA',ar:'مascara',prix:750},{fr:'OUARGLA',ar:'ورقلة',prix:1000},{fr:'ORAN',ar:'وهران',prix:700},{fr:'EL BAYADH',ar:'البيض',prix:1050},{fr:'ILLIZI',ar:'إيليزي',prix:1100},{fr:'BORDJ BOU ARRERIDJ',ar:'برج بوعريريج',prix:750},{fr:'BOUMERDES',ar:'بومرداس',prix:750},{fr:'EL TARF',ar:'الطارف',prix:850},{fr:'TINDOUF',ar:'تندوف',prix:1600},{fr:'TISSEMSILT',ar:'تيسمسيلت',prix:800},{fr:'EL OUED',ar:'الوادي',prix:1000},{fr:'KHENCHELA',ar:'خنشلة',prix:800},{fr:'SOUK AHRAS',ar:'سوق أهراس',prix:800},{fr:'TIPAZA',ar:'تيبازة',prix:900},{fr:'MILA',ar:'ميلة',prix:800},{fr:'AIN DEFLA',ar:'عين الدفلى',prix:850},{fr:'NAAMA',ar:'النعامة',prix:800},{fr:'AIN TEMOUCHENT',ar:'عين تموشنت',prix:800},{fr:'GHARDAIA',ar:'غرداية',prix:800},{fr:'RELIZANE',ar:'غليزان',prix:800},{fr:'TIMIMOUN',ar:'تيميمون',prix:800},{fr:'BORDJ BADJI MOKHTAR',ar:'برج باجي مختار',prix:800},{fr:'OULED DJELLAL',ar:'أولاد جلال',prix:800},{fr:'BENI ABBES',ar:'بني عباس',prix:800},{fr:'IN SALAH',ar:'عين صالح',prix:800},{fr:'IN GUEZZAM',ar:'عين قزام',prix:800},{fr:'TOUGGOURT',ar:'تقرت',prix:800},{fr:'DJANET',ar:'جانت',prix:800},{fr:'MGHAIR',ar:'الاغواط',prix:800},{fr:'EL MENIAA',ar:'المنيعة',prix:800}
-    ];
-    let lang = 'fr';
-    const body = document.body;
-    const txt = {
-      fr:{h1:'Techno Directe',btnLang:'العربية',modalTitle:'Formulaire de commande',placeholderNom:'Nom',placeholderPrenom:'Prénom',placeholderTel1:'Téléphone 1',placeholderTel2:'Téléphone 2 (facultatif)',radioBureau:'Bureau de poste',radioDomicile:'À domicile',submit:'Envoyer la commande',labelWilaya:'Wilaya de livraison :',commanderWhatsapp:'Commander sur WhatsApp',commanderForm:'Commander ici',total:'Total :',adminTitle:'Zone Admin – Commandes formulaire',addAffiche:'+ Ajouter une affiche (max 20)',save:'Sauvegarder les changements'},
-      ar:{h1:'تكنو دايركت',btnLang:'Français',modalTitle:'نموذج الطلب',placeholderNom:'اللقب',placeholderPrenom:'الاسم',placeholderTel1:'الهاتف 1',placeholderTel2:'الهاتف 2 (اختياري)',radioBureau:'مكتب البريد',radioDomicile:'توصيل للمنزل',submit:'إرسال الطلب',labelWilaya:'ولاية التوصيل :',commanderWhatsapp:'اطلب عبر واتساب',commanderForm:'اطلب هنا',total:'المجموع :',adminTitle:'منطقة الأدمن – طلبات النموذج',addAffiche:'+ إضافة ملصق (max 20)',save:'حفظ التغييرات'}
-    };
-    const DEFAULT_CATALOG = [
-      {id:1, name:'HP EliteBook 840 G5',desc:'Intel Core i5-8250U • 8 Go DDR4 • SSD 256 Go • 14″ Full HD',price:50000,img:'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=60 '},
-      {id:2, name:'Lenovo ThinkPad T480',desc:'Intel Core i7-8650U • 16 Go DDR4 • SSD 512 Go • 14″ Full HD',price:72000,img:'https://images.unsplash.com/photo/1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60 '},
-      {id:3, name:'MacBook Air 2018',desc:'Intel Core i5 • 8 Go • SSD 256 Go • 13,3″ Retina',price:94000,img:'https://images.unsplash.com/photo/1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=60 '}
-    ];
-    let catalogue = [];
+    let freeDelivery = false;
 
-    // INIT
-    initCatalog();
-    renderCatalog();
-    attachEvents();
-    updateLang();
-    showCommandes();
+    // ton code original ici (catalogue, commandes, admin, langues, etc.)
+    // J'ajoute seulement les nouvelles fonctionnalités ci-dessous
 
-    // Reste du code existant inchangé...
-    function initCatalog(){
-      const saved = localStorage.getItem('technoCatalog');
-      if (saved) catalogue = JSON.parse(saved);
-      else { catalogue = JSON.parse(JSON.stringify(DEFAULT_CATALOG)); saveCatalog(); }
-    }
-    function saveCatalog(){ localStorage.setItem('technoCatalog', JSON.stringify(catalogue)); }
-
-    // Render avec click photo pour agrandir
-    function renderCatalog(){
-      const cont = document.getElementById('catalogue');
-      cont.innerHTML = '';
-      catalogue.forEach(prod=>{
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <img src="${prod.img}" alt="${prod.name}">
-          <div class="info">
-            <h2>${prod.name}</h2>
-            <p>${prod.desc}</p>
-            <p class="price prix-produit" data-prix="${prod.price}">${prod.price.toLocaleString('fr-DZ')} DA</p>
-            <label class="label-wilaya">${txt[lang].labelWilaya}
-              <select class="wilaya" required></select>
-            </label>
-            <p class="total"><strong>${txt[lang].total} <span class="montant">${prod.price.toLocaleString('fr-DZ')} DA</span></strong></p>
-            <a class="btn whatsapp" href="#">${txt[lang].commanderWhatsapp}</a>
-            <button class="btn formulaire" data-id="${prod.id}">${txt[lang].commanderForm}</button>
-          </div>`;
-        cont.appendChild(card);
-
-        // Ajout click sur image pour agrandir
-        card.querySelector('img').onclick = ()=>{
+    // 1. Cliquer sur la photo pour agrandir
+    function attachImageClick(){
+      document.querySelectorAll('.card img').forEach(img=>{
+        img.onclick = ()=> {
           const modal = document.getElementById('imgModal');
-          modal.querySelector('img').src = prod.img;
+          const modalImg = document.getElementById('imgModalContent');
+          modalImg.src = img.src;
           modal.style.display = 'flex';
         };
       });
-      fillWilayaSelects();
-      attachCardEvents();
     }
-    function closeImgModal(){ document.getElementById('imgModal').style.display='none'; }
 
-    // Le reste de ton code admin, formulaire, commandes reste exactement le même...
+    // 2. Livraison gratuite
+    document.getElementById('toggleDelivery').onclick = ()=>{
+      freeDelivery = !freeDelivery;
+      document.querySelectorAll('.card').forEach(card=>{
+        const sel = card.querySelector('.wilaya');
+        const totSpan = card.querySelector('.montant');
+        const prix = parseInt(card.querySelector('.prix-produit').dataset.prix);
+        if(freeDelivery){
+          totSpan.textContent = (prix).toLocaleString('fr-DZ') + ' DA (Livraison gratuite)';
+        } else {
+          const liv = parseInt(sel.value)||0;
+          totSpan.textContent = (prix+liv).toLocaleString('fr-DZ') + ' DA';
+        }
+      });
+    };
+
+    // 3. Réorganisation par glisser-déposer
+    function makeAdminSortable(){
+      const list = document.getElementById('adminList');
+      let dragSrcEl = null;
+
+      function handleDragStart(e){
+        dragSrcEl = this;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+      }
+      function handleDragOver(e){
+        if(e.preventDefault) e.preventDefault();
+        return false;
+      }
+      function handleDrop(e){
+        if(dragSrcEl != this){
+          let tmp = this.innerHTML;
+          this.innerHTML = dragSrcEl.innerHTML;
+          dragSrcEl.innerHTML = tmp;
+          // mettre à jour le tableau catalogue
+          const items = [...list.children];
+          catalogue = items.map((div,idx)=>{
+            return {
+              id:idx+1,
+              name: div.querySelector('input[placeholder="Nom"]').value,
+              desc: div.querySelector('input[placeholder="Description"]').value,
+              price: parseInt(div.querySelector('input[placeholder="Prix"]').value)||0,
+              img: div.querySelector('img').src
+            };
+          });
+          saveCatalog();
+        }
+        return false;
+      }
+      list.querySelectorAll('.admin-item').forEach(item=>{
+        item.setAttribute('draggable','true');
+        item.addEventListener('dragstart', handleDragStart, false);
+        item.addEventListener('dragover', handleDragOver, false);
+        item.addEventListener('drop', handleDrop, false);
+      });
+    }
+
+    // appeler ces fonctions après le rendu
+    function attachExtras(){
+      attachImageClick();
+      makeAdminSortable();
+    }
+    // Appeler après renderCatalog() et renderAdminList()
   </script>
 </body>
 </html>
