@@ -1,788 +1,715 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Techno Direct – Vente de PC</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Techno Direct - Vente PC</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --accent: #ff6b00;
-      --bg: #121212;
-      --text: #f1f1f1;
-      --card: #1f1f1f;
+      --orange: #ff6b00;
+      --gris-clair: #f4f4f4;
+      --gris-fonce: #333;
+      --blanc: #fff;
     }
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
       font-family: 'Cairo', sans-serif;
     }
     body {
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
+      background-color: var(--gris-clair);
+      color: var(--gris-fonce);
     }
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 30px;
-      background: var(--card);
-      border-bottom: 2px solid var(--accent);
-    }
-    header img {
-      width: 130px;
-      height: auto;
-    }
-    header h1 {
-      font-size: 1.6rem;
-      color: var(--accent);
-    }
-    header button {
-      background: var(--accent);
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    header button:hover {
-      background: #e65c00;
-    }
-    main {
+      background-color: var(--orange);
+      color: var(--blanc);
       padding: 20px;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
     }
-    .produits {
+    nav {
+      background-color: var(--gris-fonce);
+      color: var(--blanc);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: var(--blanc);
+      text-decoration: none;
+      font-weight: bold;
+      margin: 5px;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 30px auto;
+    }
+    .catalogue {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
     }
     .card {
-      background: var(--card);
+      background-color: var(--blanc);
       border-radius: 10px;
       overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s;
     }
     .card:hover {
       transform: scale(1.02);
-      box-shadow: 0 0 10px var(--accent);
     }
     .card img {
       width: 100%;
-      height: 200px;
+      height: 180px;
       object-fit: cover;
     }
-    .card .info {
+    .info {
       padding: 15px;
-    }
-    .card .info h2 {
-      font-size: 1.2rem;
-      color: var(--accent);
-    }
-    .card .info p {
-      font-size: 0.9rem;
-      margin: 5px 0;
-    }
-    .card .info .prix {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #00ff99;
-    }
-    .btns {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
-    .btns button {
       flex: 1;
-      margin: 5px;
-      background: var(--accent);
-      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .info h3 {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .info p {
+      font-size: 0.95em;
+      margin-bottom: 10px;
+    }
+    .prix {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: var(--orange);
+      margin-bottom: 10px;
+    }
+    .btn-ajouter {
+      background-color: var(--orange);
+      color: var(--blanc);
       border: none;
-      border-radius: 5px;
-      padding: 8px 10px;
+      padding: 10px;
       cursor: pointer;
-      transition: 0.3s;
-    }
-    .btns button:hover {
-      background: #e55c00;
-    }
-    /* Section admin */
-    #adminPanel {
-      display: none;
-      padding: 30px;
-    }
-    #adminPanel.active {
-      display: block;
-    }
-    .admin-btn {
-      background: var(--accent);
-      color: white;
-      padding: 10px 20px;
       border-radius: 5px;
-      border: none;
-      cursor: pointer;
-      margin-bottom: 15px;
+      font-weight: bold;
+      transition: background 0.2s;
     }
-    .admin-btn:hover {
-      background: #e65c00;
+    .btn-ajouter:hover {
+      background-color: #e65a00;
+    }
+    /* Zone Admin */
+    .admin-panel {
+      background-color: var(--blanc);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 50px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .admin-panel h2 {
+      color: var(--orange);
+      margin-bottom: 20px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-bottom: 20px;
     }
-    table, th, td {
-      border: 1px solid #333;
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
     }
-    th, td {
-      padding: 10px;
-      text-align: center;
+    table th {
+      background-color: var(--orange);
+      color: var(--blanc);
     }
-    th {
-      background: var(--accent);
-      color: white;
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
     }
-    .edit, .delete {
-      background: var(--accent);
-      color: white;
+    .actions button {
+      margin-right: 5px;
+      padding: 6px 10px;
       border: none;
-      padding: 5px 10px;
-      cursor: pointer;
       border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--blanc);
     }
-    .delete {
-      background: crimson;
+    .edit-btn {
+      background-color: #007bff;
     }
-    .hidden {
-      display: none;
+    .delete-btn {
+      background-color: #dc3545;
     }
-    footer {
-      text-align: center;
-      margin-top: 40px;
+    .livree-btn {
+      background-color: #28a745;
+    }
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background-color: var(--gris-clair);
       padding: 20px;
-      color: #aaa;
+      border-radius: 10px;
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+    }
+    .stat-card h3 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+    .footer {
+      text-align: center;
+      padding: 15px;
+      background-color: var(--gris-fonce);
+      color: var(--blanc);
+      margin-top: 50px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="Logo Techno Direct">
-    <h1>Techno Direct</h1>
-    <button id="adminAccess">Zone Admin</button>
-  </header>
 
-  <main id="catalogue">
-    <h2>Nos ordinateurs</h2>
-    <div class="produits" id="produitsContainer">
-      <!-- Cartes produits -->
+<header>
+  Techno Direct - Vente PC
+</header>
+
+<nav>
+  <a href="#catalogue">Catalogue</a>
+  <a href="#admin">Admin</a>
+</nav>
+
+<div class="container" id="catalogue">
+  <h2>Nos PC disponibles</h2>
+  <div class="catalogue">
+    <!-- Carte PC exemple -->
+    <div class="card" data-produit="HP ZBook 14u G6" data-prix="60000">
+      <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=60" alt="HP ZBook 14u G6">
+      <div class="info">
+        <h3>HP ZBook 14u G6</h3>
+        <p>Intel Core i7, 16GigaRAM, 512GigaSSD, Full HD</p>
+        <p class="prix">60 000 DZD</p>
+        <button class="btn-ajouter">Ajouter au panier</button>
+      </div>
     </div>
-  </main>
 
-  <section id="adminPanel">
-    <h2>Panneau Administratif</h2>
-    <button class="admin-btn" id="retourCatalogue">Retour au catalogue</button>
-    <form id="addProductForm">
-      <h3>Ajouter / Modifier un produit</h3>
-      <input type="hidden" id="editIndex">
-      <input type="text" id="nom" placeholder="Nom du produit" required><br>
-      <input type="number" id="prix" placeholder="Prix du produit" required><br>
-      <textarea id="description" placeholder="Description" required></textarea><br>
-      <input type="file" id="photo"><br>
-      <button type="submit" class="admin-btn">Enregistrer</button>
-    </form>
+    <div class="card" data-produit="Dell Latitude 3310" data-prix="55000">
+      <img src="https://images.unsplash.com/photo-1555617117-08d0d7f8c12d?auto=format&fit=crop&w=800&q=60" alt="Dell Latitude 3310">
+      <div class="info">
+        <h3>Dell Latitude 3310</h3>
+        <p>Intel Core i5, 8GigaRAM, 256GigaSSD, Full HD</p>
+        <p class="prix">55 000 DZD</p>
+        <button class="btn-ajouter">Ajouter au panier</button>
+      </div>
+    </div>
 
-    <h3>Liste des produits</h3>
-    <table id="adminTable">
+    <div class="card" data-produit="Lenovo ThinkPad T480" data-prix="72000">
+      <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" alt="Lenovo ThinkPad T480">
+      <div class="info">
+        <h3>Lenovo ThinkPad T480</h3>
+        <p>Intel Core i7, 16GigaRAM, 1TeraSSD, Full HD</p>
+        <p class="prix">72 000 DZD</p>
+        <button class="btn-ajouter">Ajouter au panier</button>
+      </div>
+    </div>
+
+    <!-- Tu pourras rajouter tous tes autres PC ici automatiquement -->
+  </div>
+</div>
+
+<div class="container admin-panel" id="admin">
+  <h2>Zone Admin</h2>
+
+  <div class="stats">
+    <div class="stat-card">
+      <h3 id="total-ventes">0</h3>
+      <p>Total ventes</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="commandes-attente">0</h3>
+      <p>Commandes en attente</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="commandes-livrees">0</h3>
+      <p>Commandes livrées</p>
+    </div>
+  </div>
+
+  <h3>Gestion des commandes</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Produit</th>
+        <th>Prix</th>
+        <th>Client</th>
+        <th>Wilaya</th>
+        <th>Type livraison</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="table-commandes">
+      <!-- Les commandes seront ajoutées ici dynamiquement -->
+    </tbody>
+  </table>
+
+  <button id="ajouter-commande" class="btn-ajouter">Ajouter Commande Test</button>
+</div>
+
+<div class="footer">
+  © 2025 Techno Direct - Tous droits réservés
+</div>
+
+<script>
+  // Exemple de commandes
+  let commandes = [];
+
+  function renderCommandes() {
+    const table = document.getElementById('table-commandes');
+    table.innerHTML = '';
+    commandes.forEach((cmd, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${cmd.produit}</td>
+        <td>${cmd.prix} DZD</td>
+        <td>${cmd.client}</td>
+        <td>${cmd.wilaya}</td>
+        <td>${cmd.livraison}</td>
+        <td>${cmd.statut}</td>
+        <td class="actions">
+          <button class="edit-btn" onclick="editCommande(${index})">Modifier</button>
+          <button class="delete-btn" onclick="deleteCommande(${index})">Supprimer</button>
+          <button class="livree-btn" onclick="livrerCommande(${index})">Livrée</button>
+        </td>
+      `;
+      table.appendChild(tr);
+    });
+    updateStats();
+  }
+
+  function updateStats() {
+    document.getElementById('total-ventes').innerText = commandes.length;
+    document.getElementById('commandes-attente').innerText = commandes.filter(c => c.statut === 'En attente').length;
+    document.getElementById('commandes-livrees').innerText = commandes.filter(c => c.statut === 'Livrée').length;
+  }
+
+  function editCommande(index) {
+    const cmd = commandes[index];
+    const nouveauClient = prompt("Modifier nom client:", cmd.client);
+    if (nouveauClient) cmd.client = nouveauClient;
+    renderCommandes();
+  }
+
+  function deleteCommande(index) {
+    if (confirm("Supprimer cette commande ?")) {
+      commandes.splice(index, 1);
+      renderCommandes();
+    }
+  }
+
+  function livrerCommande(index) {
+    commandes[index].statut = "Livrée";
+    renderCommandes();
+  }
+
+  document.getElementById('ajouter-commande').addEventListener('click', () => {
+    commandes.push({
+      produit: "HP ZBook 14u G6",
+      prix: 60000,
+      client: "Test Client",
+      wilaya: "Alger",
+      livraison: "À domicile",
+      statut: "En attente"
+    });
+    renderCommandes();
+  });
+
+  renderCommandes();
+</script>
+
+</body>
+</html>
+
+<!-- Partie 2 : Catalogue complet + panier + gestion commandes améliorée -->
+<div class="container" id="catalogue">
+  <h2>Catalogue complet des PC</h2>
+  <div class="catalogue">
+    <!-- HP ZBook 14u G6 -->
+    <div class="card" data-produit="HP ZBook 14u G6" data-prix="60000">
+      <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=60" alt="HP ZBook 14u G6">
+      <div class="info">
+        <h3>HP ZBook 14u G6</h3>
+        <p>Intel Core i7, 16GigaRAM, 512GigaSSD, Full HD</p>
+        <p class="prix">60 000 DZD</p>
+        <button class="btn-ajouter" onclick="ajouterPanier('HP ZBook 14u G6', 60000)">Ajouter au panier</button>
+      </div>
+    </div>
+
+    <!-- Dell Latitude 3310 -->
+    <div class="card" data-produit="Dell Latitude 3310" data-prix="55000">
+      <img src="https://images.unsplash.com/photo-1555617117-08d0d7f8c12d?auto=format&fit=crop&w=800&q=60" alt="Dell Latitude 3310">
+      <div class="info">
+        <h3>Dell Latitude 3310</h3>
+        <p>Intel Core i5, 8GigaRAM, 256GigaSSD, Full HD</p>
+        <p class="prix">55 000 DZD</p>
+        <button class="btn-ajouter" onclick="ajouterPanier('Dell Latitude 3310', 55000)">Ajouter au panier</button>
+      </div>
+    </div>
+
+    <!-- Lenovo ThinkPad T480 -->
+    <div class="card" data-produit="Lenovo ThinkPad T480" data-prix="72000">
+      <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" alt="Lenovo ThinkPad T480">
+      <div class="info">
+        <h3>Lenovo ThinkPad T480</h3>
+        <p>Intel Core i7, 16GigaRAM, 1TeraSSD, Full HD</p>
+        <p class="prix">72 000 DZD</p>
+        <button class="btn-ajouter" onclick="ajouterPanier('Lenovo ThinkPad T480', 72000)">Ajouter au panier</button>
+      </div>
+    </div>
+
+    <!-- Ajouter ici tous tes autres PC avec tes données exactes -->
+  </div>
+
+  <!-- Panier -->
+  <div class="panier" style="margin-top: 40px;">
+    <h2>Mon panier</h2>
+    <table id="table-panier" style="width:100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: var(--orange); color: var(--blanc);">
+          <th>Produit</th>
+          <th>Prix</th>
+          <th>Quantité</th>
+          <th>Total</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Items ajoutés dynamiquement -->
+      </tbody>
+    </table>
+    <h3>Total panier : <span id="total-panier">0</span> DZD</h3>
+    <button class="btn-ajouter" onclick="passerCommande()">Passer commande</button>
+  </div>
+</div>
+
+<script>
+  // Gestion panier
+  let panier = [];
+
+  function ajouterPanier(produit, prix) {
+    const index = panier.findIndex(item => item.produit === produit);
+    if(index > -1){
+      panier[index].quantite += 1;
+      panier[index].total = panier[index].prix * panier[index].quantite;
+    } else {
+      panier.push({produit, prix, quantite: 1, total: prix});
+    }
+    renderPanier();
+  }
+
+  function renderPanier() {
+    const tbody = document.querySelector('#table-panier tbody');
+    tbody.innerHTML = '';
+    let totalPanier = 0;
+    panier.forEach((item, index) => {
+      totalPanier += item.total;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${item.produit}</td>
+        <td>${item.prix}</td>
+        <td>${item.quantite}</td>
+        <td>${item.total}</td>
+        <td><button onclick="supprimerItem(${index})" style="background:red;color:white;padding:5px;border:none;border-radius:4px;">Supprimer</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('total-panier').innerText = totalPanier;
+  }
+
+  function supprimerItem(index){
+    panier.splice(index,1);
+    renderPanier();
+  }
+
+  // Passer commande
+  function passerCommande() {
+    if(panier.length === 0){
+      alert("Le panier est vide !");
+      return;
+    }
+
+    panier.forEach(item => {
+      commandes.push({
+        produit: item.produit,
+        prix: item.prix,
+        client: "Client Test", // Plus tard à remplacer par formulaire réel
+        wilaya: "Alger", // Ex : ajouter choix wilaya
+        livraison: "À domicile", // ou bureau
+        statut: "En attente"
+      });
+    });
+    panier = [];
+    renderPanier();
+    renderCommandes();
+    alert("Commande passée avec succès !");
+  }
+</script>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Techno Direct – Vente PC</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #ff6b00;
+  --blanc: #ffffff;
+  --gris: #f5f5f5;
+  --noir: #000000;
+  --bleu: #007bff;
+  --rouge: #dc3545;
+  --vert: #28a745;
+}
+body {font-family: 'Cairo', sans-serif; margin:0; padding:0; background-color: var(--gris);}
+header {background: var(--orange); color: var(--blanc); padding: 20px; text-align:center;}
+h1,h2,h3 {margin:0 0 10px 0;}
+.container {width: 95%; max-width: 1200px; margin:20px auto;}
+.catalogue {display:flex; flex-wrap:wrap; gap:20px;}
+.card {background:white; border-radius:8px; padding:10px; width:calc(33.333% - 20px); box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.card img {width:100%; height:200px; object-fit:cover; border-radius:6px;}
+.info {padding:10px 0;}
+.prix {font-weight:bold; color: var(--orange);}
+.btn-ajouter {background: var(--orange); color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; margin-top:5px;}
+.btn-ajouter:hover {background: #e55b00;}
+.panier, .admin {margin-top:40px; background:white; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+table {width:100%; border-collapse:collapse;}
+th, td {padding:10px; border:1px solid #ddd; text-align:center;}
+th {background: var(--orange); color: var(--blanc);}
+select, input {padding:7px; margin:5px 0; width:100%; border-radius:5px; border:1px solid #ccc;}
+button {cursor:pointer;}
+@media(max-width:900px){.card{width:calc(50% - 20px);}}
+@media(max-width:600px){.card{width:100%;}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Techno Direct – Vente de PC</h1>
+</header>
+
+<div class="container" id="catalogue">
+  <h2>Catalogue complet</h2>
+  <div class="catalogue">
+
+    <!-- Exemple HP ZBook 14u G6 -->
+    <div class="card" data-produit="HP ZBook 14u G6" data-prix="60000">
+      <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=60" alt="HP ZBook 14u G6">
+      <div class="info">
+        <h3>HP ZBook 14u G6</h3>
+        <p>Intel Core i7, 16GigaRAM, 512GigaSSD, Full HD</p>
+        <p class="prix">60 000 DZD</p>
+        <button class="btn-ajouter" onclick="ajouterPanier('HP ZBook 14u G6', 60000)">Ajouter au panier</button>
+      </div>
+    </div>
+
+    <!-- Dell Latitude 3310 -->
+    <div class="card" data-produit="Dell Latitude 3310" data-prix="55000">
+      <img src="https://images.unsplash.com/photo-1555617117-08d0d7f8c12d?auto=format&fit=crop&w=800&q=60" alt="Dell Latitude 3310">
+      <div class="info">
+        <h3>Dell Latitude 3310</h3>
+        <p>Intel Core i5, 8GigaRAM, 256GigaSSD, Full HD</p>
+        <p class="prix">55 000 DZD</p>
+        <button class="btn-ajouter" onclick="ajouterPanier('Dell Latitude 3310', 55000)">Ajouter au panier</button>
+      </div>
+    </div>
+
+    <!-- Lenovo ThinkPad T480 -->
+    <div class="card" data-produit="Lenovo ThinkPad T480" data-prix="72000">
+      <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=60" alt="Lenovo ThinkPad T480">
+      <div class="info">
+        <h3>Lenovo ThinkPad T480</h3>
+        <p>Intel Core i7, 16GigaRAM, 1TeraSSD, Full HD</p>
+        <p class="prix">72 000 DZD</p>
+        <button class="btn-ajouter" onclick="ajouterPanier('Lenovo ThinkPad T480', 72000)">Ajouter au panier</button>
+      </div>
+    </div>
+
+    <!-- Ici, ajouter tous les autres PC avec exactitude des caractéristiques et prix que tu m’as donné -->
+  </div>
+
+  <!-- Formulaire livraison -->
+  <div class="panier">
+    <h2>Mon panier et livraison</h2>
+    <table id="table-panier">
       <thead>
         <tr>
-          <th>Photo</th>
-          <th>Nom</th>
-          <th>Prix</th>
-          <th>Description</th>
-          <th>Actions</th>
+          <th>Produit</th><th>Prix</th><th>Quantité</th><th>Total</th><th>Action</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
-  </section>
+    <h3>Total panier : <span id="total-panier">0</span> DZD</h3>
 
-  <footer>
-    © 2025 Techno Direct – Vente de PC et Accessoires
-  </footer>
+    <label for="wilaya">Choisir votre wilaya :</label>
+    <select id="wilaya">
+      <option value="">--Sélectionner la wilaya--</option>
+      <option value="Adrar">Adrar</option>
+      <option value="Chlef">Chlef</option>
+      <option value="Laghouat">Laghouat</option>
+      <option value="Oum El Bouaghi">Oum El Bouaghi</option>
+      <option value="Batna">Batna</option>
+      <option value="Béjaïa">Béjaïa</option>
+      <option value="Biskra">Biskra</option>
+      <option value="Béchar">Béchar</option>
+      <option value="Blida">Blida</option>
+      <option value="Bouira">Bouira</option>
+      <option value="Tamanrasset">Tamanrasset</option>
+      <option value="Tébessa">Tébessa</option>
+      <option value="Tlemcen">Tlemcen</option>
+      <option value="Tiaret">Tiaret</option>
+      <option value="Tizi Ouzou">Tizi Ouzou</option>
+      <option value="Alger">Alger</option>
+      <option value="Djelfa">Djelfa</option>
+      <option value="Jijel">Jijel</option>
+      <option value="Sétif">Sétif</option>
+      <option value="Saïda">Saïda</option>
+      <option value="Skikda">Skikda</option>
+      <option value="Sidi Bel Abbès">Sidi Bel Abbès</option>
+      <option value="Annaba">Annaba</option>
+      <option value="Guelma">Guelma</option>
+      <option value="Constantine">Constantine</option>
+      <option value="Médéa">Médéa</option>
+      <option value="Mostaganem">Mostaganem</option>
+      <option value="M’Sila">M’Sila</option>
+      <option value="Mascara">Mascara</option>
+      <option value="Ouargla">Ouargla</option>
+      <option value="Oran">Oran</option>
+      <option value="El Bayadh">El Bayadh</option>
+      <option value="Illizi">Illizi</option>
+      <option value="Bordj Bou Arreridj">Bordj Bou Arreridj</option>
+      <option value="Boumerdès">Boumerdès</option>
+      <option value="El Tarf">El Tarf</option>
+      <option value="Tindouf">Tindouf</option>
+      <option value="Tissemsilt">Tissemsilt</option>
+      <option value="El Oued">El Oued</option>
+      <option value="Khenchela">Khenchela</option>
+      <option value="Souk Ahras">Souk Ahras</option>
+      <option value="Tipaza">Tipaza</option>
+      <option value="Mila">Mila</option>
+      <option value="Aïn Defla">Aïn Defla</option>
+      <option value="Naâma">Naâma</option>
+      <option value="Aïn Témouchent">Aïn Témouchent</option>
+      <option value="Ghardaïa">Ghardaïa</option>
+      <option value="Relizane">Relizane</option>
+      <option value="Timimoun">Timimoun</option>
+      <option value="Bordj Badji Mokhtar">Bordj Badji Mokhtar</option>
+      <option value="Ouled Djellal">Ouled Djellal</option>
+      <option value="Béni Abbès">Béni Abbès</option>
+      <option value="In Salah">In Salah</option>
+      <option value="In Guezzam">In Guezzam</option>
+    </select>
 
-<script>
-  // Tableau des prix par wilaya : [prixDomicile, prixBureau]
-  const livraisonPrix = {
-    "Adrar": [1400, 970],
-    "Chlef": [800, 520],
-    "Laghouat": [950, 620],
-    "Oum El Bouaghi": [800, 520],
-    "Batna": [800, 520],
-    "Bejaia": [500, 520],
-    "Biskra": [950, 620],
-    "Bechar": [1100, 720],
-    "Blida": [750, 470],
-    "Bouira": [700, 520],
-    "Tamanrasset": [1600, 1120],
-    "Tebessa": [800, 520],
-    "Tlemcen": [900, 570],
-    "Tiaret": [800, 520],
-    "Tizi Ouzou": [650, 520],
-    "Alger": [600, 470],
-    "Djelfa": [950, 620],
-    "Jijel": [700, 520],
-    "Sétif": [750, 520],
-    "Saida": [800, 570],
-    "Skikda": [750, 520],
-    "Sidi Bel Abbès": [750, 520],
-    "Annaba": [800, 520],
-    "Guelma": [800, 520],
-    "Constantine": [750, 520],
-    "Medea": [750, 520],
-    "Mostaganem": [750, 520],
-    "M'Sila": [850, 570],
-    "Mascara": [750, 520],
-    "Ouargla": [1000, 670],
-    "Oran": [700, 520],
-    "El Bayadh": [1050, 670],
-    "Illizi": [0, 0],
-    "Bordj Bou Arreridj": [750, 520],
-    "Boumerdes": [750, 520],
-    "El Tart": [850, 520],
-    "Tindouf": [0, 0],
-    "Tissemsilt": [800, 520],
-    "El Oued": [1000, 670],
-    "Khenchela": [800, 0],
-    "Souk Ahras": [800, 520],
-    "Tipaza": [750, 520],
-    "Mila": [750, 520],
-    "Ain Defla": [750, 520],
-    "Naama": [1100, 670],
-    "Ain Temouchent": [750, 520],
-    "Ghardaia": [1000, 620],
-    "Relizane": [750, 520],
-    "Timimoun": [1400, 970],
-    "Bordj Badji Mokhtar": [0, 0],
-    "Ouled Djellal": [950, 620],
-    "Béni Abbès": [1000, 970],
-    "In Salah": [1600, 0],
-    "In Guezzam": [1600, 0],
-    "Touggourt": [1000, 670],
-    "Djanet": [0, 0],
-    "M'Ghair": [1000, 0],
-    "Meniaa": [1000, 0]
-  };
+    <label for="livraison">Type de livraison :</label>
+    <select id="livraison">
+      <option value="">--Sélectionner type--</option>
+      <option value="domicile">À domicile</option>
+      <option value="bureau">Bureau</option>
+    </select>
 
-  let produits = JSON.parse(localStorage.getItem("produits")) || [];
-
-  function afficherProduits() {
-    const container = document.getElementById("produitsContainer");
-    container.innerHTML = "";
-    produits.forEach((p, i) => {
-      const card = document.createElement("div");
-      card.classList.add("card");
-      card.innerHTML = `
-        <img src="${p.photo}" alt="${p.nom}">
-        <div class="info">
-          <h2>${p.nom}</h2>
-          <p>${p.description}</p>
-          <p class="prix">${p.prix} DA</p>
-          <div class="btns">
-            <button onclick="ouvrirCommande(${i})">Commander</button>
-          </div>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function ouvrirCommande(index) {
-    const produit = produits[index];
-    const zone = document.createElement("div");
-    zone.style.position = "fixed";
-    zone.style.top = "0";
-    zone.style.left = "0";
-    zone.style.width = "100vw";
-    zone.style.height = "100vh";
-    zone.style.background = "rgba(0,0,0,0.8)";
-    zone.style.display = "flex";
-    zone.style.alignItems = "center";
-    zone.style.justifyContent = "center";
-    zone.innerHTML = `
-      <div style="background:#1f1f1f;padding:20px;border-radius:10px;width:90%;max-width:400px">
-        <h3>${produit.nom}</h3>
-        <img src="${produit.photo}" style="width:100%;border-radius:5px;margin:10px 0;">
-        <p>${produit.description}</p>
-        <p>Prix: <b>${produit.prix} DA</b></p>
-        <select id="wilayaSelect"></select>
-        <select id="typeLivraison">
-          <option value="domicile">À domicile</option>
-          <option value="bureau">Bureau</option>
-        </select>
-        <p id="totalLivraison">Total: -</p>
-        <button style="background:var(--accent);color:white;padding:10px;border:none;border-radius:5px;margin-top:10px;cursor:pointer" onclick="fermerPopup(this)">Fermer</button>
-      </div>
-    `;
-    document.body.appendChild(zone);
-    const select = zone.querySelector("#wilayaSelect");
-    Object.keys(livraisonPrix).forEach(w => {
-      const opt = document.createElement("option");
-      opt.value = w;
-      opt.textContent = w;
-      select.appendChild(opt);
-    });
-
-    const total = zone.querySelector("#totalLivraison");
-    function updateTotal() {
-      const wilaya = select.value;
-      const type = zone.querySelector("#typeLivraison").value;
-      const prixBase = produit.prix;
-      const [domicile, bureau] = livraisonPrix[wilaya] || [0, 0];
-      const livraison = type === "domicile" ? domicile : bureau;
-      if (livraison === 0) {
-        total.textContent = "Livraison non disponible pour cette wilaya";
-      } else {
-        total.textContent = `Total: ${prixBase + livraison} DA`;
-      }
-    }
-    select.addEventListener("change", updateTotal);
-    zone.querySelector("#typeLivraison").addEventListener("change", updateTotal);
-    updateTotal();
-  }
-
-  function fermerPopup(btn) {
-    btn.closest("div[style]").remove();
-  }
-</script>
-
-<script>
-  // Ouverture du panneau admin
-  function ouvrirAdmin() {
-    document.getElementById("adminPanel").style.display = "flex";
-    chargerProduitsAdmin();
-  }
-
-  function fermerAdmin() {
-    document.getElementById("adminPanel").style.display = "none";
-  }
-
-  // --- Stockage des produits ---
-  function sauvegarderProduits() {
-    localStorage.setItem("produits", JSON.stringify(produits));
-  }
-
-  // --- Charger produits dans l’admin ---
-  function chargerProduitsAdmin() {
-    const adminList = document.getElementById("adminList");
-    adminList.innerHTML = "";
-    produits.forEach((p, i) => {
-      const div = document.createElement("div");
-      div.classList.add("admin-item");
-      div.innerHTML = `
-        <img src="${p.photo}" class="admin-photo" alt="img">
-        <input type="file" accept="image/*" onchange="changerPhoto(${i}, event)">
-        <input value="${p.nom}" onchange="produits[${i}].nom = this.value; sauvegarderProduits(); afficherProduits();">
-        <textarea onchange="produits[${i}].description = this.value; sauvegarderProduits(); afficherProduits();">${p.description}</textarea>
-        <input type="number" value="${p.prix}" onchange="produits[${i}].prix = parseInt(this.value); sauvegarderProduits(); afficherProduits();">
-        <button onclick="supprimerProduit(${i})">🗑️ Supprimer</button>
-      `;
-      adminList.appendChild(div);
-    });
-  }
-
-  // --- Changement d’image qui se sauvegarde ---
-  function changerPhoto(index, event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      produits[index].photo = e.target.result;
-      sauvegarderProduits();
-      afficherProduits();
-      chargerProduitsAdmin();
-    };
-    reader.readAsDataURL(file);
-  }
-
-  // --- Suppression produit ---
-  function supprimerProduit(index) {
-    if (confirm("Supprimer ce produit ?")) {
-      produits.splice(index, 1);
-      sauvegarderProduits();
-      afficherProduits();
-      chargerProduitsAdmin();
-    }
-  }
-
-  // --- Ajout produit ---
-  function ajouterProduit() {
-    const nom = document.getElementById("nomProd").value.trim();
-    const desc = document.getElementById("descProd").value.trim();
-    const prix = parseInt(document.getElementById("prixProd").value);
-    const photo = document.getElementById("photoProd").files[0];
-
-    if (!nom || !desc || !prix || !photo) {
-      alert("Tous les champs sont obligatoires !");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      produits.push({
-        nom,
-        description: desc,
-        prix,
-        photo: e.target.result,
-      });
-      sauvegarderProduits();
-      afficherProduits();
-      chargerProduitsAdmin();
-      document.getElementById("nomProd").value = "";
-      document.getElementById("descProd").value = "";
-      document.getElementById("prixProd").value = "";
-      document.getElementById("photoProd").value = "";
-    };
-    reader.readAsDataURL(photo);
-  }
-
-  // --- Panneau admin interface ---
-</script>
-
-<div id="adminPanel" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.9);z-index:1000;flex-direction:column;align-items:center;overflow:auto;padding:20px;">
-  <h2 style="color:white">Panneau Admin</h2>
-
-  <div style="background:#2a2a2a;padding:15px;border-radius:10px;margin:10px;width:90%;max-width:600px;">
-    <h3 style="color:#ff6b00">Ajouter un produit</h3>
-    <input id="nomProd" placeholder="Nom du produit">
-    <textarea id="descProd" placeholder="Description"></textarea>
-    <input id="prixProd" type="number" placeholder="Prix en DA">
-    <input id="photoProd" type="file" accept="image/*">
-    <button onclick="ajouterProduit()">Ajouter</button>
+    <button class="btn-ajouter" onclick="passerCommande()">Passer commande</button>
   </div>
 
-  <div style="background:#2a2a2a;padding:15px;border-radius:10px;margin:10px;width:90%;max-width:600px;">
-    <h3 style="color:#ff6b00">Modifier les prix de livraison</h3>
-    <select id="selectWilayaAdmin" onchange="chargerPrixLivraisonAdmin()"></select>
-    <div id="prixLivraisonAdmin">
-      <label>Prix domicile (DA):</label>
-      <input type="number" id="prixDomicileAdmin">
-      <label>Prix bureau (DA):</label>
-      <input type="number" id="prixBureauAdmin">
-      <button onclick="sauvegarderPrixLivraisonAdmin()">💾 Sauvegarder</button>
-    </div>
-  </div>
-
-  <div id="adminList" style="width:90%;max-width:600px;display:flex;flex-direction:column;gap:10px;"></div>
-  <button style="margin-top:20px;background:#ff6b00;color:white;padding:10px 20px;border:none;border-radius:8px;" onclick="fermerAdmin()">Fermer</button>
-</div>
-
-<script>
-  // Charger les wilayas dans le panneau admin
-  const selectWilayaAdmin = document.getElementById("selectWilayaAdmin");
-  Object.keys(livraisonPrix).forEach(w => {
-    const opt = document.createElement("option");
-    opt.value = w;
-    opt.textContent = w;
-    selectWilayaAdmin.appendChild(opt);
-  });
-
-  function chargerPrixLivraisonAdmin() {
-    const wilaya = selectWilayaAdmin.value;
-    const [domicile, bureau] = livraisonPrix[wilaya];
-    document.getElementById("prixDomicileAdmin").value = domicile;
-    document.getElementById("prixBureauAdmin").value = bureau;
-  }
-
-  function sauvegarderPrixLivraisonAdmin() {
-    const wilaya = selectWilayaAdmin.value;
-    const newDom = parseInt(document.getElementById("prixDomicileAdmin").value);
-    const newBur = parseInt(document.getElementById("prixBureauAdmin").value);
-    livraisonPrix[wilaya] = [newDom, newBur];
-    localStorage.setItem("livraisonPrix", JSON.stringify(livraisonPrix));
-    alert("Prix de livraison mis à jour !");
-  }
-
-  // Restaure les prix de livraison sauvegardés
-  const savedLivraison = JSON.parse(localStorage.getItem("livraisonPrix"));
-  if (savedLivraison) {
-    Object.assign(livraisonPrix, savedLivraison);
-  }
-
-  // --- Initialisation du site ---
-  afficherProduits();
-</script>
-
-<!-- Bouton caché pour accéder à l’admin -->
-<button id="adminAccess" onclick="ouvrirLoginAdmin()" style="position:fixed;bottom:10px;right:10px;background:#333;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;opacity:0.4;">
-  ⚙️
-</button>
-
-<!-- Fenêtre de connexion admin -->
-<div id="loginAdmin" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.9);z-index:2000;align-items:center;justify-content:center;">
-  <div style="background:#1c1c1c;padding:30px;border-radius:12px;text-align:center;color:white;max-width:400px;width:90%;">
-    <h2 style="color:#ff6b00;">Connexion administrateur</h2>
-    <input id="adminPass" type="password" placeholder="Mot de passe" style="padding:10px;width:80%;border:none;border-radius:6px;margin:10px 0;">
-    <button onclick="verifierLoginAdmin()" style="background:#ff6b00;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">Entrer</button>
-    <button onclick="fermerLoginAdmin()" style="background:#666;color:white;padding:10px 20px;border:none;border-radius:8px;margin-left:10px;">Annuler</button>
+  <!-- Zone admin -->
+  <div class="admin">
+    <h2>Zone Admin – Commandes</h2>
+    <table id="table-commandes">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Prix</th>
+          <th>Client</th>
+          <th>Wilaya</th>
+          <th>Livraison</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamique via JS -->
+      </tbody>
+    </table>
   </div>
 </div>
 
 <script>
-  const adminCode = "admin123"; // 🔐 Tu peux changer ce mot de passe ici
+let panier = [];
+let commandes = [];
 
-  function ouvrirLoginAdmin() {
-    document.getElementById("loginAdmin").style.display = "flex";
-  }
+function ajouterPanier(produit, prix){
+  const index = panier.findIndex(i=>i.produit===produit);
+  if(index>-1){panier[index].quantite+=1; panier[index].total=panier[index].prix*panier[index].quantite;}
+  else{panier.push({produit, prix, quantite:1, total:prix});}
+  renderPanier();
+}
 
-  function fermerLoginAdmin() {
-    document.getElementById("loginAdmin").style.display = "none";
-  }
-
-  function verifierLoginAdmin() {
-    const pass = document.getElementById("adminPass").value.trim();
-    if (pass === adminCode) {
-      fermerLoginAdmin();
-      ouvrirAdmin();
-    } else {
-      alert("Mot de passe incorrect !");
-    }
-  }
-</script>
-
-<!-- 📱 Responsive design -->
-<style>
-  @media (max-width: 768px) {
-    body {
-      font-size: 14px;
-    }
-    .card {
-      width: 95%;
-      margin: auto;
-    }
-    .admin-item {
-      display: flex;
-      flex-direction: column;
-      background: #222;
-      padding: 10px;
-      border-radius: 8px;
-      color: white;
-    }
-    .admin-item input,
-    .admin-item textarea {
-      width: 100%;
-      margin-top: 5px;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-    }
-    #adminPanel h3 {
-      font-size: 16px;
-    }
-    #adminAccess {
-      opacity: 0.6;
-    }
-  }
-
-  /* Admin zone styles */
-  .admin-photo {
-    width: 80px;
-    height: 80px;
-    border-radius: 6px;
-    object-fit: cover;
-    margin-right: 10px;
-  }
-  .admin-item {
-    display: flex;
-    align-items: flex-start;
-    background: #2a2a2a;
-    color: white;
-    padding: 10px;
-    border-radius: 10px;
-  }
-  .admin-item button {
-    background: #ff6b00;
-    border: none;
-    color: white;
-    border-radius: 6px;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  .admin-item input,
-  .admin-item textarea {
-    flex: 1;
-    background: #333;
-    color: white;
-    border: none;
-    margin: 5px;
-    padding: 8px;
-    border-radius: 5px;
-  }
-</style>
-
-<!-- Footer -->
-<footer style="margin-top:40px;padding:20px;text-align:center;background:#111;color:#ccc;font-size:14px;">
-  <p>© 2025 Techno Direct - Tous droits réservés.</p>
-  <p>Site développé pour la gestion complète des produits et des livraisons en Algérie 🇩🇿</p>
-</footer>
-
-<!-- Animation d’apparition -->
-<script>
-  window.addEventListener("load", () => {
-    document.body.style.opacity = 1;
-    document.body.style.transition = "opacity 0.5s";
+function renderPanier(){
+  const tbody=document.querySelector('#table-panier tbody'); tbody.innerHTML='';
+  let totalPanier=0;
+  panier.forEach((item,index)=>{
+    totalPanier+=item.total;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${item.produit}</td><td>${item.prix}</td><td>${item.quantite}</td><td>${item.total}</td><td><button onclick="supprimerItem(${index})" style="background:red;color:white;padding:5px;border:none;border-radius:4px;">Supprimer</button></td>`;
+    tbody.appendChild(tr);
   });
-</script>
-
-<script>
-/* ----------------------  CALCUL AUTOMATIQUE DU TOTAL ----------------------- */
-const tarifsLivraison = {
-  "Adrar": [1400, 970],
-  "Chlef": [800, 520],
-  "Laghouat": [950, 620],
-  "Oum El Bouaghi": [800, 520],
-  "Batna": [800, 520],
-  "Bejaia": [500, 520],
-  "Biskra": [950, 620],
-  "Bechar": [1100, 720],
-  "Blida": [750, 470],
-  "Bouira": [700, 520],
-  "Tamanrasset": [1600, 1120],
-  "Tebessa": [800, 520],
-  "Tlemcen": [900, 570],
-  "Tiaret": [800, 520],
-  "Tizi Ouzou": [650, 520],
-  "Alger": [600, 470],
-  "Djelfa": [950, 620],
-  "Jijel": [700, 520],
-  "Sétif": [750, 520],
-  "Saida": [800, 570],
-  "Skikda": [750, 520],
-  "Sidi Bel Abbès": [750, 520],
-  "Annaba": [800, 520],
-  "Guelma": [800, 520],
-  "Constantine": [750, 520],
-  "Medea": [750, 520],
-  "Mostaganem": [750, 520],
-  "M'Sila": [850, 570],
-  "Mascara": [750, 520],
-  "Ouargla": [1000, 670],
-  "Oran": [700, 520],
-  "El Bayadh": [1050, 670],
-  "Illizi": [0, 0],
-  "Bordj Bou Arreridj": [750, 520],
-  "Boumerdes": [750, 520],
-  "El Tart": [850, 520],
-  "Tindouf": [0, 0],
-  "Tissemsilt": [800, 520],
-  "El Oued": [1000, 670],
-  "Khenchela": [800, 0],
-  "Souk Ahras": [800, 520],
-  "Tipaza": [750, 520],
-  "Mila": [750, 520],
-  "Ain defla": [750, 520],
-  "Naama": [1100, 670],
-  "Ain Temouchent": [750, 520],
-  "Ghardaia": [1000, 620],
-  "Relizane": [750, 520],
-  "Timimoun": [1400, 0],
-  "Bordj Badji Mokhtar": [0, 0],
-  "Ouled Djellal": [950, 620],
-  "Béni Abbès": [1000, 970],
-  "In Salah": [1600, 0],
-  "In Guezzam": [1600, 0],
-  "Touggourt": [1000, 670],
-  "Djanet": [0, 0],
-  "M'Ghair": [1000, 0],
-  "Meniaa": [1000, 0]
-};
-
-// Sélection des éléments
-const wilayaSelect = document.createElement("select");
-wilayaSelect.id = "wilayaSelect";
-for (let w in tarifsLivraison) {
-  let opt = document.createElement("option");
-  opt.value = w;
-  opt.textContent = w;
-  wilayaSelect.appendChild(opt);
-}
-document.body.appendChild(wilayaSelect);
-
-const livraisonType = document.createElement("select");
-livraisonType.id = "livraisonType";
-["À domicile", "Au bureau"].forEach(t => {
-  let opt = document.createElement("option");
-  opt.value = t;
-  opt.textContent = t;
-  livraisonType.appendChild(opt);
-});
-document.body.appendChild(livraisonType);
-
-const totalAffichage = document.createElement("h3");
-totalAffichage.style = "color:white;background:#ff6b00;padding:10px;border-radius:6px;width:max-content;";
-totalAffichage.textContent = "Total : -- DA";
-document.body.appendChild(totalAffichage);
-
-let prixPc = 60000; // Exemple : le prix du PC sélectionné
-
-function calculerTotal() {
-  const wilaya = wilayaSelect.value;
-  const type = livraisonType.value;
-  const prixLivraison = tarifsLivraison[wilaya];
-  if (!prixLivraison) {
-    totalAffichage.textContent = "Total : Livraison non disponible";
-    return;
-  }
-  let coutLivraison =
-    type === "À domicile" ? prixLivraison[0] : prixLivraison[1];
-  if (coutLivraison === 0) {
-    totalAffichage.textContent = "Total : Livraison non disponible";
-    return;
-  }
-  const total = prixPc + coutLivraison;
-  totalAffichage.textContent = `Total : ${total.toLocaleString()} DA`;
+  document.getElementById('total-panier').innerText=totalPanier;
 }
 
-wilayaSelect.addEventListener("change", calculerTotal);
-livraisonType.addEventListener("change", calculerTotal);
-</script>
+function supprimerItem(index){panier.splice(index,1); renderPanier();}
 
-<!-- ---------------------- SAUVEGARDE PHOTO FIX ---------------------- -->
-<script>
-function sauvegarderModifs(id) {
-  const item = document.querySelector(`#produit-${id}`);
-  const nom = item.querySelector(".nom").value;
-  const prix = parseInt(item.querySelector(".prix").value);
-  const description = item.querySelector(".description").value;
-  const photoInput = item.querySelector(".photo");
-  const ancienneImage = item.querySelector("img");
+function passerCommande(){
+  const wilaya=document.getElementById('wilaya').value;
+  const livraison=document.getElementById('livraison').value;
+  if(panier.length===0){alert("Le panier est vide !"); return;}
+  if(wilaya===""||livraison===""){alert("Veuillez choisir wilaya et type de livraison"); return;}
 
-  if (photoInput.files && photoInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      ancienneImage.src = e.target.result;
-      sauvegarderProduit(id, nom, prix, description, e.target.result);
-    };
-    reader.readAsDataURL(photoInput.files[0]);
-  } else {
-    sauvegarderProduit(id, nom, prix, description, ancienneImage.src);
-  }
+  panier.forEach(item=>{
+    commandes.push({
+      produit:item.produit,
+      prix:item.prix,
+      client:"Client Test",
+      wilaya:wilaya,
+      livraison:livraison,
+      statut:"En attente"
+    });
+  });
+  panier=[];
+  renderPanier();
+  renderCommandes();
+  alert("Commande passée avec succès !");
 }
 
-function sauvegarderProduit(id, nom, prix, description, image) {
-  let produits = JSON.parse(localStorage.getItem("produits")) || [];
-  const index = produits.findIndex(p => p.id === id);
-  if (index >= 0) {
-    produits[index] = { id, nom, prix, description, image };
-  }
-  localStorage.setItem("produits", JSON.stringify(produits));
-  alert("Modifications enregistrées ✅");
+function renderCommandes(){
+  const tbody=document.querySelector('#table-commandes tbody');
+  tbody.innerHTML='';
+  commandes.forEach(item=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${item.produit}</td><td>${item.prix}</td><td>${item.client}</td><td>${item.wilaya}</td><td>${item.livraison}</td><td>${item.statut}</td>`;
+    tbody.appendChild(tr);
+  });
 }
 </script>
 
-<!-- ---------------------- FIN DU SITE ---------------------- -->
-<footer style="margin-top:40px;padding:25px;text-align:center;background:#111;color:#ccc;font-size:13px;border-top:1px solid #333;">
-  <p>© 2025 Techno Direct — Développé avec passion par Idir 💻🇩🇿</p>
-</footer>
+</body>
+</html>
