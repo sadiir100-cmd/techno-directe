@@ -3,565 +3,811 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Affiches PC — Vitrine</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header class="site-header">
-    <h1>Vitrine PC</h1>
-    <nav>
-      <a href="admin.html" class="btn">Admin</a>
-    </nav>
-  </header>
+  <title>Technoid — Vitrine PC</title>
 
-  <main class="container">
-    <section id="gallery" class="grid">
-      <!-- Les affiches seront insérées ici par app.js -->
-    </section>
-  </main>
-
-  <!-- Modal pour visualiser les images en grand -->
-  <div id="lightbox" class="lightbox hidden" role="dialog" aria-hidden="true">
-    <button id="lb-close" class="lb-close" aria-label="Fermer">✕</button>
-    <img id="lb-img" alt="Agrandissement produit" />
-  </div>
-
-  <template id="poster-template">
-    <article class="poster card">
-      <div class="poster-top">
-        <img class="poster-main" src="" alt="Photo principale" />
-        <div class="thumbs">
-          <button class="thumb" data-index="0"><img src="" alt="miniature 1" /></button>
-          <button class="thumb" data-index="1"><img src="" alt="miniature 2" /></button>
-          <button class="thumb" data-index="2"><img src="" alt="miniature 3" /></button>
-        </div>
-      </div>
-      <div class="poster-body">
-        <h2 class="poster-title"></h2>
-        <p class="poster-specs"></p>
-        <div class="poster-actions">
-          <button class="view-btn btn">Voir</button>
-        </div>
-      </div>
-    </article>
-  </template>
-
-  <script src="app.js"></script>
-</body>
-</html>
-
-:root{
-  --bg:#f5f6fa;
-  --card:#ffffff;
-  --accent:#1f6feb;
-  --muted:#6b7280;
-  --shadow: 0 6px 18px rgba(18, 18, 18, 0.08);
-  --radius:12px;
-  --gap:16px;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-}
-
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:var(--bg);
-  color:#0f172a;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  padding-bottom:40px;
-}
-
-/* Header */
-.site-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:18px 24px;
-  background:linear-gradient(90deg,#fff 0%, #fbfdff 100%);
-  box-shadow: var(--shadow);
-  position:sticky;
-  top:0;
-  z-index:10;
-}
-.site-header h1{margin:0;font-size:20px}
-.site-header .btn{padding:8px 12px;border-radius:10px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
-
-/* Container & Grid */
-.container{max-width:1140px;margin:28px auto;padding:0 18px}
-.grid{
-  display:grid;
-  gap:var(--gap);
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-}
-
-/* Poster card */
-.card{
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-.poster-top{position:relative}
-.poster-main{
-  display:block;
-  width:100%;
-  aspect-ratio: 16/10;
-  object-fit:cover;
-  background:#eee;
-}
-.thumbs{
-  display:flex;
-  gap:8px;
-  padding:10px;
-  justify-content:center;
-  background:linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
-}
-.thumb{
-  border:0;background:transparent;padding:0;border-radius:8px;
-  width:64px;height:48px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
-}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block;border-radius:6px}
-
-/* Body */
-.poster-body{padding:12px 14px}
-.poster-title{margin:0 0 6px;font-size:16px}
-.poster-specs{margin:0;color:var(--muted);font-size:13px}
-.poster-actions{display:flex;justify-content:flex-end;margin-top:10px}
-.btn{
-  border:0;padding:8px 12px;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-weight:600;
-}
-
-/* Lightbox */
-.lightbox{
-  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,0.6);z-index:1000;padding:20px;
-}
-.lightbox.hidden{display:none}
-.lightbox img{max-width:100%;max-height:85vh;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-.lb-close{
-  position:absolute;right:22px;top:20px;background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer;
-}
-
-/* Responsive tweaks */
-@media (max-width:520px){
-  .thumb{width:48px;height:36px}
-  .poster-specs{font-size:12px}
-}
-
-/* app.js
-Responsabilités:
-- Charger les "posters" depuis localStorage (clé: posters).
-- Si aucun poster, charger des exemples (sample).
-- Afficher chaque poster avec image principale et 3 miniatures cliquables.
-- Cliquer sur miniature = changer l'image principale. Cliquer sur "Voir" ou image = lightbox.
-- Fournir export/import simple via console (admin fera l'UI).
-*/
-
-// --- Helpers storage ---
-const STORAGE_KEY = 'posters_vitrine_v1';
-
-function loadPosters(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return samplePosters();
-    const parsed = JSON.parse(raw);
-    if(!Array.isArray(parsed)) return samplePosters();
-    return parsed;
-  }catch(e){
-    console.error('Erreur lecture storage', e);
-    return samplePosters();
-  }
-}
-
-function savePosters(arr){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-}
-
-// --- Sample data si vide (images placeholder) ---
-function sampleImageData(color='#ccc', text='PC'){
-  // simple SVG data URL placeholder
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='800'><rect width='100%' height='100%' fill='${color}'/><text x='50%' y='50%' font-size='60' fill='#333' dominant-baseline='middle' text-anchor='middle'>${text}</text></svg>`;
-  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-}
-
-function samplePosters(){
-  const p = [
-    {
-      id: genId(),
-      title: "Gamer Fury X1",
-      specs: "i7 • RTX 4060 • 16GB RAM • SSD 1TB",
-      main: sampleImageData('#e6f0ff','Gamer Fury X1'),
-      thumbs: [
-        sampleImageData('#dbeafe','detail 1'),
-        sampleImageData('#c7f9cc','detail 2'),
-        sampleImageData('#ffe4e6','detail 3')
-      ]
-    },
-    {
-      id: genId(),
-      title: "Office Pro S2",
-      specs: "i5 • Intel UHD • 8GB RAM • SSD 512GB",
-      main: sampleImageData('#fff7e6','Office Pro S2'),
-      thumbs: [
-        sampleImageData('#fff1b6','detail 1'),
-        sampleImageData('#fce7f3','detail 2'),
-        sampleImageData('#e8fdf5','detail 3')
-      ]
-    }
-  ];
-  savePosters(p);
-  return p;
-}
-
-function genId(){ return 'p_' + Math.random().toString(36).slice(2,9); }
-
-// --- Render ---
-const gallery = document.getElementById('gallery');
-const template = document.getElementById('poster-template');
-const lightbox = document.getElementById('lightbox');
-const lbImg = document.getElementById('lb-img');
-const lbClose = document.getElementById('lb-close');
-
-let posters = loadPosters();
-
-function render(){
-  gallery.innerHTML = '';
-  posters.forEach(p => {
-    const node = template.content.cloneNode(true);
-    const article = node.querySelector('.poster');
-    article.dataset.id = p.id;
-    const title = node.querySelector('.poster-title');
-    const specs = node.querySelector('.poster-specs');
-    const mainImg = node.querySelector('.poster-main');
-    const thumbs = node.querySelectorAll('.thumb img');
-    const thumbBtns = node.querySelectorAll('.thumb');
-
-    title.textContent = p.title;
-    specs.textContent = p.specs || '';
-    mainImg.src = p.main || (p.thumbs && p.thumbs[0]) || '';
-    mainImg.alt = `${p.title} — image principale`;
-
-    // Assign thumbs (may be less than 3)
-    for(let i=0;i<3;i++){
-      const imgEl = thumbs[i];
-      const btn = thumbBtns[i];
-      const src = (p.thumbs && p.thumbs[i]) ? p.thumbs[i] : '';
-      if(src){
-        imgEl.src = src;
-        imgEl.alt = `${p.title} miniature ${i+1}`;
-        btn.addEventListener('click', () => {
-          // changer l'image principale
-          mainImg.src = src;
-        });
-        // double click on thumb: open lightbox
-        btn.addEventListener('dblclick', () => openLightbox(src));
-      } else {
-        // hide if absent
-        btn.style.display = 'none';
-      }
-    }
-
-    // click sur image principale = open lightbox
-    mainImg.addEventListener('click', () => openLightbox(mainImg.src));
-
-    // View button opens lightbox with main
-    node.querySelector('.view-btn').addEventListener('click', () => openLightbox(mainImg.src));
-
-    gallery.appendChild(node);
-  });
-}
-
-function openLightbox(src){
-  lbImg.src = src;
-  lightbox.classList.remove('hidden');
-  lightbox.setAttribute('aria-hidden', 'false');
-}
-function closeLightbox(){
-  lightbox.classList.add('hidden');
-  lightbox.setAttribute('aria-hidden', 'true');
-  lbImg.src = '';
-}
-lbClose.addEventListener('click', closeLightbox);
-lightbox.addEventListener('click', (e)=>{
-  if(e.target === lightbox) closeLightbox();
-});
-document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeLightbox(); });
-
-render();
-
-// Expose for debug (optionnel)
-window._posters = posters;
-window._savePosters = (arr)=>{ posters = arr; savePosters(arr); render(); };
-
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Vitrine PC</title>
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Fonts (system fallback) -->
   <style>
-    /* petits ajustements pour admin */
-    .admin-wrap{max-width:1000px;margin:24px auto;padding:18px;background:var(--card);border-radius:12px;box-shadow:var(--shadow)}
-    form .row{display:flex;gap:12px;flex-wrap:wrap}
-    input, textarea{padding:8px;border-radius:8px;border:1px solid #e6e9ef;font-size:14px;width:100%}
-    label{font-weight:600;font-size:13px}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .list-posters{margin-top:20px}
-    .list-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fff,#f9fbff)}
-    .list-item img{width:84px;height:60px;object-fit:cover;border-radius:8px}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+  </style>
+
+  <!-- Styles : thème sombre moderne -->
+  <style>
+    :root{
+      --bg:#071022;
+      --panel:#0b1220;
+      --muted:#9fb0d1;
+      --accent:#1f6feb;
+      --glass: rgba(255,255,255,0.03);
+      --card-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      --rounded: 12px;
+      --danger:#ef4444;
+      --success:#10b981;
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#020617 0%, #071022 100%);
+      color: #e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.4;
+    }
+
+    /* layout */
+    .wrap{max-width:1180px;margin:0 auto;padding:18px}
+    header.top{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter: blur(6px) saturate(120%);
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-bottom:1px solid var(--glass);
+    }
+    .top .inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;background:linear-gradient(135deg,#0f172a,#4f46e5)}
+    .title{font-weight:800}
+    .subtitle{color:var(--muted);font-size:13px}
+
+    /* grid */
+    .grid{display:grid;gap:18px;grid-template-columns: repeat(auto-fit,minmax(260px,1fr));margin-top:18px}
+    .card{background:var(--panel);border-radius:var(--rounded);box-shadow:var(--card-shadow);border:1px solid var(--glass);overflow:hidden}
+    .card .pad{padding:12px}
+
+    /* poster */
+    .poster-img{width:100%;height:190px;object-fit:cover;border-radius:8px;display:block}
+    .thumbs{display:flex;gap:8px;justify-content:center;margin-top:10px}
+    .thumb{width:68px;height:48px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.05)}
+    .thumb.active{box-shadow:0 0 0 3px rgba(31,111,235,0.12);border-color:var(--accent)}
+
+    .p-title{font-weight:700;margin-top:10px}
+    .p-specs{color:var(--muted);font-size:13px;margin-top:4px}
+
+    /* buttons / inputs */
+    .btn{display:inline-block;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
+    .btn-accent{background:var(--accent);color:#fff}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff}
+    .btn-danger{background:var(--danger);color:#fff}
+    .btn-small{padding:6px 8px;border-radius:8px;font-size:13px}
+    input[type="text"],input[type="url"],input[type="number"],textarea,select{
+      width:100%;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;box-sizing:border-box;
+    }
+    label{display:block;font-weight:600;margin-bottom:6px}
+
+    /* admin modal */
+    .modal{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:120}
+    .panel{background:var(--panel);padding:16px;border-radius:12px;width:100%;max-width:820px;border:1px solid var(--glass);box-shadow:var(--card-shadow)}
+
+    /* lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:200;padding:12px}
+    .lightbox img{max-width:98%;max-height:90vh;border-radius:10px}
+    .lightbox .close{position:absolute;top:20px;right:24px;font-size:28px;color:#fff;background:transparent;border:none;cursor:pointer}
+
+    /* admin table */
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
     .muted{color:var(--muted);font-size:13px}
-    .small{font-size:13px;padding:6px 8px}
+
+    /* responsive */
+    @media (max-width:640px){
+      .poster-img{height:150px}
+      .thumb{width:56px;height:42px}
+      .wrap{padding:12px}
+    }
+
+    /* helper small text */
+    .hint{color:var(--muted);font-size:13px}
+    .top-left-trigger{position:fixed;left:8px;top:8px;width:56px;height:56px;z-index:9999}
+    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .search{display:flex;gap:8px;align-items:center}
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <h1>Admin — Vitrine PC</h1>
-    <nav>
-      <a href="index.html" class="btn">Voir la vitrine</a>
-    </nav>
-  </header>
+  <!-- invisible area (double-click) sits at top-left -->
+  <div class="top-left-trigger" title="Double-clic pour ouvrir admin (caché)"></div>
 
-  <main class="container">
-    <div class="admin-wrap">
-      <h2>Ajouter / Modifier une affiche</h2>
-      <form id="poster-form">
+  <header class="top">
+    <div class="inner wrap">
+      <div class="brand">
+        <div class="logo">T</div>
         <div>
-          <label>Titre</label>
-          <input id="title" required />
+          <div class="title">Technoid — Vitrine PC</div>
+          <div class="subtitle">Affiches · Miniatures cliquables · Gestion des livraisons</div>
         </div>
-        <div>
-          <label>Specs / Description courte</label>
-          <input id="specs" />
-        </div>
+      </div>
 
-        <div style="margin-top:10px">
-          <label>Image principale (fichier)</label>
-          <input id="main-file" type="file" accept="image/*" />
-        </div>
-
-        <div style="margin-top:10px">
-          <label>3 images secondaires (optionnel)</label>
-          <input id="thumb-files" type="file" accept="image/*" multiple />
-          <p class="muted">Sélectionnez jusqu'à 3 images. Elles seront utilisées comme miniatures cliquables.</p>
-        </div>
-
-        <div class="controls">
-          <button type="submit" class="btn">Enregistrer</button>
-          <button id="clear-storage" type="button" class="btn small" style="background:#ef4444">Supprimer tout</button>
-          <button id="export-json" type="button" class="btn small" style="background:#10b981">Exporter JSON</button>
-          <label for="import-file" class="btn small" style="background:#f59e0b;cursor:pointer">Importer JSON</label>
-          <input id="import-file" type="file" accept="application/json" style="display:none" />
-        </div>
-      </form>
-
-      <section class="list-posters" id="list-posters">
-        <h3>Affiches existantes</h3>
-        <!-- Liste remplie par admin.js -->
-      </section>
-    </div>
-  </main>
-
-  <script src="admin.js"></script>
-</body>
-</html>
-
-/* admin.js
-- Partage le même STORAGE_KEY que app.js
-- Permet création, édition, suppression, export/import JSON, et suppression totale.
-*/
-
-const STORAGE_KEY = 'posters_vitrine_v1';
-
-// Elements
-const form = document.getElementById('poster-form');
-const titleInput = document.getElementById('title');
-const specsInput = document.getElementById('specs');
-const mainFile = document.getElementById('main-file');
-const thumbFiles = document.getElementById('thumb-files');
-const listContainer = document.getElementById('list-posters');
-const clearBtn = document.getElementById('clear-storage');
-const exportBtn = document.getElementById('export-json');
-const importFile = document.getElementById('import-file');
-
-let posters = loadPosters();
-let editingId = null;
-
-function loadPosters(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return [];
-    const parsed = JSON.parse(raw);
-    if(!Array.isArray(parsed)) return [];
-    return parsed;
-  }catch(e){
-    console.error(e);
-    return [];
-  }
-}
-function saveAll(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(posters));
-  // For convenience, notify app page if open in another tab by using storage event
-  renderList();
-}
-
-// Utility: read file to dataURL
-function fileToDataURL(file){
-  return new Promise((res,rej)=>{
-    const reader = new FileReader();
-    reader.onload = ()=>res(reader.result);
-    reader.onerror = ()=>rej(new Error("Erreur lecture fichier"));
-    reader.readAsDataURL(file);
-  });
-}
-
-form.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const title = titleInput.value.trim();
-  const specs = specsInput.value.trim();
-  if(!title){ alert('Titre requis'); return; }
-
-  let mainData = null;
-  if(mainFile.files && mainFile.files[0]){
-    mainData = await fileToDataURL(mainFile.files[0]);
-  }
-
-  const thumbsData = [];
-  if(thumbFiles.files && thumbFiles.files.length){
-    for(let i=0;i<Math.min(3, thumbFiles.files.length); i++){
-      const f = thumbFiles.files[i];
-      const d = await fileToDataURL(f);
-      thumbsData.push(d);
-    }
-  }
-
-  if(editingId){
-    // Edit existing
-    const idx = posters.findIndex(p => p.id === editingId);
-    if(idx === -1) { alert('Élément introuvable'); resetForm(); return; }
-    if(mainData) posters[idx].main = mainData;
-    if(thumbsData.length) posters[idx].thumbs = thumbsData;
-    posters[idx].title = title;
-    posters[idx].specs = specs;
-    editingId = null;
-  } else {
-    // New
-    const newPoster = {
-      id: genId(),
-      title,
-      specs,
-      main: mainData || '',
-      thumbs: thumbsData
-    };
-    posters.unshift(newPoster);
-  }
-
-  saveAll();
-  resetForm();
-});
-
-function genId(){ return 'p_' + Math.random().toString(36).slice(2,9); }
-
-function resetForm(){
-  form.reset();
-  titleInput.value = '';
-  specsInput.value = '';
-  mainFile.value = '';
-  thumbFiles.value = '';
-  editingId = null;
-}
-
-function renderList(){
-  const list = posters.map(p => {
-    const mainThumb = p.main || (p.thumbs && p.thumbs[0]) || '';
-    return { id: p.id, title: p.title, specs: p.specs, thumb: mainThumb };
-  });
-
-  const html = list.length === 0 ? '<p class="muted">Aucune affiche pour l’instant.</p>' : list.map(it => `
-    <div class="list-item" data-id="${it.id}">
-      <img src="${it.thumb}" alt="${it.title}" />
-      <div style="flex:1">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>${escapeHtml(it.title)}</strong>
-          <div>
-            <button class="edit small">Editer</button>
-            <button class="delete small" style="background:#ef4444">Suppr</button>
-          </div>
-        </div>
-        <div class="muted">${escapeHtml(it.specs || '')}</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="hint">Double-clic en haut à gauche pour admin</div>
       </div>
     </div>
-  `).join('');
-  listContainer.innerHTML = `<h3>Affiches existantes</h3>${html}`;
+  </header>
 
-  // Add event listeners
-  listContainer.querySelectorAll('.edit').forEach(btn=>{
-    btn.addEventListener('click', (ev)=>{
-      const id = ev.target.closest('.list-item').dataset.id;
-      startEdit(id);
-    });
-  });
-  listContainer.querySelectorAll('.delete').forEach(btn=>{
-    btn.addEventListener('click', (ev)=>{
-      const id = ev.target.closest('.list-item').dataset.id;
-      if(confirm('Supprimer cette affiche ?')) {
-        posters = posters.filter(p => p.id !== id);
-        saveAll();
-      }
-    });
-  });
-}
+  <main class="wrap" id="app">
+    <!-- main content injected by JS -->
+    <div id="root"></div>
+  </main>
 
-function startEdit(id){
-  const p = posters.find(x=>x.id===id);
-  if(!p) return alert('Introuvable');
-  editingId = id;
-  titleInput.value = p.title || '';
-  specsInput.value = p.specs || '';
-  // note: on ne préremplit pas les inputs file (impossible JS) — l'utilisateur peut choisir de remplacer
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+  <!-- templates injected and controlled by JS -->
+  <script>
+  (function(){
+    /* --------------------------
+       CONFIG & DATA
+       -------------------------- */
+    const ADMIN_PWD = 'technoid';
+    const POSTERS_KEY = 'vitrine_posters_v1';
+    const WILAYAS_KEY = 'wilayas_prices_v1';
 
-// Clear all
-clearBtn.addEventListener('click', ()=>{
-  if(!confirm('Supprimer toutes les affiches ?')) return;
-  posters = [];
-  saveAll();
-});
+    const DEFAULT_WILAYAS = [
+      { name: "Adrar", home: 1400, office: 970 },
+      { name: "Chlef", home: 800, office: 520 },
+      { name: "Laghouat", home: 950, office: 620 },
+      { name: "Oum El Bouaghi", home: 800, office: 520 },
+      { name: "Batna", home: 800, office: 520 },
+      { name: "Bejaia", home: 500, office: 520 },
+      { name: "Biskra", home: 950, office: 620 },
+      { name: "Bechar", home: 1100, office: 720 },
+      { name: "Blida", home: 750, office: 470 },
+      { name: "Bouira", home: 700, office: 520 },
+      { name: "Tamanrasset", home: 1600, office: 1120 },
+      { name: "Tebessa", home: 800, office: 520 },
+      { name: "Tlemcen", home: 900, office: 570 },
+      { name: "Tiaret", home: 800, office: 520 },
+      { name: "Tizi Ouzou", home: 650, office: 520 },
+      { name: "Alger", home: 600, office: 470 },
+      { name: "Djelfa", home: 950, office: 620 },
+      { name: "Jijel", home: 700, office: 520 },
+      { name: "Sétif", home: 750, office: 520 },
+      { name: "Saida", home: 800, office: 570 },
+      { name: "Skikda", home: 750, office: 520 },
+      { name: "Sidi Bel Abbès", home: 750, office: 520 },
+      { name: "Annaba", home: 800, office: 520 },
+      { name: "Guelma", home: 800, office: 520 },
+      { name: "Constantine", home: 750, office: 520 },
+      { name: "Medea", home: 750, office: 520 },
+      { name: "Mostaganem", home: 750, office: 520 },
+      { name: "M'Sila", home: 850, office: 570 },
+      { name: "Mascara", home: 750, office: 520 },
+      { name: "Ouargla", home: 1000, office: 670 },
+      { name: "Oran", home: 700, office: 520 },
+      { name: "El Bayadh", home: 1050, office: 670 },
+      { name: "Illizi", home: 0, office: 0 },
+      { name: "Bordj Bou Arreridj", home: 750, office: 520 },
+      { name: "Boumerdes", home: 750, office: 520 },
+      { name: "El Tart", home: 850, office: 520 },
+      { name: "Tindouf", home: 0, office: 0 },
+      { name: "Tissemsilt", home: 800, office: 520 },
+      { name: "El Oued", home: 1000, office: 670 },
+      { name: "Khenchela", home: 800, office: 0 },
+      { name: "Souk Ahras", home: 800, office: 520 },
+      { name: "Tipaza", home: 750, office: 520 },
+      { name: "Mila", home: 750, office: 520 },
+      { name: "Ain Defla", home: 750, office: 520 },
+      { name: "Naama", home: 1100, office: 670 },
+      { name: "Ain Temouchent", home: 750, office: 520 },
+      { name: "Ghardaia", home: 1000, office: 620 },
+      { name: "Relizane", home: 750, office: 520 },
+      { name: "Timimoun", home: 1400, office: 0 },
+      { name: "Bordj Badji Mokhtar", home: 0, office: 0 },
+      { name: "Ouled Djellal", home: 950, office: 620 },
+      { name: "Béni Abbès", home: 1000, office: 970 },
+      { name: "In Salah", home: 1600, office: 0 },
+      { name: "In Guezzam", home: 1600, office: 0 },
+      { name: "Touggourt", home: 1000, office: 670 },
+      { name: "Djanet", home: 0, office: 0 },
+      { name: "M'Ghair", home: 1000, office: 0 },
+      { name: "Meniaa", home: 1000, office: 0 }
+    ];
 
-// Export JSON
-exportBtn.addEventListener('click', ()=>{
-  const blob = new Blob([JSON.stringify(posters, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'posters_export.json'; document.body.appendChild(a); a.click();
-  a.remove(); URL.revokeObjectURL(url);
-});
-
-// Import JSON
-importFile.addEventListener('change', async (ev)=>{
-  const f = ev.target.files[0];
-  if(!f) return;
-  try{
-    const txt = await f.text();
-    const parsed = JSON.parse(txt);
-    if(!Array.isArray(parsed)) throw new Error('Format invalide (tableau attendu)');
-    // validation légère: s'assurer que chaque élément a id + title
-    const ok = parsed.every(x => x.id && x.title);
-    if(!ok) if(!confirm('Le fichier semble différent. Continuer quand même ?')) return;
-    // Préfixer IDs pour éviter collisions? Ici on remplace totalement
-    if(confirm('Importer va remplacer les affiches actuelles. Continuer ?')) {
-      posters = parsed;
-      saveAll();
+    /* --------------------------
+       UTILITIES
+       -------------------------- */
+    function uid(){ return 'id_' + Math.random().toString(36).slice(2,9); }
+    function byId(id){ return document.getElementById(id); }
+    function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+    function load(key, fallback){
+      try{
+        const r = localStorage.getItem(key);
+        return r ? JSON.parse(r) : fallback;
+      }catch(e){ return fallback; }
     }
-  }catch(e){
-    alert('Erreur import: ' + e.message);
-  } finally {
-    importFile.value = '';
-  }
-});
 
-renderList();
+    /* seed sample posters if none */
+    function seedPosters(){
+      const sample = [
+        {
+          id: uid(),
+          title: "Gamer Fury X1",
+          specs: "i7 • RTX 4060 • 16 GB • SSD 1TB",
+          main: "https://via.placeholder.com/1200x800/CCE4FF/222?text=Gamer+Fury+X1",
+          thumbs: [
+            "https://via.placeholder.com/400x260/BBF7D0/222?text=Detail+1",
+            "https://via.placeholder.com/400x260/FDE68A/222?text=Detail+2",
+            "https://via.placeholder.com/400x260/FBCFE8/222?text=Detail+3"
+          ]
+        },
+        {
+          id: uid(),
+          title: "Office Pro S2",
+          specs: "i5 • Intel UHD • 8 GB • SSD 512GB",
+          main: "https://via.placeholder.com/1200x800/FFF7E6/222?text=Office+Pro+S2",
+          thumbs: [
+            "https://via.placeholder.com/400x260/FFE4E6/222?text=Detail+1",
+            "https://via.placeholder.com/400x260/E0F2FE/222?text=Detail+2",
+            "https://via.placeholder.com/400x260/DCFCE7/222?text=Detail+3"
+          ]
+        }
+      ];
+      save(POSTERS_KEY, sample);
+      return sample;
+    }
+
+    /* --------------------------
+       UI RENDERING
+       -------------------------- */
+
+    const root = byId('root');
+
+    function renderApp(){
+      root.innerHTML = `
+        <section>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px">
+            <div>
+              <h2 style="margin:0;font-size:20px">Vitrine — Produits</h2>
+              <div class="hint">Cliquez sur une image pour l'agrandir, cliquez sur une miniature pour changer la principale.</div>
+            </div>
+
+            <div class="toolbar">
+              <button id="btn-admin-preview" class="btn btn-ghost btn-small">Accès admin (caché)</button>
+              <button id="btn-export-json" class="btn btn-ghost btn-small">Exporter JSON</button>
+              <button id="btn-import-json" class="btn btn-ghost btn-small">Importer JSON</button>
+              <button id="btn-download-backup" class="btn btn-ghost btn-small">Télécharger backup</button>
+            </div>
+          </div>
+
+          <div id="gallery" class="grid"></div>
+        </section>
+
+        <hr style="margin:18px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
+
+        <section style="margin-top:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px">
+            <div>
+              <h3 style="margin:0">Rechercher prix de livraison</h3>
+              <div class="hint">Choisis une wilaya pour voir le prix domicile / stopdesk</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select id="sel-wilaya" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit"></select>
+              <div id="wilaya-prices" class="muted"></div>
+            </div>
+          </div>
+        </section>
+      `;
+
+      // bind buttons
+      byId('btn-export-json').onclick = exportJSONDialog;
+      byId('btn-import-json').onclick = importJSONDialog;
+      byId('btn-download-backup').onclick = downloadBackup;
+      byId('btn-admin-preview').onclick = ()=> alert('Double-clic en haut à gauche pour ouvrir le panneau admin (mot de passe caché).');
+
+      renderGallery();
+      populateWilayaSelector();
+    }
+
+    function renderGallery(){
+      const gallery = byId('gallery');
+      gallery.innerHTML = '';
+      const posters = load(POSTERS_KEY, []);
+      const list = posters.length ? posters : seedPosters();
+
+      list.forEach(p=>{
+        const col = document.createElement('div'); col.className='card';
+        col.innerHTML = `
+          <div class="pad">
+            <img src="${escapeHtml(p.main)}" class="poster-img" data-main="${escapeHtml(p.main)}" />
+            <div class="thumbs" style="margin-top:10px"></div>
+            <div class="p-title">${escapeHtml(p.title)}</div>
+            <div class="p-specs">${escapeHtml(p.specs)}</div>
+          </div>
+        `;
+        // thumbs
+        const thumbsWrap = col.querySelector('.thumbs');
+        (p.thumbs || []).slice(0,3).forEach((t, i)=>{
+          const img = document.createElement('img');
+          img.src = t || '';
+          img.className = 'thumb' + (i===0 ? ' active' : '');
+          img.onclick = () => {
+            // change main image in local render and open lightbox if clicked twice quickly
+            col.querySelector('.poster-img').src = t;
+            // save change only in admin; here we let homepage not persist thumb change
+          };
+          thumbsWrap.appendChild(img);
+        });
+
+        // main image click -> lightbox
+        col.querySelector('.poster-img').onclick = (ev) => {
+          openLightbox(ev.currentTarget.src);
+        };
+
+        gallery.appendChild(col);
+      });
+    }
+
+    /* --------------------------
+       Lightbox
+       -------------------------- */
+    let lightboxEl = null;
+    function openLightbox(src){
+      if(lightboxEl) closeLightbox();
+      lightboxEl = document.createElement('div');
+      lightboxEl.className = 'lightbox';
+      lightboxEl.innerHTML = `<img src="${escapeHtml(src)}" alt="zoom"/><button class="close" title="Fermer">×</button>`;
+      document.body.appendChild(lightboxEl);
+      lightboxEl.querySelector('.close').onclick = closeLightbox;
+      lightboxEl.onclick = (e)=>{ if(e.target===lightboxEl) closeLightbox(); }
+    }
+    function closeLightbox(){
+      if(lightboxEl){ lightboxEl.remove(); lightboxEl=null; }
+    }
+
+    /* --------------------------
+       Wilaya selector
+       -------------------------- */
+    function populateWilayaSelector(){
+      const sel = byId('sel-wilaya');
+      const wilayas = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+      sel.innerHTML = '<option value="">-- Choisir une wilaya --</option>';
+      wilayas.forEach(w=>{
+        const opt = document.createElement('option');
+        opt.value = w.name;
+        opt.textContent = w.name;
+        sel.appendChild(opt);
+      });
+      sel.onchange = ()=> showWilayaPrices(sel.value);
+      // show nothing initially
+      byId('wilaya-prices').textContent = '';
+    }
+    function showWilayaPrices(name){
+      const pricesEl = byId('wilaya-prices');
+      if(!name){ pricesEl.textContent=''; return; }
+      const wilayas = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+      const item = wilayas.find(w=>w.name===name);
+      if(!item){ pricesEl.textContent='—'; return; }
+      // rules: 0 => not available
+      const home = item.home === 0 ? 'Non disponible' : item.home + ' DA (domicile)';
+      const office = item.office === 0 ? 'Non disponible' : item.office + ' DA (stopdesk)';
+      pricesEl.innerHTML = `<strong>${home}</strong> — <span style="margin-left:8px">${office}</span>`;
+    }
+
+    /* --------------------------
+       ADMIN FLOW (double-clic top-left)
+       -------------------------- */
+    // double click detection on the dedicated top-left element
+    const trigger = document.querySelector('.top-left-trigger');
+    let lastClick = 0;
+    trigger.addEventListener('dblclick', ()=>showAdminLogin());
+    // also accept double single clicks from mobile: detect two clicks within 400ms
+    trigger.addEventListener('click', ()=>{
+      const now = Date.now();
+      if(now - lastClick < 420){ showAdminLogin(); }
+      lastClick = now;
+    });
+
+    function showAdminLogin(){
+      const modal = document.createElement('div');
+      modal.className='modal';
+      modal.innerHTML = `
+        <div class="panel" role="dialog" aria-modal="true">
+          <h3 style="margin:0 0 8px 0">Accès Admin (caché)</h3>
+          <div class="muted" style="margin-bottom:12px">Entrez le mot de passe pour accéder au panneau admin</div>
+          <form id="admin-login-form">
+            <input type="password" id="admin-password" placeholder="Mot de passe" style="margin-bottom:10px" />
+            <div style="display:flex;justify-content:flex-end;gap:8px">
+              <button type="button" id="admin-cancel" class="btn btn-ghost">Annuler</button>
+              <button type="submit" class="btn btn-accent">Entrer</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      byId('admin-cancel').onclick = ()=> modal.remove();
+      const form = byId('admin-login-form');
+      form.onsubmit = (e)=>{
+        e.preventDefault();
+        const val = byId('admin-password').value.trim();
+        if(val === ADMIN_PWD){
+          modal.remove();
+          openAdminPanel();
+        } else {
+          alert('Mot de passe incorrect');
+        }
+      };
+    }
+
+    /* --------------------------
+       Admin Panel: full CRUD + wilayas editor + export/import
+       -------------------------- */
+    function openAdminPanel(){
+      const posters = load(POSTERS_KEY, []);
+      const wilayas = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+
+      const modal = document.createElement('div');
+      modal.className='modal';
+      modal.innerHTML = `<div class="panel" role="dialog" aria-modal="true" style="max-width:1000px;overflow:auto;max-height:92vh">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div>
+            <h2 style="margin:0">Panneau Admin</h2>
+            <div class="muted">Ajoute / modifie / supprime affiches et gère les prix de livraison</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button id="admin-close" class="btn btn-ghost">Fermer</button>
+            <button id="admin-export" class="btn btn-ghost">Exporter tout (JSON)</button>
+            <button id="admin-import" class="btn btn-ghost">Importer JSON</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 420px;gap:16px">
+          <div>
+            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:10px;margin-bottom:12px">
+              <form id="poster-form">
+                <input type="hidden" id="poster-id" />
+                <div style="display:flex;gap:8px">
+                  <div style="flex:1">
+                    <label>Titre</label>
+                    <input id="poster-title" type="text" placeholder="Titre du produit" />
+                  </div>
+                  <div style="width:140px">
+                    <label>Prix (facultatif)</label>
+                    <input id="poster-price" type="text" placeholder="ex: 150000 DA" />
+                  </div>
+                </div>
+
+                <div style="margin-top:8px">
+                  <label>Spécifications</label>
+                  <input id="poster-specs" type="text" placeholder="i7 • RTX • 16 GB" />
+                </div>
+
+                <div style="margin-top:8px">
+                  <label>Image principale (URL)</label>
+                  <input id="poster-main" type="url" placeholder="https://..." />
+                </div>
+
+                <div style="margin-top:8px">
+                  <label>Images secondaires (URL) — 3 max</label>
+                  <div style="display:flex;gap:8px">
+                    <input id="thumb-0" type="url" placeholder="mini 1" />
+                    <input id="thumb-1" type="url" placeholder="mini 2" />
+                    <input id="thumb-2" type="url" placeholder="mini 3" />
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+                  <button type="button" id="clear-form" class="btn btn-ghost">Effacer</button>
+                  <button type="submit" class="btn btn-accent">Enregistrer</button>
+                </div>
+              </form>
+            </div>
+
+            <div style="margin-bottom:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <h4 style="margin:0">Affiches existantes</h4>
+                <div style="display:flex;gap:8px">
+                  <button id="clear-all-posters" class="btn btn-danger btn-small">Tout supprimer</button>
+                </div>
+              </div>
+              <div id="admin-posters-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px"></div>
+            </div>
+          </div>
+
+          <!-- right column: wilayas editor + tools -->
+          <div>
+            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:10px;margin-bottom:12px">
+              <h4 style="margin:0 0 8px 0">Prix de livraison par wilaya</h4>
+              <div style="display:flex;gap:8px;margin-bottom:8px">
+                <input id="wilaya-filter" placeholder="Rechercher..." style="flex:1" />
+                <button id="wilaya-reset" class="btn btn-ghost btn-small">Réinitialiser</button>
+              </div>
+              <div style="max-height:320px;overflow:auto;border-radius:8px;padding:6px" id="wilaya-table-wrap"></div>
+            </div>
+
+            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:10px">
+              <h4 style="margin:0 0 8px 0">Outils</h4>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button id="btn-export-posters" class="btn btn-ghost">Exporter affiches (JSON)</button>
+                <button id="btn-import-posters" class="btn btn-ghost">Importer affiches</button>
+                <button id="btn-download-csv" class="btn btn-ghost">Télécharger prix CSV</button>
+                <button id="btn-restore-defaults" class="btn btn-ghost">Restaurer prix par défaut</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`; // end panel inner
+
+      document.body.appendChild(modal);
+
+      // bind close & actions
+      byId('admin-close').onclick = ()=> modal.remove();
+      byId('admin-export').onclick = ()=> {
+        const data = { posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS) };
+        downloadFile(JSON.stringify(data, null, 2), 'technoid_backup.json', 'application/json');
+      };
+      byId('admin-import').onclick = ()=> {
+        const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
+        input.onchange = (e)=> {
+          const f = e.target.files[0];
+          if(!f) return;
+          const r = new FileReader();
+          r.onload = ()=> {
+            try{
+              const obj = JSON.parse(r.result);
+              if(obj.posters) save(POSTERS_KEY, obj.posters);
+              if(obj.wilayas) save(WILAYAS_KEY, obj.wilayas);
+              alert('Import OK. Le panneau va se réinitialiser.');
+              modal.remove();
+              renderApp();
+            }catch(err){ alert('Fichier JSON invalide'); }
+          };
+          r.readAsText(f);
+        };
+        input.click();
+      };
+
+      // poster form
+      const form = byId('poster-form');
+      const inputs = {
+        id: byId('poster-id'),
+        title: byId('poster-title'),
+        price: byId('poster-price'),
+        specs: byId('poster-specs'),
+        main: byId('poster-main'),
+        thumbs: [byId('thumb-0'), byId('thumb-1'), byId('thumb-2')]
+      };
+
+      function refreshPostersList(){
+        const listWrap = byId('admin-posters-list');
+        const arr = load(POSTERS_KEY, []);
+        listWrap.innerHTML = '';
+        arr.forEach((p, idx)=>{
+          const el = document.createElement('div');
+          el.className = 'card';
+          el.style.padding='8px';
+          el.innerHTML = `
+            <img src="${escapeHtml(p.main)}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:8px" />
+            <div style="font-weight:700">${escapeHtml(p.title)}</div>
+            <div class="muted" style="font-size:13px">${escapeHtml(p.specs)}</div>
+            <div style="display:flex;gap:8px;margin-top:8px;justify-content:space-between">
+              <button class="btn btn-ghost btn-small edit">Modifier</button>
+              <button class="btn btn-danger btn-small del">Supprimer</button>
+            </div>
+          `;
+          // actions
+          el.querySelector('.edit').onclick = ()=>{
+            inputs.id.value = p.id || '';
+            inputs.title.value = p.title || '';
+            inputs.price.value = p.price || '';
+            inputs.specs.value = p.specs || '';
+            inputs.main.value = p.main || '';
+            (p.thumbs || []).forEach((t,i)=>{ if(inputs.thumbs[i]) inputs.thumbs[i].value = t || '' });
+            window.scrollTo({top:0,behavior:'smooth'});
+          };
+          el.querySelector('.del').onclick = ()=>{
+            if(!confirm('Supprimer cette affiche ?')) return;
+            const arr2 = load(POSTERS_KEY, []).filter((_,i)=>i!==idx);
+            save(POSTERS_KEY, arr2);
+            refreshPostersList();
+            renderGallery();
+          };
+          listWrap.appendChild(el);
+        });
+      }
+
+      refreshPostersList();
+
+      // form submit
+      form.onsubmit = (e)=>{
+        e.preventDefault();
+        const title = inputs.title.value.trim();
+        const specs = inputs.specs.value.trim();
+        const main = inputs.main.value.trim();
+        const thumbs = inputs.thumbs.map(i=>i.value.trim()).filter(Boolean);
+        if(!title || !main){ alert('Le titre et l\'image principale sont requis'); return; }
+        const arr = load(POSTERS_KEY, []);
+        const idv = inputs.id.value;
+        if(idv){
+          // edit
+          const idx = arr.findIndex(x=>x.id===idv);
+          if(idx!==-1){
+            arr[idx] = { id:idv, title, specs, main, thumbs };
+            save(POSTERS_KEY, arr);
+            alert('Modifié');
+          }
+        } else {
+          arr.push({ id: uid(), title, specs, main, thumbs });
+          save(POSTERS_KEY, arr);
+        }
+        // clear and refresh
+        inputs.id.value = ''; inputs.title.value = ''; inputs.price.value=''; inputs.specs.value=''; inputs.main.value='';
+        inputs.thumbs.forEach(i=>i.value='');
+        refreshPostersList();
+        renderGallery();
+      };
+
+      byId('clear-form').onclick = ()=>{
+        inputs.id.value=''; inputs.title.value=''; inputs.price.value=''; inputs.specs.value=''; inputs.main.value='';
+        inputs.thumbs.forEach(i=>i.value='');
+      };
+
+      byId('clear-all-posters').onclick = ()=>{
+        if(!confirm('Supprimer toutes les affiches ?')) return;
+        save(POSTERS_KEY, []);
+        refreshPostersList();
+        renderGallery();
+      };
+
+      /* ========== WILAYAS EDITOR ========= */
+      function renderWilayaTable(filter=''){
+        const wrap = byId('wilaya-table-wrap');
+        const list = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+        const filtered = list.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
+        wrap.innerHTML = `
+          <table class="table" style="width:100%">
+            <thead><tr><th>Wilaya</th><th>Domicile (DA)</th><th>Stopdesk (DA)</th></tr></thead>
+            <tbody>
+              ${filtered.map((w,idx)=>`<tr data-w="${escapeHtml(w.name)}">
+                <td>${escapeHtml(w.name)}</td>
+                <td><input class="wil-home" data-i="${idx}" value="${w.home}" style="width:100px"/></td>
+                <td><input class="wil-office" data-i="${idx}" value="${w.office}" style="width:100px"/></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        `;
+        // bind inputs
+        wrap.querySelectorAll('.wil-home').forEach(el=>{
+          el.onchange = ()=> {
+            const name = el.closest('tr').dataset.w;
+            const v = Number(el.value) || 0;
+            updateWilayaValue(name, 'home', v);
+          }
+        });
+        wrap.querySelectorAll('.wil-office').forEach(el=>{
+          el.onchange = ()=> {
+            const name = el.closest('tr').dataset.w;
+            const v = Number(el.value) || 0;
+            updateWilayaValue(name, 'office', v);
+          }
+        });
+      }
+
+      function updateWilayaValue(name, field, val){
+        const arr = load(WILAYAS_KEY, DEFAULT_WILAYAS).map(w => w.name===name ? {...w, [field]: val} : w);
+        save(WILAYAS_KEY, arr);
+        populateWilayaSelector(); // update selector labels
+      }
+
+      byId('wilaya-filter').oninput = (e)=> renderWilayaTable(e.target.value);
+      byId('wilaya-reset').onclick = ()=> {
+        if(!confirm('Réinitialiser aux valeurs par défaut ?')) return;
+        save(WILAYAS_KEY, DEFAULT_WILAYAS);
+        renderWilayaTable('');
+        populateWilayaSelector();
+      };
+
+      renderWilayaTable('');
+
+      /* ========== tools buttons ========= */
+      byId('btn-export-posters').onclick = ()=> {
+        const data = load(POSTERS_KEY, []);
+        downloadFile(JSON.stringify(data, null, 2), 'posters.json', 'application/json');
+      };
+      byId('btn-import-posters').onclick = ()=> {
+        const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
+        input.onchange = (e)=> {
+          const f = e.target.files[0]; if(!f) return;
+          const r = new FileReader(); r.onload = ()=> {
+            try{
+              const arr = JSON.parse(r.result);
+              if(!Array.isArray(arr)) throw new Error('Format invalide');
+              save(POSTERS_KEY, arr);
+              refreshPostersList(); renderGallery();
+              alert('Import OK');
+            }catch(er){ alert('Fichier invalide'); }
+          }; r.readAsText(f);
+        }; input.click();
+      };
+      byId('btn-download-csv').onclick = ()=> {
+        const list = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+        const csvRows = [['Wilaya','Domicile','Stopdesk'], ...list.map(w=>[w.name,w.home,w.office])];
+        const csv = csvRows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+        downloadFile(csv, 'wilayas_prices.csv', 'text/csv');
+      };
+      byId('btn-restore-defaults').onclick = ()=> {
+        if(!confirm('Restaurer les prix par défaut (fourni initialement) ?')) return;
+        save(WILAYAS_KEY, DEFAULT_WILAYAS);
+        renderWilayaTable('');
+        populateWilayaSelector();
+      };
+
+      /* close modal helper */
+      function closeAndRefresh(){
+        modal.remove();
+        renderApp();
+      }
+
+      // when admin imported or exported and wants close, we already bound close
+    } // end openAdminPanel
+
+    /* --------------------------
+       Export / Import handlers on main page
+       -------------------------- */
+    function exportJSONDialog(){
+      const data = {
+        posters: load(POSTERS_KEY, []),
+        wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS),
+        exportedAt: new Date().toISOString()
+      };
+      downloadFile(JSON.stringify(data, null, 2), 'technoid_export.json', 'application/json');
+    }
+    function importJSONDialog(){
+      const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
+      input.onchange = (e)=> {
+        const f = e.target.files[0];
+        if(!f) return;
+        const r = new FileReader();
+        r.onload = ()=> {
+          try{
+            const obj = JSON.parse(r.result);
+            if(obj.posters) save(POSTERS_KEY, obj.posters);
+            if(obj.wilayas) save(WILAYAS_KEY, obj.wilayas);
+            alert('Import OK');
+            renderApp();
+          }catch(err){ alert('Fichier invalide'); }
+        };
+        r.readAsText(f);
+      };
+      input.click();
+    }
+
+    /* download helper */
+    function downloadFile(content, filename, mime){
+      const blob = new Blob([content], {type: mime || 'application/octet-stream'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    /* small backup (download) */
+    function downloadBackup(){
+      const data = {posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS), ts:new Date().toISOString()};
+      downloadFile(JSON.stringify(data,null,2), 'technoid_backup_'+(new Date().toISOString().slice(0,19).replace(/[:T]/g,'-'))+'.json', 'application/json');
+    }
+
+    /* utility escape */
+    function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+
+    /* --------------------------
+       CSV import helper (not used now) - placeholder
+       -------------------------- */
+    // (kept for future extension)
+
+    /* --------------------------
+       INITIALIZATION
+       -------------------------- */
+    // seed wilayas if none
+    if(!localStorage.getItem(WILAYAS_KEY)) save(WILAYAS_KEY, DEFAULT_WILAYAS);
+    // seed posters if none
+    if(!localStorage.getItem(POSTERS_KEY)) seedPosters();
+
+    // initial render
+    renderApp();
+
+    // expose some helpers for debugging (window.Technoid)
+    window.Technoid = {
+      reload: renderApp,
+      export: exportJSONDialog,
+      import: importJSONDialog,
+      downloadBackup
+    };
+
+  })();
+  </script>
+</body>
+</html>
