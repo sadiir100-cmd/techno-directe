@@ -199,7 +199,6 @@
 <script>
 /* ========== PARTIE 2 ===========
    Données, utilitaires, initialisation
-   (conserve tes données / intègre les prix que tu as fournis)
    ================================== */
 
 const ADMIN_PWD = 'technoid';
@@ -213,11 +212,11 @@ function genId(){ return 'id_'+Math.random().toString(36).slice(2,9) }
 function save(key,val){ localStorage.setItem(key, JSON.stringify(val)) }
 function load(key, fallback){ try{ const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback }catch(e){ return fallback } }
 function numberFormat(n){ if(n == null) return ''; return new Intl.NumberFormat('fr-FR').format(n) + ' DA' }
-function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;') }
+function escapeHtml(s){ if(s === null || s === undefined) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;') }
 function downloadFile(content, filename, type='application/json'){ const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
 
-// DEFAULT AFFICHES (kept - your originals preserved as seed)
-const DEFAULT_AFFICHES = load(STORAGE_KEY_AFFICHES, null) || [
+// DEFAULT AFFICHES (seed, static)
+const DEFAULT_AFFICHES = [
   { id: genId(), titre: "HP ZBook 14u G6", prix: 60000, description: "256 SSD • 8 Go RAM • Batterie >3h • Processeur i5", specs: "256 SSD · 8 Go · i5 · Batterie >3h", main: null, thumbs: [], createdAt: Date.now() },
   { id: genId(), titre: "Lenovo ThinkPad T480", prix: 72000, description: "512 SSD • 8 Go • Excellente autonomie", specs: "512 SSD · 8 Go · i5", main: null, thumbs: [], createdAt: Date.now() },
   { id: genId(), titre: "Dell Latitude 3310", prix: 65000, description: "256 SSD • 8 Go • Full HD", specs: "256 SSD · 8 Go · Full HD", main: null, thumbs: [], createdAt: Date.now() },
@@ -225,7 +224,7 @@ const DEFAULT_AFFICHES = load(STORAGE_KEY_AFFICHES, null) || [
   { id: genId(), titre: "Lenovo IdeaPad 3", prix: 54000, description: "128 SSD • 4 Go • Bon prix", specs: "128 SSD · 4 Go", main: null, thumbs: [], createdAt: Date.now() },
 ];
 
-// DEFAULT WILAYA PRICES — **from your provided list** (I normalized names)
+// DEFAULT WILAYA PRICES — from your provided list
 const DEFAULT_WILAYAS = {
   "Adrar":[1400,970],"Chlef":[800,520],"Laghouat":[950,620],"Oum El Bouaghi":[800,520],"Batna":[800,520],
   "Bejaia":[500,520],"Biskra":[950,620],"Bechar":[1100,720],"Blida":[750,470],"Bouira":[700,520],
@@ -246,8 +245,12 @@ let affiches = load(STORAGE_KEY_AFFICHES, DEFAULT_AFFICHES.slice());
 let commandes = load(STORAGE_KEY_COMMANDES, []);
 let prixParWilaya = load(STORAGE_KEY_WILAYAS, DEFAULT_WILAYAS);
 
-// Ensure affiches have thumbs array and main attribute
-affiches = affiches.map(a => ({ thumbs:[], main:a.main||a.image||a.main||null, ...a }));
+// Normalize affiches: ensure thumbs is array and main exists (or null)
+affiches = (affiches || []).map(a => ({
+  ...a,
+  thumbs: Array.isArray(a.thumbs) ? a.thumbs : [],
+  main: (a.main || a.image) ? (a.main || a.image) : null
+}));
 
 // Save helpers
 function persistAll(){ save(STORAGE_KEY_AFFICHES, affiches); save(STORAGE_KEY_COMMANDES, commandes); save(STORAGE_KEY_WILAYAS, prixParWilaya); }
@@ -413,7 +416,6 @@ function updateCommandeTotalDisplay(){
 }
 document.getElementById('cmd_wilaya').onchange = updateCommandeTotalDisplay;
 document.getElementById('cmd_type').onchange = updateCommandeTotalDisplay;
-
 document.getElementById('btn_submit_cmd').onclick = ()=> {
   const nom = document.getElementById('cmd_nom').value.trim();
   const tel = document.getElementById('cmd_tel').value.trim();
@@ -428,7 +430,6 @@ document.getElementById('btn_submit_cmd').onclick = ()=> {
   const total = (pc.prix || 0) * currentOrder.qty + (prixLiv || 0);
   const cmd = { id: genId(), produit: pc.titre, produitId: pc.id, nom, tel, tel2, wilaya, type, qty: currentOrder.qty, prixProduit: pc.prix, prixLivraison: prixLiv, total, date: new Date().toISOString() };
   commandes.push(cmd);
-  save(STORAGE_KEY_COMMANDES, commandes);
   persistAll();
   alert('✅ Commande enregistrée ! Nous vous contacterons.');
   document.getElementById('overlayCommande').style.display='none';
@@ -440,7 +441,6 @@ document.getElementById('btn_submit_cmd').onclick = ()=> {
 /* ========== PARTIE 4 ===========
    Admin trigger + Admin UI + upload thumbs (up to 4) + Wilaya editor
    ================================== */
-
 // Hidden trigger: double-click top-left area (we reuse header click area)
 let lastClick = 0;
 document.getElementById('siteHeader').addEventListener('dblclick', promptAdminLogin);
@@ -457,27 +457,23 @@ function promptAdminLogin(){
     alert('Mot de passe incorrect');
   }
 }
-
 // Build admin UI (injected)
 function openAdminFull(){
   document.getElementById('adminPanelFull').style.display = 'block';
   document.getElementById('adminPanelFull').setAttribute('aria-hidden','false');
   buildAdminUI();
 }
-
 function closeAdminFull(){
   document.getElementById('adminPanelFull').style.display = 'none';
   document.getElementById('adminPanelFull').setAttribute('aria-hidden','true');
   persistAll();
 }
-
 // Build admin columns
 function buildAdminUI(){
   const left = document.getElementById('adminLeftColumn');
   const right = document.getElementById('adminRightColumn');
   left.innerHTML = '';
   right.innerHTML = '';
-
   // LEFT: form for add/edit + affiches list
   left.innerHTML = `
     <section style="background:#071022;padding:12px;border-radius:8px;margin-bottom:12px">
@@ -487,13 +483,11 @@ function buildAdminUI(){
         <input id="adm_prix" type="number" placeholder="Prix (DA)" />
         <input id="adm_specs" placeholder="Spécifications courtes" />
         <textarea id="adm_desc" placeholder="Description détaillée"></textarea>
-
         <div style="display:flex;gap:8px;align-items:center">
           <input id="adm_main_file" type="file" accept="image/*" />
           <button class="smallbtn" id="adm_upload_main_btn">Télécharger image principale</button>
           <button class="smallbtn" id="adm_clear_main_btn">Effacer</button>
         </div>
-
         <div>
           <label style="font-weight:700">Images secondaires (max 4)</label>
           <div style="display:flex;gap:8px;margin-top:6px">
@@ -504,20 +498,17 @@ function buildAdminUI(){
           </div>
           <div style="margin-top:8px" id="adm_thumbs_preview"></div>
         </div>
-
         <div style="display:flex;gap:8px">
           <button class="btn-save" id="adm_save_affiche">💾 Sauvegarder</button>
           <button class="btn-cancel" id="adm_cancel_edit">Annuler</button>
         </div>
       </div>
     </section>
-
     <section style="background:#071022;padding:12px;border-radius:8px">
       <h3 style="margin:0 0 8px;color:var(--orange)">Affiches publiées (${affiches.length})</h3>
       <div id="adm_list_affiches" style="max-height:420px;overflow:auto"></div>
     </section>
   `;
-
   // RIGHT: commandes + wilayas + tools
   right.innerHTML = `
     <section style="margin-bottom:12px">
@@ -530,7 +521,6 @@ function buildAdminUI(){
         <button class="smallbtn" id="adm_delete_all_cmds">Supprimer tout</button>
       </div>
     </section>
-
     <section style="margin-top:12px;background:#071022;padding:10px;border-radius:8px">
       <h3 style="color:var(--orange)">Prix livraison — Wilayas</h3>
       <div id="adm_prix_wilaya" style="max-height:360px;overflow:auto;padding-top:8px"></div>
@@ -539,7 +529,6 @@ function buildAdminUI(){
         <button class="btn-cancel" id="adm_reset_wilayas">Réinitialiser</button>
       </div>
     </section>
-
     <section style="margin-top:12px;background:#071022;padding:10px;border-radius:8px">
       <h3 style="color:var(--orange)">Outils</h3>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
@@ -549,14 +538,12 @@ function buildAdminUI(){
       </div>
     </section>
   `;
-
   // wire admin controls
   wireAdminControls();
   renderAdminAffichesList();
   renderAdminCommandsTable();
   renderAdminPrixWilaya();
 }
-
 // Wire admin behaviors (uploads, save, list)
 let editingIdx = -1;
 function wireAdminControls(){
@@ -569,18 +556,22 @@ function wireAdminControls(){
     const r = new FileReader();
     r.onload = ()=> {
       const src = r.result;
-      document.getElementById('adm_thumbs_preview').insertAdjacentHTML('beforeend', `<div style="display:inline-block;width:120px;margin-right:8px"><img src="${src}" style="width:100%;border-radius:6px" data-main-preview /></div>`);
+      const preview = document.getElementById('adm_thumbs_preview');
+      // clear previous main-preview if any
+      Array.from(preview.querySelectorAll('[data-main-preview]')).forEach(n=>n.closest('div').remove());
+      preview.insertAdjacentHTML('beforeend', `<div style="display:inline-block;width:120px;margin-right:8px"><img src="${src}" style="width:100%;border-radius:6px" data-main-preview /></div>`);
       // temporarily store in a data attr for saving when Save clicked
-      document.getElementById('adm_thumbs_preview').dataset.mainTemp = src;
+      // store explicit string (could be empty string to clear)
+      preview.dataset.mainTemp = src;
     };
     r.readAsDataURL(f);
   };
   document.getElementById('adm_clear_main_btn').onclick = ()=> {
-    delete document.getElementById('adm_thumbs_preview').dataset.mainTemp;
-    // remove previews with data-main-preview
-    Array.from(document.querySelectorAll('[data-main-preview]')).forEach(n=>n.closest('div').remove());
+    const preview = document.getElementById('adm_thumbs_preview');
+    // indicate explicit clearing by setting dataset to empty string
+    preview.dataset.mainTemp = ''; // explicit "empty" to remove main when saving
+    Array.from(preview.querySelectorAll('[data-main-preview]')).forEach(n=>n.closest('div').remove());
   };
-
   // thumbs uploads (up to 4)
   for(let i=0;i<4;i++){
     const inp = document.getElementById('adm_thumb_file_'+i);
@@ -603,7 +594,6 @@ function wireAdminControls(){
       r.readAsDataURL(f);
     };
   }
-
   // Save affiche
   document.getElementById('adm_save_affiche').onclick = ()=> {
     const titre = document.getElementById('adm_titre').value.trim();
@@ -611,30 +601,34 @@ function wireAdminControls(){
     const specs = document.getElementById('adm_specs').value.trim();
     const desc = document.getElementById('adm_desc').value.trim();
     const preview = document.getElementById('adm_thumbs_preview');
-    const mainTemp = preview.dataset.mainTemp || null;
+    // note: preview.dataset.mainTemp can be undefined (no change), '' (explicit clear), or dataURL
+    const mainTempExists = Object.prototype.hasOwnProperty.call(preview.dataset, 'mainTemp');
+    const mainTemp = mainTempExists ? preview.dataset.mainTemp : undefined;
     const thumbsTemp = preview.dataset.thumbsTemp ? JSON.parse(preview.dataset.thumbsTemp) : [];
-
     if(!titre || !prix || !desc){ alert('Nom, prix et description obligatoires.'); return; }
-
     if(editingIdx >= 0){
-      // update
+      // update existing
       affiches[editingIdx].titre = titre;
       affiches[editingIdx].prix = prix;
       affiches[editingIdx].specs = specs;
       affiches[editingIdx].description = desc;
-      if(mainTemp) affiches[editingIdx].main = mainTemp;
-      // merge thumbs: keep existing, overwrite with new ones
+      // mainTemp handling: if undefined -> keep existing; if '' -> clear; if dataURL -> set
+      if(mainTemp !== undefined){
+        affiches[editingIdx].main = mainTemp ? mainTemp : null;
+      }
+      // merge thumbs: keep existing, overwrite with new ones when provided
       const existing = affiches[editingIdx].thumbs || [];
       const merged = [];
       for(let i=0;i<4;i++){
-        merged[i] = thumbsTemp[i] || existing[i] || null;
+        // thumbsTemp may be sparse; prefer thumbsTemp[i] when present and truthy
+        merged[i] = (thumbsTemp && typeof thumbsTemp[i] !== 'undefined' && thumbsTemp[i]) ? thumbsTemp[i] : existing[i] || null;
       }
       affiches[editingIdx].thumbs = merged.filter(Boolean);
       alert('Affiche modifiée.');
     } else {
       // add new (limit 20)
       if(affiches.length >= 20){ alert('Limite : max 20 affiches.'); return; }
-      const newAff = { id: genId(), titre, prix, specs, description: desc, main: mainTemp || null, thumbs: (thumbsTemp || []).filter(Boolean), createdAt: Date.now() };
+      const newAff = { id: genId(), titre, prix, specs, description: desc, main: (mainTemp ? mainTemp : null), thumbs: (thumbsTemp || []).filter(Boolean), createdAt: Date.now() };
       affiches.unshift(newAff);
       alert('Nouvelle affiche ajoutée.');
     }
@@ -647,9 +641,7 @@ function wireAdminControls(){
     renderAdminAffichesList();
     renderCatalogue(); // update public immediately
   };
-
   document.getElementById('adm_cancel_edit').onclick = ()=> { clearAdminForm(); editingIdx = -1; };
-
   // exports & imports
   document.getElementById('adm_export_all').onclick = ()=> {
     const data = { affiches, commandes, prixParWilaya };
@@ -665,13 +657,14 @@ function wireAdminControls(){
           if(obj.affiches) affiches = obj.affiches;
           if(obj.commandes) commandes = obj.commandes;
           if(obj.prixParWilaya) prixParWilaya = obj.prixParWilaya;
+          // normalize after import
+          affiches = (affiches || []).map(a => ({ ...a, thumbs: Array.isArray(a.thumbs)?a.thumbs:[], main: (a.main||a.image) ? (a.main||a.image) : null }));
           persistAll(); renderAdminAffichesList(); renderAdminCommandsTable(); renderAdminPrixWilaya(); renderCatalogue();
           alert('Import OK');
         }catch(err){ alert('Fichier JSON invalide'); }
       }; r.readAsText(f);
     }; input.click();
   };
-
   document.getElementById('adm_export_cmds').onclick = ()=> {
     if(commandes.length === 0) return alert('Aucune commande');
     // CSV
@@ -684,7 +677,6 @@ function wireAdminControls(){
     if(!confirm('Supprimer toutes les commandes ?')) return;
     commandes = []; persistAll(); renderAdminCommandsTable();
   };
-
   // wilaya save/reset
   document.getElementById('adm_save_wilayas').onclick = ()=> { persistAll(); alert('Prix sauvegardés'); };
   document.getElementById('adm_reset_wilayas').onclick = ()=> {
@@ -692,7 +684,6 @@ function wireAdminControls(){
     prixParWilaya = JSON.parse(JSON.stringify(DEFAULT_WILAYAS));
     persistAll(); renderAdminPrixWilaya();
   };
-
   document.getElementById('adm_download_wilayas_csv').onclick = ()=> {
     const rows = [['Wilaya','Domicile','Stopdesk']];
     for(const w in prixParWilaya) rows.push([w, prixParWilaya[w][0], prixParWilaya[w][1]]);
@@ -700,7 +691,6 @@ function wireAdminControls(){
     downloadFile(csv, 'wilayas_prices.csv', 'text/csv');
   };
 }
-
 // Render admin affiches list (left column)
 function renderAdminAffichesList(){
   const wrap = document.getElementById('adm_list_affiches');
@@ -722,7 +712,6 @@ function renderAdminAffichesList(){
     wrap.appendChild(div);
   });
 }
-
 // start edit
 function startEditAffiche(idx){
   editingIdx = idx;
@@ -734,21 +723,23 @@ function startEditAffiche(idx){
   // preview main and thumbs
   const preview = document.getElementById('adm_thumbs_preview');
   preview.innerHTML = '';
+  // ensure dataset cleared
+  delete preview.dataset.mainTemp;
+  delete preview.dataset.thumbsTemp;
   if(a.main) preview.insertAdjacentHTML('beforeend', `<div style="display:inline-block;width:120px;margin-right:8px"><img src="${a.main}" style="width:100%;border-radius:6px" data-main-preview /></div>`);
   if(a.thumbs && a.thumbs.length){
     a.thumbs.slice(0,4).forEach((t,i)=> preview.insertAdjacentHTML('beforeend', `<div style="display:inline-block;width:120px;margin-right:8px"><img src="${t}" style="width:100%;border-radius:6px"><div style="text-align:center;font-size:12px">mini ${i+1}</div></div>`));
     preview.dataset.thumbsTemp = JSON.stringify(a.thumbs.slice(0,4));
   }
 }
-
+</script>
+<script>
 // delete, move functions
 function deleteAffiche(idx){ if(!confirm('Supprimer cette affiche ?')) return; affiches.splice(idx,1); persistAll(); renderAdminAffichesList(); renderCatalogue(); }
 function moveAfficheUp(idx){ if(idx<=0) return; [affiches[idx-1], affiches[idx]] = [affiches[idx], affiches[idx-1]]; persistAll(); renderAdminAffichesList(); renderCatalogue(); }
 function moveAfficheDown(idx){ if(idx>=affiches.length-1) return; [affiches[idx+1], affiches[idx]] = [affiches[idx], affiches[idx+1]]; persistAll(); renderAdminAffichesList(); renderCatalogue(); }
-
 // clear admin form
 function clearAdminForm(){ editingIdx = -1; document.getElementById('adm_titre').value=''; document.getElementById('adm_prix').value=''; document.getElementById('adm_specs').value=''; document.getElementById('adm_desc').value=''; document.getElementById('adm_thumbs_preview').innerHTML=''; document.getElementById('adm_main_file').value=''; for(let i=0;i<4;i++) document.getElementById('adm_thumb_file_'+i).value=''; }
-
 // Commandes table rendering
 function renderAdminCommandsTable(){
   const table = document.getElementById('adm_table_cmds');
@@ -759,7 +750,7 @@ function renderAdminCommandsTable(){
     html += `<tr>
       <td>${escapeHtml(c.produit)}</td>
       <td>${escapeHtml(c.nom)}</td>
-      <td>${escapeHtml(c.tel)}${c.tel2? ' / ' + escapeHtml(c.tel2): ''}</td>
+      <td>${escapeHtml(c.tel || '')}${c.tel2? ' / ' + escapeHtml(c.tel2): ''}</td>
       <td>${escapeHtml(c.wilaya)}</td>
       <td>${escapeHtml(c.type)}</td>
       <td>${numberFormat(c.total)}</td>
@@ -770,7 +761,6 @@ function renderAdminCommandsTable(){
 }
 function openCommandWhatsApp(i){ const c = commandes[i]; if(!c) return; const msg = encodeURIComponent(`Commande ${c.produit}\nNom:${c.nom}\nTel:${c.tel}\nWilaya:${c.wilaya}\nTotal:${c.total}DA`); window.open(`https://wa.me/213699039372?text=${msg}`, '_blank'); }
 function deleteCommand(i){ if(!confirm('Supprimer cette commande ?')) return; commandes.splice(i,1); persistAll(); renderAdminCommandsTable(); }
-
 // Render wilaya editor (right column)
 function renderAdminPrixWilaya(){
   const root = document.getElementById('adm_prix_wilaya');
@@ -800,7 +790,6 @@ function renderAdminPrixWilaya(){
 /* ========== PARTIE 5 ===========
    Final init: bind public buttons, populate wilaya selects, save/load, render
    ================================== */
-
 // helper to fill wilaya select(s)
 function fillWilayaSelect(selectId){
   const sel = document.getElementById(selectId);
@@ -810,26 +799,20 @@ function fillWilayaSelect(selectId){
     sel.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`);
   });
 }
-
 // Delete command helper used in admin table (already declared earlier) - ensure accessible
 window.deleteCommand = deleteCommand;
 window.openCommandWhatsApp = openCommandWhatsApp;
-
 // initialize UI
 window.addEventListener('load', ()=>{
-  // sync storages with our current variables (if localStorage keys changed)
   // ensure prixParWilaya existence
   if(!prixParWilaya || Object.keys(prixParWilaya).length === 0){ prixParWilaya = JSON.parse(JSON.stringify(DEFAULT_WILAYAS)); save(STORAGE_KEY_WILAYAS, prixParWilaya); }
-  // persist affiches & commandes to use unified keys
-  save(STORAGE_KEY_AFFICHES, affiches);
-  save(STORAGE_KEY_COMMANDES, commandes);
-
+  // persist affiches & commandes to use unified keys (ensures localStorage keys created)
+  persistAll();
   // fill selects
   fillWilayaSelect('cmd_wilaya');
   // initial render
   renderCatalogue();
 });
-
 // expose some functions for console quick usage
 window.Technoid = {
   renderCatalogue,
@@ -837,17 +820,14 @@ window.Technoid = {
   persistAll,
   downloadCurrentExport: ()=> downloadFile(JSON.stringify({affiches, commandes, prixParWilaya}, null, 2), 'techno_direct_export.json'),
 };
-
 // small accessibility: Enter on header triggers admin login prompt if Ctrl/Meta+A pressed
 window.addEventListener('keydown', (e)=>{
   if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='a'){ e.preventDefault(); promptAdminLogin(); }
 });
-
 // comments:
-// - Tu peux modifier / enrichir les éléments affichés dans renderCatalogue.
 // - Les images uploadées deviennent DataURL et sont stockées dans localStorage (attention à la taille).
 // - Wilayas et affiches sont sauvegardés automatiquement via persistAll().
-// - Le bouton bleu a été retiré de l'interface publique (je n'ai supprimé aucune de tes sections, j'ai retiré uniquement le bouton bleu visible public).
+// - J'ai gardé toute l'UI inchangée et corrigé la logique de sauvegarde pour que les modifications (titre, prix, description, specs, photo principale, miniatures) apparaissent immédiatement sur le site public.
 </script>
 </body>
 </html>
