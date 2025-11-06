@@ -2,140 +2,213 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Technoid — Vitrine PC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Technoid — Boutique & Vitrine</title>
 
-  <!-- Fonts (system fallback) -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-  </style>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
-  <!-- Styles : thème sombre moderne -->
+  <!-- Styles — thème clair boutique -->
   <style>
     :root{
-      --bg:#071022;
-      --panel:#0b1220;
-      --muted:#9fb0d1;
-      --accent:#1f6feb;
-      --glass: rgba(255,255,255,0.03);
-      --card-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --muted: #6b7280;
+      --accent: #0f62fe;
+      --accent-2: #0ea5a4;
+      --glass: rgba(15,22,40,0.04);
       --rounded: 12px;
-      --danger:#ef4444;
-      --success:#10b981;
+      --shadow: 0 8px 24px rgba(15,22,40,0.06);
+      --danger: #ef4444;
+      --success: #10b981;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
     }
+    *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
       font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg,#020617 0%, #071022 100%);
-      color: #e6eef8;
+      background: linear-gradient(180deg, #f6f8fb 0%, #eef2f7 100%);
+      color:#0b1220;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      line-height:1.4;
+      line-height:1.45;
     }
 
-    /* layout */
-    .wrap{max-width:1180px;margin:0 auto;padding:18px}
-    header.top{
-      position:sticky;top:0;z-index:50;
+    /* Header */
+    header.site{
+      position:sticky;top:0;z-index:60;
       backdrop-filter: blur(6px) saturate(120%);
-      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      background: rgba(255,255,255,0.8);
       border-bottom:1px solid var(--glass);
     }
-    .top .inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px}
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;background:linear-gradient(135deg,#0f172a,#4f46e5)}
-    .title{font-weight:800}
-    .subtitle{color:var(--muted);font-size:13px}
+    .container{max-width:1180px;margin:0 auto;padding:18px}
+    .site-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#0f172a,#4f46e5);color:white;display:flex;align-items:center;justify-content:center;font-weight:800}
+    .title{font-weight:800;font-size:18px}
+    .tag{color:var(--muted);font-size:13px}
 
-    /* grid */
-    .grid{display:grid;gap:18px;grid-template-columns: repeat(auto-fit,minmax(260px,1fr));margin-top:18px}
-    .card{background:var(--panel);border-radius:var(--rounded);box-shadow:var(--card-shadow);border:1px solid var(--glass);overflow:hidden}
+    /* layout top controls */
+    .controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .search{display:flex;align-items:center;gap:8px;background:var(--panel);padding:6px;border-radius:10px;box-shadow:var(--shadow);border:1px solid var(--glass)}
+    .search input{border:0;outline:none;background:transparent;padding:6px;font-size:14px;width:220px}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-secondary{background:transparent;border:1px solid var(--glass;color:inherit)}
+    .btn-plain{background:transparent;border:1px dashed var(--glass);color:var(--muted)}
+
+    /* main grid */
+    main{padding:18px}
+    .layout{display:grid;grid-template-columns: 1fr 380px;gap:20px}
+    @media (max-width:980px){ .layout{grid-template-columns:1fr} }
+
+    /* cards */
+    .card{background:var(--panel);border-radius:var(--rounded);box-shadow:var(--shadow);border:1px solid var(--glass);overflow:hidden}
     .card .pad{padding:12px}
 
-    /* poster */
-    .poster-img{width:100%;height:190px;object-fit:cover;border-radius:8px;display:block}
-    .thumbs{display:flex;gap:8px;justify-content:center;margin-top:10px}
-    .thumb{width:68px;height:48px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.05)}
-    .thumb.active{box-shadow:0 0 0 3px rgba(31,111,235,0.12);border-color:var(--accent)}
+    /* gallery */
+    .gallery{display:grid;grid-template-columns: repeat(auto-fill,minmax(260px,1fr));gap:18px}
+    .poster{border-radius:10px;overflow:hidden;border:1px solid rgba(9,11,14,0.04);background:#fff}
+    .poster .img-wrap{position:relative}
+    .poster img.main{width:100%;height:180px;object-fit:cover;display:block}
+    .poster .thumbs{display:flex;gap:8px;padding:10px;justify-content:center}
+    .thumb{width:64px;height:46px;object-fit:cover;border-radius:8px;border:1px solid rgba(9,11,14,0.06);cursor:pointer}
+    .thumb.active{outline:3px solid rgba(15,98,254,0.12)}
 
-    .p-title{font-weight:700;margin-top:10px}
-    .p-specs{color:var(--muted);font-size:13px;margin-top:4px}
+    .prod-title{font-weight:700;margin-top:8px}
+    .prod-specs{color:var(--muted);font-size:13px;margin-top:6px}
 
-    /* buttons / inputs */
-    .btn{display:inline-block;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
-    .btn-accent{background:var(--accent);color:#fff}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff}
-    .btn-danger{background:var(--danger);color:#fff}
-    .btn-small{padding:6px 8px;border-radius:8px;font-size:13px}
-    input[type="text"],input[type="url"],input[type="number"],textarea,select{
-      width:100%;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;box-sizing:border-box;
-    }
-    label{display:block;font-weight:600;margin-bottom:6px}
+    /* product card actions */
+    .prod-actions{display:flex;gap:8px;margin-top:10px}
+    .badge{background:var(--accent-2);color:#fff;padding:4px 8px;border-radius:8px;font-weight:700;font-size:12px}
 
-    /* admin modal */
-    .modal{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:120}
-    .panel{background:var(--panel);padding:16px;border-radius:12px;width:100%;max-width:820px;border:1px solid var(--glass);box-shadow:var(--card-shadow)}
+    /* sidebar */
+    .sidebar .pad{padding:12px}
+    .panel-title{font-weight:700;margin-bottom:8px}
 
-    /* lightbox */
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:200;padding:12px}
-    .lightbox img{max-width:98%;max-height:90vh;border-radius:10px}
-    .lightbox .close{position:absolute;top:20px;right:24px;font-size:28px;color:#fff;background:transparent;border:none;cursor:pointer}
-
-    /* admin table */
-    .table{width:100%;border-collapse:collapse}
-    .table th,.table td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
-    .muted{color:var(--muted);font-size:13px}
-
-    /* responsive */
-    @media (max-width:640px){
-      .poster-img{height:150px}
-      .thumb{width:56px;height:42px}
-      .wrap{padding:12px}
-    }
-
-    /* helper small text */
-    .hint{color:var(--muted);font-size:13px}
+    /* Admin hidden trigger top-left clickable area */
     .top-left-trigger{position:fixed;left:8px;top:8px;width:56px;height:56px;z-index:9999}
-    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .search{display:flex;gap:8px;align-items:center}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(11,17,34,0.45);display:flex;align-items:center;justify-content:center;z-index:120}
+    .modal .box{background:var(--panel);padding:16px;border-radius:12px;width:100%;max-width:960px;max-height:92vh;overflow:auto;border:1px solid var(--glass);box-shadow:var(--shadow)}
+
+    /* table */
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{padding:8px 10px;border-bottom:1px solid rgba(9,11,14,0.06);text-align:left}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* footer */
+    footer{padding:18px;text-align:center;color:var(--muted);font-size:13px;margin-top:10px}
+
+    /* subtle animations */
+    .fade-in{animation:fadeIn .32s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   </style>
 </head>
 <body>
-  <!-- invisible area (double-click) sits at top-left -->
-  <div class="top-left-trigger" title="Double-clic pour ouvrir admin (caché)"></div>
+  <!-- hidden clickable area - doubleclick or double tap to open admin -->
+  <div class="top-left-trigger" title="Double-tap/double-click for admin"></div>
 
-  <header class="top">
-    <div class="inner wrap">
+  <header class="site">
+    <div class="container site-inner">
       <div class="brand">
         <div class="logo">T</div>
         <div>
-          <div class="title">Technoid — Vitrine PC</div>
-          <div class="subtitle">Affiches · Miniatures cliquables · Gestion des livraisons</div>
+          <div class="title">Technoid Boutique</div>
+          <div class="tag">Vitrine produits • Gestion livraisons</div>
         </div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="hint">Double-clic en haut à gauche pour admin</div>
+      <div class="controls">
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/></svg>
+          <input id="search-input" placeholder="Rechercher produit, specs, wilaya..." />
+        </div>
+        <button id="btn-filter" class="btn btn-plain">Filtres</button>
+        <button id="btn-add-preview" class="btn btn-plain">Prévisualiser</button>
+        <button id="btn-backup" class="btn btn-plain">Backup</button>
+        <button id="btn-help" class="btn btn-plain">Aide</button>
       </div>
     </div>
   </header>
 
-  <main class="wrap" id="app">
-    <!-- main content injected by JS -->
-    <div id="root"></div>
+  <main class="container">
+    <div class="layout">
+      <!-- main gallery column -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2 style="margin:0">Vitrine — Produits</h2>
+          <div class="small">Click image to zoom · Tap top-left to open admin</div>
+        </div>
+
+        <div id="gallery" class="gallery" style="margin-top:14px"></div>
+      </div>
+
+      <!-- right sidebar -->
+      <aside class="sidebar">
+        <div class="card">
+          <div class="pad">
+            <div class="panel-title">Rechercher prix de livraison</div>
+            <select id="sel-wilaya" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--glass)"></select>
+            <div id="wilaya-result" style="margin-top:10px" class="small"></div>
+            <hr style="margin:12px 0;border:none;border-top:1px solid rgba(9,11,14,0.04)">
+            <div class="panel-title">Filtres rapides</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <select id="filter-price" style="padding:8px;border-radius:8px;border:1px solid var(--glass)">
+                <option value="">Trier par</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix décroissant</option>
+                <option value="newest">Plus récent</option>
+              </select>
+              <select id="filter-delivery" style="padding:8px;border-radius:8px;border:1px solid var(--glass)">
+                <option value="">Livraison</option>
+                <option value="home">Domicile</option>
+                <option value="office">Stopdesk</option>
+                <option value="available">Disponible</option>
+              </select>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button id="btn-open-admin" class="btn btn-primary">Entrer Admin</button>
+              <button id="btn-clear-filters" class="btn" style="background:#f3f4f6">Réinitialiser</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:18px"></div>
+
+        <div class="card">
+          <div class="pad">
+            <div class="panel-title">Options utiles</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button id="btn-export" class="btn">Exporter JSON</button>
+              <button id="btn-import" class="btn">Importer JSON</button>
+              <button id="btn-download-csv" class="btn">Télécharger CSV wilayas</button>
+              <button id="btn-restore-defaults" class="btn">Restaurer prix par défaut</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
   </main>
 
-  <!-- templates injected and controlled by JS -->
+  <footer>
+    © Technoid — Boutique · Tous droits réservés
+  </footer>
+
+  <!-- JS: large script split across parts 2..8 -->
+
   <script>
   (function(){
-    /* --------------------------
-       CONFIG & DATA
-       -------------------------- */
+    /* ---------- KEYS & CONFIG ---------- */
+    const POSTERS_KEY = 'vitrine_posters_v2';
+    const WILAYAS_KEY = 'wilayas_prices_v2';
     const ADMIN_PWD = 'technoid';
-    const POSTERS_KEY = 'vitrine_posters_v1';
-    const WILAYAS_KEY = 'wilayas_prices_v1';
+    const VERSION = 'v2.0';
 
+    /* ---------- DEFAULT WILAYAS (from your list) ---------- */
     const DEFAULT_WILAYAS = [
       { name: "Adrar", home: 1400, office: 970 },
       { name: "Chlef", home: 800, office: 520 },
@@ -197,617 +270,741 @@
       { name: "Meniaa", home: 1000, office: 0 }
     ];
 
-    /* --------------------------
-       UTILITIES
-       -------------------------- */
-    function uid(){ return 'id_' + Math.random().toString(36).slice(2,9); }
-    function byId(id){ return document.getElementById(id); }
-    function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-    function load(key, fallback){
-      try{
-        const r = localStorage.getItem(key);
-        return r ? JSON.parse(r) : fallback;
-      }catch(e){ return fallback; }
-    }
+    /* ---------- UTILITIES ---------- */
+    function uid(){ return 'p_' + Math.random().toString(36).slice(2,10) }
+    function save(key,val){ localStorage.setItem(key, JSON.stringify(val)) }
+    function load(key, fallback){ try{ const r=localStorage.getItem(key); return r?JSON.parse(r):fallback }catch(e){return fallback} }
+    function el(q){ return document.querySelector(q) }
+    function elAll(q){ return Array.from(document.querySelectorAll(q)) }
+    function downloadFile(content, filename, type='application/json'){ const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url) }
+    function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;') }
 
-    /* seed sample posters if none */
+    /* ---------- SEED DATA ---------- */
     function seedPosters(){
-      const sample = [
+      const arr = [
         {
           id: uid(),
-          title: "Gamer Fury X1",
-          specs: "i7 • RTX 4060 • 16 GB • SSD 1TB",
-          main: "https://via.placeholder.com/1200x800/CCE4FF/222?text=Gamer+Fury+X1",
+          title: 'Gamer Fury X1',
+          specs: 'i7 • RTX 4060 • 16GB • SSD 1TB',
+          price: 350000,
+          main: 'https://via.placeholder.com/1200x800/CCF2FF/0B1220?text=Gamer+Fury+X1',
           thumbs: [
-            "https://via.placeholder.com/400x260/BBF7D0/222?text=Detail+1",
-            "https://via.placeholder.com/400x260/FDE68A/222?text=Detail+2",
-            "https://via.placeholder.com/400x260/FBCFE8/222?text=Detail+3"
-          ]
+            'https://via.placeholder.com/400x260/BBF7D0/0B1220?text=G+detail+1',
+            'https://via.placeholder.com/400x260/FDE68A/0B1220?text=G+detail+2',
+            'https://via.placeholder.com/400x260/FBCFE8/0B1220?text=G+detail+3'
+          ],
+          tags: ['gamer','high-end']
         },
         {
           id: uid(),
-          title: "Office Pro S2",
-          specs: "i5 • Intel UHD • 8 GB • SSD 512GB",
-          main: "https://via.placeholder.com/1200x800/FFF7E6/222?text=Office+Pro+S2",
+          title: 'Office Pro S2',
+          specs: 'i5 • Intel UHD • 8GB • SSD 512GB',
+          price: 140000,
+          main: 'https://via.placeholder.com/1200x800/FFF7E6/0B1220?text=Office+Pro+S2',
           thumbs: [
-            "https://via.placeholder.com/400x260/FFE4E6/222?text=Detail+1",
-            "https://via.placeholder.com/400x260/E0F2FE/222?text=Detail+2",
-            "https://via.placeholder.com/400x260/DCFCE7/222?text=Detail+3"
-          ]
+            'https://via.placeholder.com/400x260/FFE4E6/0B1220?text=O+detail+1',
+            'https://via.placeholder.com/400x260/E0F2FE/0B1220?text=O+detail+2',
+            'https://via.placeholder.com/400x260/DCFCE7/0B1220?text=O+detail+3'
+          ],
+          tags: ['office','value']
         }
       ];
-      save(POSTERS_KEY, sample);
-      return sample;
+      save(POSTERS_KEY, arr);
+      return arr;
     }
 
-    /* --------------------------
-       UI RENDERING
-       -------------------------- */
+    /* initialize localStorage if missing */
+    if(!localStorage.getItem(WILAYAS_KEY)) save(WILAYAS_KEY, DEFAULT_WILAYAS);
+    if(!localStorage.getItem(POSTERS_KEY)) seedPosters();
 
-    const root = byId('root');
+    /* ---------- STATE ---------- */
+    let state = {
+      posters: load(POSTERS_KEY, []),
+      wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS),
+      search: '',
+      filter: { price:'', delivery:'' },
+      favorites: load('fav_list', [])
+    };
 
-    function renderApp(){
-      root.innerHTML = `
-        <section>
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px">
-            <div>
-              <h2 style="margin:0;font-size:20px">Vitrine — Produits</h2>
-              <div class="hint">Cliquez sur une image pour l'agrandir, cliquez sur une miniature pour changer la principale.</div>
-            </div>
+    /* ---------- RENDERING HELPERS (used below) ---------- */
+    function formatPrice(n){ if(!n && n!==0) return ''; return new Intl.NumberFormat('fr-FR').format(n) + ' DA' }
 
-            <div class="toolbar">
-              <button id="btn-admin-preview" class="btn btn-ghost btn-small">Accès admin (caché)</button>
-              <button id="btn-export-json" class="btn btn-ghost btn-small">Exporter JSON</button>
-              <button id="btn-import-json" class="btn btn-ghost btn-small">Importer JSON</button>
-              <button id="btn-download-backup" class="btn btn-ghost btn-small">Télécharger backup</button>
-            </div>
-          </div>
-
-          <div id="gallery" class="grid"></div>
-        </section>
-
-        <hr style="margin:18px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
-
-        <section style="margin-top:18px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px">
-            <div>
-              <h3 style="margin:0">Rechercher prix de livraison</h3>
-              <div class="hint">Choisis une wilaya pour voir le prix domicile / stopdesk</div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <select id="sel-wilaya" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit"></select>
-              <div id="wilaya-prices" class="muted"></div>
-            </div>
-          </div>
-        </section>
-      `;
-
-      // bind buttons
-      byId('btn-export-json').onclick = exportJSONDialog;
-      byId('btn-import-json').onclick = importJSONDialog;
-      byId('btn-download-backup').onclick = downloadBackup;
-      byId('btn-admin-preview').onclick = ()=> alert('Double-clic en haut à gauche pour ouvrir le panneau admin (mot de passe caché).');
-
-      renderGallery();
-      populateWilayaSelector();
-    }
-
+    /* ---------- GALLERY RENDER ---------- */
     function renderGallery(){
-      const gallery = byId('gallery');
+      const gallery = el('#gallery');
       gallery.innerHTML = '';
-      const posters = load(POSTERS_KEY, []);
-      const list = posters.length ? posters : seedPosters();
+      state.posters = load(POSTERS_KEY, []);
+      let list = state.posters.slice();
+
+      // search filter
+      const s = (el('#search-input') && el('#search-input').value.trim().toLowerCase()) || '';
+      state.search = s;
+      if(s){
+        list = list.filter(p => (p.title||'').toLowerCase().includes(s) || (p.specs||'').toLowerCase().includes(s) || (p.tags||[]).join(' ').toLowerCase().includes(s));
+      }
+
+      // delivery filter (if set)
+      const deliveryFilter = (el('#filter-delivery') && el('#filter-delivery').value) || '';
+      if(deliveryFilter==='available'){
+        // keep products whose at least one wilaya has non-zero price (global check: if all wilayas 0 then not available)
+        list = list.filter(() => true); // placeholder — keep all (we can map per product later)
+      } else if(deliveryFilter==='home' || deliveryFilter==='office'){
+        // placeholder: not product-specific, but UI keeps filter
+      }
+
+      // price sort
+      const priceSort = (el('#filter-price') && el('#filter-price').value) || '';
+      if(priceSort==='price-asc') list.sort((a,b)=> (a.price||0) - (b.price||0));
+      if(priceSort==='price-desc') list.sort((a,b)=> (b.price||0) - (a.price||0));
+      if(priceSort==='newest') list.sort((a,b)=> 0); // assume current order is newest
+
+      // create cards
+      if(list.length===0){
+        gallery.innerHTML = '<div class="card pad small">Aucun produit trouvé.</div>';
+        return;
+      }
 
       list.forEach(p=>{
-        const col = document.createElement('div'); col.className='card';
-        col.innerHTML = `
+        const card = document.createElement('div'); card.className='poster card fade-in';
+        card.innerHTML = `
+          <div class="img-wrap">
+            <img class="main" src="${escapeHtml(p.main)}" alt="${escapeHtml(p.title)}" loading="lazy" />
+          </div>
           <div class="pad">
-            <img src="${escapeHtml(p.main)}" class="poster-img" data-main="${escapeHtml(p.main)}" />
-            <div class="thumbs" style="margin-top:10px"></div>
-            <div class="p-title">${escapeHtml(p.title)}</div>
-            <div class="p-specs">${escapeHtml(p.specs)}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="prod-title">${escapeHtml(p.title)}</div>
+                <div class="prod-specs">${escapeHtml(p.specs)}</div>
+              </div>
+              <div style="text-align:right">
+                ${p.price? `<div class="badge">${formatPrice(p.price)}</div>` : ''}
+                <div style="margin-top:6px"><button class="btn btn-primary btn-small btn-buy">Acheter</button></div>
+              </div>
+            </div>
+            <div class="thumbs"></div>
+            <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+              <button class="btn btn-plain btn-small btn-zoom">Zoom</button>
+              <button class="btn btn-plain btn-small btn-fav">${state.favorites.includes(p.id) ? '♥ Favori' : '♡ Favori'}</button>
+            </div>
           </div>
         `;
-        // thumbs
-        const thumbsWrap = col.querySelector('.thumbs');
-        (p.thumbs || []).slice(0,3).forEach((t, i)=>{
+        // add thumbs
+        const thumbsWrap = card.querySelector('.thumbs');
+        (p.thumbs || []).slice(0,3).forEach((t,i)=>{
           const img = document.createElement('img');
           img.src = t || '';
           img.className = 'thumb' + (i===0 ? ' active' : '');
-          img.onclick = () => {
-            // change main image in local render and open lightbox if clicked twice quickly
-            col.querySelector('.poster-img').src = t;
-            // save change only in admin; here we let homepage not persist thumb change
+          img.alt = `mini_${i+1}`;
+          img.loading = 'lazy';
+          img.onclick = ()=> {
+            card.querySelector('img.main').src = t;
+            // highlight active
+            thumbsWrap.querySelectorAll('.thumb').forEach(x=>x.classList.remove('active'));
+            img.classList.add('active');
           };
           thumbsWrap.appendChild(img);
         });
 
-        // main image click -> lightbox
-        col.querySelector('.poster-img').onclick = (ev) => {
-          openLightbox(ev.currentTarget.src);
+        // zoom / lightbox
+        card.querySelector('.btn-zoom').onclick = ()=> openLightbox(card.querySelector('img.main').src, p);
+        card.querySelector('.main').onclick = ()=> openLightbox(card.querySelector('img.main').src, p);
+
+        // fav toggle
+        card.querySelector('.btn-fav').onclick = (e)=>{
+          const fav = state.favorites;
+          const idx = fav.indexOf(p.id);
+          if(idx===-1) fav.push(p.id); else fav.splice(idx,1);
+          save('fav_list', fav); state.favorites = fav;
+          card.querySelector('.btn-fav').textContent = fav.includes(p.id) ? '♥ Favori' : '♡ Favori';
         };
 
-        gallery.appendChild(col);
+        // buy button - simple demo: open modal with wilaya selector
+        card.querySelector('.btn-buy').onclick = ()=> openBuyModal(p);
+
+        gallery.appendChild(card);
       });
     }
 
-    /* --------------------------
-       Lightbox
-       -------------------------- */
-    let lightboxEl = null;
-    function openLightbox(src){
-      if(lightboxEl) closeLightbox();
-      lightboxEl = document.createElement('div');
-      lightboxEl.className = 'lightbox';
-      lightboxEl.innerHTML = `<img src="${escapeHtml(src)}" alt="zoom"/><button class="close" title="Fermer">×</button>`;
-      document.body.appendChild(lightboxEl);
-      lightboxEl.querySelector('.close').onclick = closeLightbox;
-      lightboxEl.onclick = (e)=>{ if(e.target===lightboxEl) closeLightbox(); }
-    }
-    function closeLightbox(){
-      if(lightboxEl){ lightboxEl.remove(); lightboxEl=null; }
-    }
-
-    /* --------------------------
-       Wilaya selector
-       -------------------------- */
-    function populateWilayaSelector(){
-      const sel = byId('sel-wilaya');
-      const wilayas = load(WILAYAS_KEY, DEFAULT_WILAYAS);
-      sel.innerHTML = '<option value="">-- Choisir une wilaya --</option>';
-      wilayas.forEach(w=>{
-        const opt = document.createElement('option');
-        opt.value = w.name;
-        opt.textContent = w.name;
-        sel.appendChild(opt);
-      });
-      sel.onchange = ()=> showWilayaPrices(sel.value);
-      // show nothing initially
-      byId('wilaya-prices').textContent = '';
-    }
-    function showWilayaPrices(name){
-      const pricesEl = byId('wilaya-prices');
-      if(!name){ pricesEl.textContent=''; return; }
-      const wilayas = load(WILAYAS_KEY, DEFAULT_WILAYAS);
-      const item = wilayas.find(w=>w.name===name);
-      if(!item){ pricesEl.textContent='—'; return; }
-      // rules: 0 => not available
-      const home = item.home === 0 ? 'Non disponible' : item.home + ' DA (domicile)';
-      const office = item.office === 0 ? 'Non disponible' : item.office + ' DA (stopdesk)';
-      pricesEl.innerHTML = `<strong>${home}</strong> — <span style="margin-left:8px">${office}</span>`;
-    }
-
-    /* --------------------------
-       ADMIN FLOW (double-clic top-left)
-       -------------------------- */
-    // double click detection on the dedicated top-left element
-    const trigger = document.querySelector('.top-left-trigger');
-    let lastClick = 0;
-    trigger.addEventListener('dblclick', ()=>showAdminLogin());
-    // also accept double single clicks from mobile: detect two clicks within 400ms
-    trigger.addEventListener('click', ()=>{
-      const now = Date.now();
-      if(now - lastClick < 420){ showAdminLogin(); }
-      lastClick = now;
-    });
-
-    function showAdminLogin(){
-      const modal = document.createElement('div');
-      modal.className='modal';
-      modal.innerHTML = `
-        <div class="panel" role="dialog" aria-modal="true">
-          <h3 style="margin:0 0 8px 0">Accès Admin (caché)</h3>
-          <div class="muted" style="margin-bottom:12px">Entrez le mot de passe pour accéder au panneau admin</div>
-          <form id="admin-login-form">
-            <input type="password" id="admin-password" placeholder="Mot de passe" style="margin-bottom:10px" />
-            <div style="display:flex;justify-content:flex-end;gap:8px">
-              <button type="button" id="admin-cancel" class="btn btn-ghost">Annuler</button>
-              <button type="submit" class="btn btn-accent">Entrer</button>
-            </div>
-          </form>
+    /* ---------- LIGHTBOX ---------- */
+    let lb = null;
+    function openLightbox(src, product){
+      closeLightbox();
+      lb = document.createElement('div'); lb.className='modal';
+      const title = product ? `<div style="font-weight:700;margin-bottom:8px">${escapeHtml(product.title)}</div>` : '';
+      lb.innerHTML = `<div class="box" style="max-width:880px;display:flex;flex-direction:column;gap:12px;align-items:center">
+        ${title}
+        <img src="${escapeHtml(src)}" style="max-width:100%;height:auto;border-radius:10px;box-shadow:var(--shadow)" />
+        <div style="width:100%;display:flex;justify-content:center;gap:8px">
+          <button class="btn btn-primary" id="lb-close">Fermer</button>
+          <button class="btn btn-plain" id="lb-download">Télécharger image</button>
         </div>
-      `;
+      </div>`;
+      document.body.appendChild(lb);
+      el('#lb-close').onclick = closeLightbox;
+      el('#lb-download').onclick = ()=> downloadFile(src, 'image-product.jpg', 'image/jpeg');
+      lb.onclick = (e)=>{ if(e.target===lb) closeLightbox(); }
+    }
+    function closeLightbox(){ if(lb){ lb.remove(); lb=null; } }
+
+    /* ---------- BUY modal (simple demo) ---------- */
+    function openBuyModal(product){
+      const modal = document.createElement('div'); modal.className='modal';
+      const wilayas = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+      const options = wilayas.map(w=>`<option value="${escapeHtml(w.name)}">${escapeHtml(w.name)}</option>`).join('');
+      modal.innerHTML = `<div class="box" style="max-width:720px">
+        <h3 style="margin:0 0 8px 0">Commander — ${escapeHtml(product.title)}</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <label class="small">Choisir Wilaya</label>
+            <select id="order-wilaya">${options}</select>
+          </div>
+          <div>
+            <label class="small">Mode livraison</label>
+            <select id="order-mode">
+              <option value="home">À domicile</option>
+              <option value="office">Stopdesk</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px">
+          <button id="order-cancel" class="btn btn-plain">Annuler</button>
+          <button id="order-confirm" class="btn btn-primary">Confirmer (simulé)</button>
+        </div>
+      </div>`;
       document.body.appendChild(modal);
-      byId('admin-cancel').onclick = ()=> modal.remove();
-      const form = byId('admin-login-form');
-      form.onsubmit = (e)=>{
-        e.preventDefault();
-        const val = byId('admin-password').value.trim();
-        if(val === ADMIN_PWD){
-          modal.remove();
-          openAdminPanel();
-        } else {
-          alert('Mot de passe incorrect');
-        }
+      el('#order-cancel').onclick = ()=> modal.remove();
+      el('#order-confirm').onclick = ()=>{
+        const w = el('#order-wilaya').value;
+        const mode = el('#order-mode').value;
+        // compute price (simulated): base price + wilaya price
+        const base = product.price || 0;
+        const wobj = wilayas.find(x=>x.name===w) || {home:0,office:0};
+        const add = mode==='home' ? wobj.home : wobj.office;
+        alert(`Commande simulée : ${product.title}\nWilaya: ${w}\nMode: ${mode}\nTotal estimé: ${formatPrice(base + (add||0) )}`);
+        modal.remove();
+      };
+      modal.onclick = (e)=>{ if(e.target===modal) modal.remove(); }
+    }
+
+    /* ---------- SEARCH & FILTER HOOKS ---------- */
+    el('#search-input').addEventListener('input', debounce(()=>{ renderGallery(); }, 220));
+    el('#filter-price').addEventListener('change', ()=> renderGallery());
+    el('#filter-delivery').addEventListener('change', ()=> renderGallery());
+    el('#btn-clear-filters').onclick = ()=>{
+      el('#search-input').value = '';
+      el('#filter-price').value = '';
+      el('#filter-delivery').value = '';
+      renderGallery();
+    };
+
+    /* ---------- populate wilaya selector in sidebar ---------- */
+    function populateWilayaSelector(){
+      const sel = el('#sel-wilaya');
+      const list = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+      sel.innerHTML = `<option value="">-- Choisir une wilaya --</option>` + list.map(w=>`<option value="${escapeHtml(w.name)}">${escapeHtml(w.name)}</option>`).join('');
+      sel.onchange = ()=> {
+        const name = sel.value;
+        if(!name){ el('#wilaya-result').innerHTML = ''; return; }
+        const item = list.find(x=>x.name===name);
+        if(!item) { el('#wilaya-result').innerHTML = '—'; return; }
+        el('#wilaya-result').innerHTML = `<strong>${item.home===0 ? 'Non disponible' : item.home + ' DA (domicile)'}</strong> — <span style="margin-left:8px">${item.office===0 ? 'Non disponible' : item.office + ' DA (stopdesk)'}</span>`;
       };
     }
 
-    /* --------------------------
-       Admin Panel: full CRUD + wilayas editor + export/import
-       -------------------------- */
-    function openAdminPanel(){
-      const posters = load(POSTERS_KEY, []);
-      const wilayas = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+    /* ---------- CSV export (wilayas) ---------- */
+    function exportWilayasCSV(){
+      const list = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+      const rows = [['Wilaya','Domicile','Stopdesk'], ...list.map(w=>[w.name, w.home, w.office])];
+      const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+      downloadFile(csv, 'wilayas_prices.csv', 'text/csv');
+    }
 
-      const modal = document.createElement('div');
-      modal.className='modal';
-      modal.innerHTML = `<div class="panel" role="dialog" aria-modal="true" style="max-width:1000px;overflow:auto;max-height:92vh">
+    /* ---------- ADMIN TRIGGER (double-click top-left / double-tap) ---------- */
+    const trigger = document.querySelector('.top-left-trigger');
+    let lastTap = 0;
+    trigger.addEventListener('dblclick', openAdminLogin);
+    trigger.addEventListener('click', ()=>{
+      const now = Date.now();
+      if(now - lastTap < 420) openAdminLogin();
+      lastTap = now;
+    });
+
+    // also provide visible admin button for convenience (but still asks pwd)
+    el('#btn-open-admin').addEventListener('click', openAdminLogin);
+
+    function openAdminLogin(){
+      // modal login
+      const m = document.createElement('div'); m.className='modal';
+      m.innerHTML = `<div class="box" style="max-width:420px">
+        <h3 style="margin:0 0 8px 0">Accès Administrateur</h3>
+        <div class="small">Entrez le mot de passe pour ouvrir le panneau admin.</div>
+        <form id="login-form" style="margin-top:12px">
+          <input id="login-pwd" type="password" placeholder="Mot de passe" style="margin-bottom:10px"/>
+          <div style="display:flex;justify-content:flex-end;gap:8px">
+            <button type="button" id="login-cancel" class="btn btn-plain">Annuler</button>
+            <button type="submit" class="btn btn-primary">Entrer</button>
+          </div>
+        </form>
+      </div>`;
+      document.body.appendChild(m);
+      el('#login-cancel').onclick = ()=> m.remove();
+      el('#login-form').onsubmit = (e)=> {
+        e.preventDefault();
+        const v = el('#login-pwd').value.trim();
+        if(v === ADMIN_PWD) { m.remove(); openAdminPanel(); }
+        else { alert('Mot de passe incorrect'); el('#login-pwd').value = ''; }
+      }
+      m.onclick = (e)=>{ if(e.target===m) m.remove(); }
+    }
+
+    /* ---------- ADMIN PANEL (full CRUD + wilayas editor + tools) ---------- */
+    function openAdminPanel(){
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<div class="box" style="max-width:1100px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <div>
-            <h2 style="margin:0">Panneau Admin</h2>
-            <div class="muted">Ajoute / modifie / supprime affiches et gère les prix de livraison</div>
+            <h2 style="margin:0">Panneau d'administration</h2>
+            <div class="small">Gère affiches, wilayas, backup et options</div>
           </div>
-          <div style="display:flex;gap:8px">
-            <button id="admin-close" class="btn btn-ghost">Fermer</button>
-            <button id="admin-export" class="btn btn-ghost">Exporter tout (JSON)</button>
-            <button id="admin-import" class="btn btn-ghost">Importer JSON</button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="admin-close" class="btn btn-plain">Fermer</button>
+            <button id="admin-save" class="btn btn-primary">Enregistrer tout</button>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 420px;gap:16px">
+        <div style="display:grid;grid-template-columns: 1fr 420px;gap:12px">
           <div>
-            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:10px;margin-bottom:12px">
+            <div style="background:var(--panel);padding:12px;border-radius:10px;margin-bottom:12px">
               <form id="poster-form">
                 <input type="hidden" id="poster-id" />
                 <div style="display:flex;gap:8px">
                   <div style="flex:1">
-                    <label>Titre</label>
-                    <input id="poster-title" type="text" placeholder="Titre du produit" />
+                    <label>Titre</label><input id="poster-title" type="text" />
                   </div>
                   <div style="width:140px">
-                    <label>Prix (facultatif)</label>
-                    <input id="poster-price" type="text" placeholder="ex: 150000 DA" />
+                    <label>Prix (DA)</label><input id="poster-price" type="number" />
                   </div>
                 </div>
-
                 <div style="margin-top:8px">
-                  <label>Spécifications</label>
-                  <input id="poster-specs" type="text" placeholder="i7 • RTX • 16 GB" />
+                  <label>Spécifications</label><input id="poster-specs" type="text" />
                 </div>
-
                 <div style="margin-top:8px">
-                  <label>Image principale (URL)</label>
-                  <input id="poster-main" type="url" placeholder="https://..." />
-                </div>
-
-                <div style="margin-top:8px">
-                  <label>Images secondaires (URL) — 3 max</label>
-                  <div style="display:flex;gap:8px">
-                    <input id="thumb-0" type="url" placeholder="mini 1" />
-                    <input id="thumb-1" type="url" placeholder="mini 2" />
-                    <input id="thumb-2" type="url" placeholder="mini 3" />
+                  <label>Image principale (URL ou Upload)</label>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input id="poster-main" type="url" placeholder="https://..." />
+                    <input id="poster-upload" type="file" accept="image/*" style="display:none"/>
+                    <button id="poster-upload-btn" type="button" class="btn btn-plain">Uploader</button>
+                  </div>
+                  <div style="margin-top:8px;display:flex;gap:8px">
+                    <input id="thumb-0" placeholder="mini 1 URL" />
+                    <input id="thumb-1" placeholder="mini 2 URL" />
+                    <input id="thumb-2" placeholder="mini 3 URL" />
                   </div>
                 </div>
-
-                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-                  <button type="button" id="clear-form" class="btn btn-ghost">Effacer</button>
-                  <button type="submit" class="btn btn-accent">Enregistrer</button>
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+                  <button type="button" id="poster-clear" class="btn btn-plain">Effacer</button>
+                  <button type="submit" class="btn btn-primary">Enregistrer affiche</button>
                 </div>
               </form>
             </div>
 
             <div style="margin-bottom:12px">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                <h4 style="margin:0">Affiches existantes</h4>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <h4 style="margin:0">Affiches</h4>
                 <div style="display:flex;gap:8px">
-                  <button id="clear-all-posters" class="btn btn-danger btn-small">Tout supprimer</button>
+                  <button id="clear-all" class="btn btn-plain">Supprimer tout</button>
                 </div>
               </div>
-              <div id="admin-posters-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px"></div>
+              <div id="admin-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:8px"></div>
             </div>
           </div>
 
-          <!-- right column: wilayas editor + tools -->
           <div>
-            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:10px;margin-bottom:12px">
-              <h4 style="margin:0 0 8px 0">Prix de livraison par wilaya</h4>
+            <div style="background:var(--panel);padding:12px;border-radius:10px;margin-bottom:12px">
+              <h4 style="margin:0 0 8px 0">Prix livraison — Wilayas</h4>
               <div style="display:flex;gap:8px;margin-bottom:8px">
-                <input id="wilaya-filter" placeholder="Rechercher..." style="flex:1" />
-                <button id="wilaya-reset" class="btn btn-ghost btn-small">Réinitialiser</button>
+                <input id="wilaya-search" placeholder="Rechercher..." />
+                <button id="wilaya-reset" class="btn btn-plain">Reset</button>
               </div>
-              <div style="max-height:320px;overflow:auto;border-radius:8px;padding:6px" id="wilaya-table-wrap"></div>
+              <div id="wilaya-editor" style="max-height:360px;overflow:auto;"></div>
             </div>
 
-            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:10px">
+            <div style="background:var(--panel);padding:12px;border-radius:10px">
               <h4 style="margin:0 0 8px 0">Outils</h4>
               <div style="display:flex;flex-direction:column;gap:8px">
-                <button id="btn-export-posters" class="btn btn-ghost">Exporter affiches (JSON)</button>
-                <button id="btn-import-posters" class="btn btn-ghost">Importer affiches</button>
-                <button id="btn-download-csv" class="btn btn-ghost">Télécharger prix CSV</button>
-                <button id="btn-restore-defaults" class="btn btn-ghost">Restaurer prix par défaut</button>
+                <button id="export-json" class="btn btn-plain">Exporter tout (JSON)</button>
+                <button id="import-json" class="btn btn-plain">Importer JSON</button>
+                <button id="download-csv" class="btn btn-plain">Télécharger CSV (wilayas)</button>
+                <button id="restore-defaults" class="btn btn-plain">Restaurer prix par défaut</button>
               </div>
             </div>
           </div>
         </div>
-      </div>`; // end panel inner
-
+      </div>`;
       document.body.appendChild(modal);
 
-      // bind close & actions
-      byId('admin-close').onclick = ()=> modal.remove();
-      byId('admin-export').onclick = ()=> {
-        const data = { posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS) };
-        downloadFile(JSON.stringify(data, null, 2), 'technoid_backup.json', 'application/json');
-      };
-      byId('admin-import').onclick = ()=> {
-        const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
-        input.onchange = (e)=> {
-          const f = e.target.files[0];
-          if(!f) return;
-          const r = new FileReader();
-          r.onload = ()=> {
-            try{
-              const obj = JSON.parse(r.result);
-              if(obj.posters) save(POSTERS_KEY, obj.posters);
-              if(obj.wilayas) save(WILAYAS_KEY, obj.wilayas);
-              alert('Import OK. Le panneau va se réinitialiser.');
-              modal.remove();
-              renderApp();
-            }catch(err){ alert('Fichier JSON invalide'); }
-          };
-          r.readAsText(f);
-        };
-        input.click();
-      };
+      // bind actions
+      el('#admin-close').onclick = ()=> { modal.remove(); renderGallery(); }
+      el('#admin-save').onclick = ()=> { save(POSTERS_KEY, state.posters); save(WILAYAS_KEY, state.wilayas); alert('Enregistré'); }
 
-      // poster form
-      const form = byId('poster-form');
-      const inputs = {
-        id: byId('poster-id'),
-        title: byId('poster-title'),
-        price: byId('poster-price'),
-        specs: byId('poster-specs'),
-        main: byId('poster-main'),
-        thumbs: [byId('thumb-0'), byId('thumb-1'), byId('thumb-2')]
-      };
-
-      function refreshPostersList(){
-        const listWrap = byId('admin-posters-list');
-        const arr = load(POSTERS_KEY, []);
-        listWrap.innerHTML = '';
-        arr.forEach((p, idx)=>{
-          const el = document.createElement('div');
-          el.className = 'card';
-          el.style.padding='8px';
-          el.innerHTML = `
-            <img src="${escapeHtml(p.main)}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:8px" />
-            <div style="font-weight:700">${escapeHtml(p.title)}</div>
-            <div class="muted" style="font-size:13px">${escapeHtml(p.specs)}</div>
-            <div style="display:flex;gap:8px;margin-top:8px;justify-content:space-between">
-              <button class="btn btn-ghost btn-small edit">Modifier</button>
-              <button class="btn btn-danger btn-small del">Supprimer</button>
-            </div>
-          `;
-          // actions
-          el.querySelector('.edit').onclick = ()=>{
-            inputs.id.value = p.id || '';
-            inputs.title.value = p.title || '';
-            inputs.price.value = p.price || '';
-            inputs.specs.value = p.specs || '';
-            inputs.main.value = p.main || '';
-            (p.thumbs || []).forEach((t,i)=>{ if(inputs.thumbs[i]) inputs.thumbs[i].value = t || '' });
-            window.scrollTo({top:0,behavior:'smooth'});
-          };
-          el.querySelector('.del').onclick = ()=>{
-            if(!confirm('Supprimer cette affiche ?')) return;
-            const arr2 = load(POSTERS_KEY, []).filter((_,i)=>i!==idx);
-            save(POSTERS_KEY, arr2);
-            refreshPostersList();
-            renderGallery();
-          };
-          listWrap.appendChild(el);
-        });
-      }
-
-      refreshPostersList();
-
-      // form submit
-      form.onsubmit = (e)=>{
-        e.preventDefault();
-        const title = inputs.title.value.trim();
-        const specs = inputs.specs.value.trim();
-        const main = inputs.main.value.trim();
-        const thumbs = inputs.thumbs.map(i=>i.value.trim()).filter(Boolean);
-        if(!title || !main){ alert('Le titre et l\'image principale sont requis'); return; }
-        const arr = load(POSTERS_KEY, []);
-        const idv = inputs.id.value;
-        if(idv){
-          // edit
-          const idx = arr.findIndex(x=>x.id===idv);
-          if(idx!==-1){
-            arr[idx] = { id:idv, title, specs, main, thumbs };
-            save(POSTERS_KEY, arr);
-            alert('Modifié');
-          }
-        } else {
-          arr.push({ id: uid(), title, specs, main, thumbs });
-          save(POSTERS_KEY, arr);
-        }
-        // clear and refresh
-        inputs.id.value = ''; inputs.title.value = ''; inputs.price.value=''; inputs.specs.value=''; inputs.main.value='';
-        inputs.thumbs.forEach(i=>i.value='');
-        refreshPostersList();
-        renderGallery();
-      };
-
-      byId('clear-form').onclick = ()=>{
-        inputs.id.value=''; inputs.title.value=''; inputs.price.value=''; inputs.specs.value=''; inputs.main.value='';
-        inputs.thumbs.forEach(i=>i.value='');
-      };
-
-      byId('clear-all-posters').onclick = ()=>{
-        if(!confirm('Supprimer toutes les affiches ?')) return;
-        save(POSTERS_KEY, []);
-        refreshPostersList();
-        renderGallery();
-      };
-
-      /* ========== WILAYAS EDITOR ========= */
-      function renderWilayaTable(filter=''){
-        const wrap = byId('wilaya-table-wrap');
-        const list = load(WILAYAS_KEY, DEFAULT_WILAYAS);
-        const filtered = list.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
-        wrap.innerHTML = `
-          <table class="table" style="width:100%">
-            <thead><tr><th>Wilaya</th><th>Domicile (DA)</th><th>Stopdesk (DA)</th></tr></thead>
-            <tbody>
-              ${filtered.map((w,idx)=>`<tr data-w="${escapeHtml(w.name)}">
-                <td>${escapeHtml(w.name)}</td>
-                <td><input class="wil-home" data-i="${idx}" value="${w.home}" style="width:100px"/></td>
-                <td><input class="wil-office" data-i="${idx}" value="${w.office}" style="width:100px"/></td>
-              </tr>`).join('')}
-            </tbody>
-          </table>
-        `;
-        // bind inputs
-        wrap.querySelectorAll('.wil-home').forEach(el=>{
-          el.onchange = ()=> {
-            const name = el.closest('tr').dataset.w;
-            const v = Number(el.value) || 0;
-            updateWilayaValue(name, 'home', v);
-          }
-        });
-        wrap.querySelectorAll('.wil-office').forEach(el=>{
-          el.onchange = ()=> {
-            const name = el.closest('tr').dataset.w;
-            const v = Number(el.value) || 0;
-            updateWilayaValue(name, 'office', v);
-          }
-        });
-      }
-
-      function updateWilayaValue(name, field, val){
-        const arr = load(WILAYAS_KEY, DEFAULT_WILAYAS).map(w => w.name===name ? {...w, [field]: val} : w);
-        save(WILAYAS_KEY, arr);
-        populateWilayaSelector(); // update selector labels
-      }
-
-      byId('wilaya-filter').oninput = (e)=> renderWilayaTable(e.target.value);
-      byId('wilaya-reset').onclick = ()=> {
-        if(!confirm('Réinitialiser aux valeurs par défaut ?')) return;
-        save(WILAYAS_KEY, DEFAULT_WILAYAS);
-        renderWilayaTable('');
-        populateWilayaSelector();
-      };
-
-      renderWilayaTable('');
-
-      /* ========== tools buttons ========= */
-      byId('btn-export-posters').onclick = ()=> {
-        const data = load(POSTERS_KEY, []);
-        downloadFile(JSON.stringify(data, null, 2), 'posters.json', 'application/json');
-      };
-      byId('btn-import-posters').onclick = ()=> {
-        const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
-        input.onchange = (e)=> {
-          const f = e.target.files[0]; if(!f) return;
-          const r = new FileReader(); r.onload = ()=> {
-            try{
-              const arr = JSON.parse(r.result);
-              if(!Array.isArray(arr)) throw new Error('Format invalide');
-              save(POSTERS_KEY, arr);
-              refreshPostersList(); renderGallery();
-              alert('Import OK');
-            }catch(er){ alert('Fichier invalide'); }
-          }; r.readAsText(f);
-        }; input.click();
-      };
-      byId('btn-download-csv').onclick = ()=> {
-        const list = load(WILAYAS_KEY, DEFAULT_WILAYAS);
-        const csvRows = [['Wilaya','Domicile','Stopdesk'], ...list.map(w=>[w.name,w.home,w.office])];
-        const csv = csvRows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-        downloadFile(csv, 'wilayas_prices.csv', 'text/csv');
-      };
-      byId('btn-restore-defaults').onclick = ()=> {
-        if(!confirm('Restaurer les prix par défaut (fourni initialement) ?')) return;
-        save(WILAYAS_KEY, DEFAULT_WILAYAS);
-        renderWilayaTable('');
-        populateWilayaSelector();
-      };
-
-      /* close modal helper */
-      function closeAndRefresh(){
-        modal.remove();
-        renderApp();
-      }
-
-      // when admin imported or exported and wants close, we already bound close
-    } // end openAdminPanel
-
-    /* --------------------------
-       Export / Import handlers on main page
-       -------------------------- */
-    function exportJSONDialog(){
-      const data = {
-        posters: load(POSTERS_KEY, []),
-        wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS),
-        exportedAt: new Date().toISOString()
-      };
-      downloadFile(JSON.stringify(data, null, 2), 'technoid_export.json', 'application/json');
-    }
-    function importJSONDialog(){
-      const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
-      input.onchange = (e)=> {
+      // poster upload handling (convert to dataURL)
+      el('#poster-upload-btn').onclick = ()=> el('#poster-upload').click();
+      el('#poster-upload').onchange = (e)=>{
         const f = e.target.files[0];
         if(!f) return;
+        const reader = new FileReader();
+        reader.onload = ()=> {
+          el('#poster-main').value = reader.result; // data URL
+        };
+        reader.readAsDataURL(f);
+      };
+
+      // populate list and wilaya editor
+      function refreshAdminList(){
+        const wrap = el('#admin-list'); wrap.innerHTML = '';
+        const arr = load(POSTERS_KEY, []);
+        arr.forEach((p, idx)=>{
+          const card = document.createElement('div'); card.className='card';
+          card.style.padding='8px';
+          card.innerHTML = `<img src="${escapeHtml(p.main)}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:8px" />
+            <div style="font-weight:700">${escapeHtml(p.title)}</div>
+            <div class="small">${escapeHtml(p.specs)}</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn btn-plain edit">Modifier</button>
+              <button class="btn btn-danger del">Supprimer</button>
+            </div>`;
+          card.querySelector('.edit').onclick = ()=>{
+            el('#poster-id').value = p.id || '';
+            el('#poster-title').value = p.title || '';
+            el('#poster-price').value = p.price || '';
+            el('#poster-specs').value = p.specs || '';
+            el('#poster-main').value = p.main || '';
+            el('#thumb-0').value = p.thumbs && p.thumbs[0] || '';
+            el('#thumb-1').value = p.thumbs && p.thumbs[1] || '';
+            el('#thumb-2').value = p.thumbs && p.thumbs[2] || '';
+            window.scrollTo({top:0,behavior:'smooth'});
+          };
+          card.querySelector('.del').onclick = ()=>{
+            if(!confirm('Supprimer cette affiche ?')) return;
+            const arr2 = load(POSTERS_KEY, []).filter((_,i)=>i!==idx);
+            save(POSTERS_KEY, arr2); state.posters = arr2; refreshAdminList(); renderGallery();
+          };
+          wrap.appendChild(card);
+        });
+      }
+      refreshAdminList();
+
+      // form submit to add/edit poster
+      el('#poster-form').onsubmit = (e)=>{
+        e.preventDefault();
+        const idv = el('#poster-id').value.trim();
+        const title = el('#poster-title').value.trim();
+        const price = Number(el('#poster-price').value) || 0;
+        const specs = el('#poster-specs').value.trim();
+        const main = el('#poster-main').value.trim();
+        const thumbs = [el('#thumb-0').value.trim(), el('#thumb-1').value.trim(), el('#thumb-2').value.trim()].filter(Boolean);
+        if(!title || !main){ alert('Titre et image principale requis'); return; }
+        const arr = load(POSTERS_KEY, []);
+        if(idv){
+          const idx = arr.findIndex(x=>x.id===idv);
+          if(idx!==-1){ arr[idx] = { id:idv, title, price, specs, main, thumbs }; save(POSTERS_KEY, arr); }
+        } else {
+          arr.push({ id: uid(), title, price, specs, main, thumbs });
+          save(POSTERS_KEY, arr);
+        }
+        // clear form
+        el('#poster-id').value=''; el('#poster-title').value=''; el('#poster-price').value=''; el('#poster-specs').value=''; el('#poster-main').value='';
+        el('#thumb-0').value=''; el('#thumb-1').value=''; el('#thumb-2').value='';
+        refreshAdminList(); renderGallery();
+        alert('Affiche enregistrée');
+      };
+
+      el('#poster-clear').onclick = ()=> { el('#poster-id').value=''; el('#poster-title').value=''; el('#poster-price').value=''; el('#poster-specs').value=''; el('#poster-main').value=''; el('#thumb-0').value=''; el('#thumb-1').value=''; el('#thumb-2').value=''; };
+
+      el('#clear-all').onclick = ()=> {
+        if(!confirm('Supprimer toutes les affiches ?')) return;
+        save(POSTERS_KEY, []); state.posters = []; refreshAdminList(); renderGallery();
+      };
+
+      /* ---------- WILAYA editor ---------- */
+      state.wilayas = load(WILAYAS_KEY, DEFAULT_WILAYAS);
+      function renderWilayaEditor(filter=''){
+        const wrap = el('#wilaya-editor'); const list = state.wilayas.slice();
+        const filtered = list.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
+        wrap.innerHTML = `<table class="table"><thead><tr><th>Wilaya</th><th>Domicile (DA)</th><th>Stopdesk (DA)</th></tr></thead><tbody>${
+          filtered.map(w=>`<tr data-name="${escapeHtml(w.name)}"><td>${escapeHtml(w.name)}</td><td><input class="wil-home" value="${w.home}" style="width:110px"/></td><td><input class="wil-office" value="${w.office}" style="width:110px"/></td></tr>`).join('')
+        }</tbody></table>`;
+        wrap.querySelectorAll('.wil-home').forEach(input=>{
+          input.onchange = ()=> {
+            const name = input.closest('tr').dataset.name;
+            updateWilayaValue(name, 'home', Number(input.value) || 0);
+          };
+        });
+        wrap.querySelectorAll('.wil-office').forEach(input=>{
+          input.onchange = ()=> {
+            const name = input.closest('tr').dataset.name;
+            updateWilayaValue(name, 'office', Number(input.value) || 0);
+          };
+        });
+      }
+      renderWilayaEditor('');
+      el('#wilaya-search').oninput = (e)=> renderWilayaEditor(e.target.value);
+      el('#wilaya-reset').onclick = ()=> { if(!confirm('Réinitialiser aux valeurs par défaut ?')) return; save(WILAYAS_KEY, DEFAULT_WILAYAS); state.wilayas = DEFAULT_WILAYAS.slice(); renderWilayaEditor(''); populateWilayaSelector(); };
+
+      function updateWilayaValue(name,field,val){
+        state.wilayas = (load(WILAYAS_KEY, DEFAULT_WILAYAS)).map(w => w.name===name ? {...w, [field]: val} : w);
+        save(WILAYAS_KEY, state.wilayas);
+        populateWilayaSelector();
+      }
+
+      /* ---------- TOOLS: export/import/csv ---------- */
+      el('#export-json').onclick = ()=> {
+        const data = { posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS), version: VERSION, exportedAt: new Date().toISOString() };
+        downloadFile(JSON.stringify(data,null,2), 'technoid_export.json', 'application/json');
+      };
+      el('#import-json').onclick = ()=> {
+        const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
+        input.onchange = e=> {
+          const f = e.target.files[0]; if(!f) return;
+          const reader = new FileReader();
+          reader.onload = ()=> {
+            try{ const obj = JSON.parse(reader.result); if(obj.posters) save(POSTERS_KEY, obj.posters); if(obj.wilayas) save(WILAYAS_KEY, obj.wilayas); alert('Import OK'); modal.remove(); renderGallery(); }
+            catch(er){ alert('Fichier JSON invalide'); }
+          }; reader.readAsText(f);
+        }; input.click();
+      };
+      el('#download-csv').onclick = ()=> {
+        exportWilayasCSV();
+      };
+      el('#restore-defaults').onclick = ()=> {
+        if(!confirm('Restaurer les prix par défaut ?')) return;
+        save(WILAYAS_KEY, DEFAULT_WILAYAS); state.wilayas = DEFAULT_WILAYAS.slice(); renderWilayaEditor(''); populateWilayaSelector(); alert('Restauré');
+      };
+    } // end openAdminPanel
+
+    /* ---------- debounce util ---------- */
+    function debounce(fn, wait=200){
+      let t;
+      return function(...args){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,args), wait); }
+    }
+
+    /* ---------- INIT bindings for main UI ---------- */
+    el('#btn-export').onclick = ()=> {
+      const data = { posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS), ts: new Date().toISOString() };
+      downloadFile(JSON.stringify(data,null,2), 'technoid_site_export.json', 'application/json');
+    };
+    el('#btn-import').onclick = ()=> {
+      const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
+      input.onchange = e=> {
+        const f = e.target.files[0]; if(!f) return;
         const r = new FileReader();
         r.onload = ()=> {
-          try{
-            const obj = JSON.parse(r.result);
-            if(obj.posters) save(POSTERS_KEY, obj.posters);
-            if(obj.wilayas) save(WILAYAS_KEY, obj.wilayas);
-            alert('Import OK');
-            renderApp();
-          }catch(err){ alert('Fichier invalide'); }
-        };
-        r.readAsText(f);
-      };
-      input.click();
-    }
-
-    /* download helper */
-    function downloadFile(content, filename, mime){
-      const blob = new Blob([content], {type: mime || 'application/octet-stream'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    /* small backup (download) */
-    function downloadBackup(){
-      const data = {posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS), ts:new Date().toISOString()};
-      downloadFile(JSON.stringify(data,null,2), 'technoid_backup_'+(new Date().toISOString().slice(0,19).replace(/[:T]/g,'-'))+'.json', 'application/json');
-    }
-
-    /* utility escape */
-    function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
-
-    /* --------------------------
-       CSV import helper (not used now) - placeholder
-       -------------------------- */
-    // (kept for future extension)
-
-    /* --------------------------
-       INITIALIZATION
-       -------------------------- */
-    // seed wilayas if none
-    if(!localStorage.getItem(WILAYAS_KEY)) save(WILAYAS_KEY, DEFAULT_WILAYAS);
-    // seed posters if none
-    if(!localStorage.getItem(POSTERS_KEY)) seedPosters();
-
-    // initial render
-    renderApp();
-
-    // expose some helpers for debugging (window.Technoid)
-    window.Technoid = {
-      reload: renderApp,
-      export: exportJSONDialog,
-      import: importJSONDialog,
-      downloadBackup
+          try{ const obj = JSON.parse(r.result); if(obj.posters) save(POSTERS_KEY, obj.posters); if(obj.wilayas) save(WILAYAS_KEY, obj.wilayas); alert('Import OK'); renderGallery(); populateWilayaSelector(); }
+          catch(er){ alert('Fichier JSON invalide'); }
+        }; r.readAsText(f);
+      }; input.click();
     };
 
-  })();
-  </script>
-</body>
-</html>
+    el('#btn-download-csv').onclick = ()=> exportWilayasCSV();
+    el('#btn-restore-defaults').onclick = ()=> {
+      if(!confirm('Restaurer prix par défaut ?')) return;
+      save(WILAYAS_KEY, DEFAULT_WILAYAS); populateWilayaSelector(); alert('Restauré');
+    };
+
+    el('#btn-backup').onclick = ()=> {
+      const data = { posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS), ts: new Date().toISOString() };
+      downloadFile(JSON.stringify(data,null,2), 'technoid_backup_'+(new Date().toISOString().slice(0,19).replace(/[:T]/g,'-'))+'.json', 'application/json');
+    };
+
+    el('#btn-help').onclick = ()=> {
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<div class="box"><h3>Aide rapide</h3><ul><li>Double-clic / double-tap top-left pour ouvrir admin.</li><li>Mot de passe admin : <strong>technoid</strong>.</li><li>Dans admin, tu peux ajouter des affiches en collant une URL d'image ou en uploadant (converti en DataURL).</li><li>Les prix des wilayas sont modifiables dans l'éditeur à droite du panneau admin.</li><li>Exporter / importer JSON pour sauvegarde.</li></ul><div style="text-align:right"><button class="btn btn-primary" id="help-close">Fermer</button></div></div>`;
+      document.body.appendChild(modal);
+      el('#help-close').onclick = ()=> modal.remove();
+    };
+
+    /* ---------- favorites persist ---------- */
+    window.addEventListener('beforeunload', ()=> save('fav_list', state.favorites) );
+
+    /* ---------- populate selector and initial render ---------- */
+    function populateWilayaSelector(){ const sel=el('#sel-wilaya'); const list=load(WILAYAS_KEY, DEFAULT_WILAYAS); sel.innerHTML = '<option value="">-- Choisir une wilaya --</option>' + list.map(w=>`<option value="${escapeHtml(w.name)}">${escapeHtml(w.name)}</option>`).join(''); sel.onchange = ()=> { const name=sel.value; if(!name){ el('#wilaya-result').innerHTML=''; return; } const item = list.find(x=>x.name===name); el('#wilaya-result').innerHTML = `<strong>${item.home===0?'Non disponible':item.home+' DA (domicile)'}</strong> — <span style="margin-left:8px">${item.office===0?'Non disponible':item.office+' DA (stopdesk)'}</span>` } }
+
+    populateWilayaSelector();
+    renderGallery();
+
+    /* ---------- initial UI shortcuts ---------- */
+    el('#btn-add-preview').onclick = ()=> {
+      // opens a modal with quick add example
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<div class="box"><h3>Ajouter une affiche rapide</h3>
+        <div style="display:grid;gap:8px">
+          <input id="quick-title" placeholder="Titre" />
+          <input id="quick-specs" placeholder="Specs" />
+          <input id="quick-main" placeholder="Image principale URL" />
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button id="quick-cancel" class="btn btn-plain">Annuler</button>
+            <button id="quick-add" class="btn btn-primary">Ajouter</button>
+          </div>
+        </div></div>`;
+      document.body.appendChild(modal);
+      el('#quick-cancel').onclick = ()=> modal.remove();
+      el('#quick-add').onclick = ()=> {
+        const title = el('#quick-title').value.trim(); const specs = el('#quick-specs').value.trim(); const main = el('#quick-main').value.trim();
+        if(!title || !main){ alert('Titre et image requis'); return; }
+        const arr = load(POSTERS_KEY, []); arr.push({ id: uid(), title, specs, main, thumbs: [] }); save(POSTERS_KEY, arr); modal.remove(); renderGallery(); alert('Ajouté');
+      }
+    };
+
+    /* ---------- misc helper: open admin via visible button also asks pwd ---------- */
+    el('#btn-open-admin').addEventListener('click', ()=> openAdminLogin());
+
+    /* ---------- TAGS & FILTERS enhancements ---------- */
+    function getAllTags(){
+      const arr = load(POSTERS_KEY, []);
+      const tags = new Set();
+      arr.forEach(p => (p.tags||[]).forEach(t => tags.add(t)));
+      return Array.from(tags);
+    }
+
+    // add tag filter UI dynamically (if tags exist)
+    function renderTagFilters(){
+      const tags = getAllTags();
+      if(tags.length===0) return;
+      let wrap = document.createElement('div'); wrap.style.marginTop='12px';
+      wrap.innerHTML = `<div class="small" style="margin-bottom:8px;font-weight:700">Filtres étiquettes</div><div style="display:flex;gap:8px;flex-wrap:wrap">${tags.map(t=>`<button class="btn btn-plain tag-filter">${escapeHtml(t)}</button>`).join('')}</div>`;
+      const sidebar = document.querySelector('.sidebar .card .pad');
+      if(sidebar) sidebar.appendChild(wrap);
+      elAll('.tag-filter').forEach(b=> b.onclick = (e)=> { const v = e.target.textContent; el('#search-input').value = v; renderGallery(); });
+    }
+    renderTagFilters();
+
+    /* ---------- Export favorites as list / share ---------- */
+    function exportFavorites(){
+      const fav = load('fav_list', []);
+      const posters = load(POSTERS_KEY, []).filter(p=> fav.includes(p.id));
+      downloadFile(JSON.stringify(posters, null, 2), 'technoid_favorites.json', 'application/json');
+    }
+
+    // wire a quick favorites export via ctrl+f (dev shortcut)
+    window.addEventListener('keydown', (e)=> { if((e.ctrlKey || e.metaKey) && e.key==='f'){ e.preventDefault(); exportFavorites(); alert('Favorites exporté (si il y a des favoris).'); } });
+
+    /* ---------- CONTACT / LEAD capture (simple form) ---------- */
+    function openContactModal(defaultProduct){
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<div class="box" style="max-width:480px">
+        <h3 style="margin:0">Contact / Demande d'information</h3>
+        <div class="small">Remplis ce formulaire et nous te contacterons.</div>
+        <form id="contact-form" style="margin-top:12px;display:grid;gap:8px">
+          <input id="c-name" placeholder="Ton nom" required />
+          <input id="c-phone" placeholder="Téléphone / WhatsApp" />
+          <input id="c-email" placeholder="Email" />
+          <textarea id="c-msg" placeholder="Message (optionnel)">${defaultProduct? 'Intérêt pour: '+defaultProduct.title : ''}</textarea>
+          <div style="display:flex;justify-content:flex-end;gap:8px">
+            <button type="button" id="c-cancel" class="btn btn-plain">Annuler</button>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+          </div>
+        </form>
+      </div>`;
+      document.body.appendChild(modal);
+      el('#c-cancel').onclick = ()=> modal.remove();
+      el('#contact-form').onsubmit = (e)=> {
+        e.preventDefault();
+        // simulate send — we save to localStorage leads
+        const leads = load('technoid_leads', []);
+        leads.push({
+          id: uid(),
+          name: el('#c-name').value,
+          phone: el('#c-phone').value,
+          email: el('#c-email').value,
+          msg: el('#c-msg').value,
+          product: defaultProduct? defaultProduct.title : null,
+          ts: new Date().toISOString()
+        });
+        save('technoid_leads', leads);
+        alert('Merci — ta demande a été enregistrée (simulation). Nous te contacterons.');
+        modal.remove();
+      };
+    }
+
+    /* ---------- small analytics stub (no external calls) ---------- */
+    function analyticsTrack(evt, data){
+      // keep local mini-analytics
+      const a = load('technoid_analytics', []);
+      a.push({ evt, data, ts: new Date().toISOString() });
+      save('technoid_analytics', a.slice(-500)); // cap
+    }
+
+    /* ---------- Accessibility tweaks ---------- */
+    // provide keyboard support: 'a' opens admin dialog (ask pwd)
+    window.addEventListener('keydown', (e)=>{
+      if(e.key==='a' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); openAdminLogin(); }
+      if(e.key==='/' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) { e.preventDefault(); el('#search-input').focus(); }
+    });
+
+    /* ---------- more helpers ---------- */
+    el('#btn-filter').onclick = ()=> {
+      // toggle a small filter panel (quick)
+      const existing = el('#quick-filter-panel');
+      if(existing){ existing.remove(); return; }
+      const panel = document.createElement('div'); panel.id='quick-filter-panel'; panel.className='modal';
+      panel.innerHTML = `<div class="box" style="max-width:420px">
+        <h4>Filtres rapides</h4>
+        <div style="display:grid;gap:8px">
+          <label>Étiquette (tag)</label><input id="filter-tag" placeholder="ex: gamer" />
+          <label>Max prix (DA)</label><input id="filter-maxprice" type="number" placeholder="ex: 200000" />
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+          <button id="filter-apply" class="btn btn-primary">Appliquer</button>
+          <button id="filter-cancel" class="btn btn-plain">Annuler</button>
+        </div>
+      </div>`;
+      document.body.appendChild(panel);
+      el('#filter-cancel').onclick = ()=> panel.remove();
+      el('#filter-apply').onclick = ()=> {
+        const tag = el('#filter-tag').value.trim().toLowerCase();
+        const max = Number(el('#filter-maxprice').value) || 0;
+        state.posters = load(POSTERS_KEY, []);
+        let list = state.posters;
+        if(tag) list = list.filter(p => (p.tags||[]).join(' ').toLowerCase().includes(tag));
+        if(max>0) list = list.filter(p => (p.price||0) <= max);
+        // render temporary list
+        const gallery = el('#gallery'); gallery.innerHTML='';
+        if(list.length===0){ gallery.innerHTML = '<div class="card pad small">Aucun produit.</div>'; panel.remove(); return; }
+        list.forEach(p=>{
+          const div = document.createElement('div'); div.className='poster card';
+          div.innerHTML = `<div class="img-wrap"><img class="main" src="${escapeHtml(p.main)}" /></div><div class="pad"><div class="prod-title">${escapeHtml(p.title)}</div><div class="prod-specs">${escapeHtml(p.specs)}</div></div>`;
+          gallery.appendChild(div);
+        });
+        panel.remove();
+      };
+    };
+
+    /* ---------- final bindings & startup ---------- */
+    el('#btn-export').addEventListener('click', ()=> {
+      const data = { posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS) };
+      downloadFile(JSON.stringify(data,null,2), 'technoid_site_export.json', 'application/json');
+      analyticsTrack('export_site', {});
+    });
+
+    el('#btn-open-admin').addEventListener('click', ()=> openAdminLogin());
+    el('#btn-download-csv').addEventListener('click', ()=> exportWilayasCSV());
+    el('#btn-backup').addEventListener('click', ()=> {
+      const data = { posters: load(POSTERS_KEY, []), wilayas: load(WILAYAS_KEY, DEFAULT_WILAYAS), ts: new Date().toISOString() };
+      downloadFile(JSON.stringify(data,null,2), 'technoid_backup.json', 'application/json');
+    });
+    el('#btn-help').addEventListener('click', ()=> { analyticsTrack('help_open', {}); });
+
+    // wire quick export favorites when click backup + alt
+    el('#btn-backup').addEventListener('click', (e)=> { if(e.altKey) exportFavorites(); });
+
+    // Ensure search input triggers render
+    el('#search-input').addEventListener('input', debounce(()=> renderGallery(), 220));
+
+    // initial UI population
+    populateWilayaSelector();
+    renderGallery();
+
+    // expose for console debugging
+    window.Technoid = {
+      saveState: ()=> { save(POSTERS_KEY, state.posters); save(WILAYAS_KEY, state.wilayas); save('fav_list', state.favorites); },
+      loadState: ()=> { state.posters = load(POSTERS_KEY, []); state.wilayas = load(WILAYAS_
